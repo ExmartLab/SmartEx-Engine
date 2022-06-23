@@ -1,7 +1,5 @@
 package exengine.rest;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,9 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import exengine.database.Path;
-import exengine.haconnection.HA_API;
-import exengine.haconnection.LogEntry;
 import exengine.service.CreateExService;
 
 //@RequestMapping("/ExEngine")
@@ -33,10 +28,14 @@ public class RESTController {
 	}
 	
 	@GetMapping("/explain")
-	public ResponseEntity<String> getExplanation() {
+	public ResponseEntity<String> getExplanation(@RequestParam(value = "min", defaultValue = "30") String min) {
+		int minNumber = 30;
+		try {
+			minNumber = Integer.parseInt(min);
+		} catch(Exception e) { }
 		if(debug)
-			System.out.println("HTTP GET: Explanation requested");
-		String explanation = createExSer.getExplanation(HA_API.parseLastLogs(90));
+			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min)");
+		String explanation = createExSer.getExplanation(minNumber);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 	

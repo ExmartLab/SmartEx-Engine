@@ -22,9 +22,15 @@ public class HA_API {
 
 	static String s ="";
 	
-	public static void test() {
+	public static void printAPIStatus() {
 		System.out.print("API status: ");
-		System.out.println(executeHttpClient(apiurl));
+		String status = "not reachable";
+		try {
+			status = executeHttpClient(apiurl);
+		} catch(Exception e) {
+			status += " because " + e.getMessage();
+		}
+		System.out.println(status);
 	}
 	
 	public static ArrayList<LogEntry> parseLastLogs(int min) {
@@ -45,7 +51,7 @@ public class HA_API {
 	
 	public static ArrayList<LogEntry> parseJSON(String json) {
 		ArrayList<LogEntry> logsArrList = new ArrayList<LogEntry>();
-		System.out.println(json);
+		//System.out.println(json);
 		//remove front and back brackets
 		json = json.substring(1, json.length()-2);
 		
@@ -56,33 +62,40 @@ public class HA_API {
 		List<List<String>> loglist = new ArrayList<List<String>>();
 		
 		for(String s : logs) {
-			System.out.println(s);
-			loglist.add(Arrays.asList(s.split("\\,")));
-			
+			//System.out.println(s);
+			loglist.add(Arrays.asList(s.split("\\,")));	
 		}
 		
 		for(List<String> list : loglist) {
 			String time = null, name = null, state = null, entity_id = null;
 			ArrayList<String> other = new ArrayList<String>();
+			
+			//cleaning front spaces
+			for(int i = 0; i < list.size(); i++) {
+				if(list.get(i).startsWith(" ")) {
+					list.set(i, list.get(i).substring(1));
+				}
+			}
+			
 			//cases for LogEntry Attributes
 			for(String s : list) {
 				if(s.startsWith("\"when"))
 					time = s.substring(9, s.length()-1);
-				else if(s.startsWith(" \"name"))
-					name = s.substring(10, s.length()-1);
-				else if(s.startsWith(" \"state"))
-					state = s.substring(11, s.length()-1);
-				else if(s.startsWith(" \"entity_id"))
-					entity_id = s.substring(15, s.length()-1);
+				else if(s.startsWith("\"name"))
+					name = s.substring(9, s.length()-1);
+				else if(s.startsWith("\"state"))
+					state = s.substring(10, s.length()-1);
+				else if(s.startsWith("\"entity_id"))
+					entity_id = s.substring(14, s.length()-1);
 				else if(s.length() > 1)
-					other.add(s.substring(1, s.length()));
+					other.add(s);
 			}
 			if(time != null)
 				logsArrList.add(new LogEntry(time, name, state, entity_id, other));
 		}
 		
-		System.out.println("\nlines: " + logs.size());
-		System.out.println("Logs: " + logsArrList.size());
+		//System.out.println("\nlines: " + logs.size());
+		//System.out.println("Logs: " + logsArrList.size());
 		//System.out.println(loglist.size());
 		return logsArrList;
 	}
@@ -99,7 +112,7 @@ public class HA_API {
 	public static String getURLlastXMin(int min) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		/*
-		 * TO DO Include Daylight Saving Time Difference
+		 * TODO Consider Daylight Saving Time
 		 */
 		int hours = min/60;
 		min = min-(hours*60);
@@ -112,7 +125,7 @@ public class HA_API {
 		String s = logsurl + formatter.format(new Date())+"+" + h + ":" + m;
 		String[] arr = s.split(" ");
 		s = arr[0] + "T" + arr[1];
-		System.out.println(s);
+		//System.out.println(s);
 		return s;
 	}
 	

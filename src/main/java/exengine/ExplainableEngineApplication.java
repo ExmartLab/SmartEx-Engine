@@ -1,21 +1,27 @@
 package exengine;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import exengine.database.Path;
-import exengine.database.PathRepository;
+
+import exengine.database.Rule;
+import exengine.database.RuleRepository;
+import exengine.database.Trigger;
 import exengine.haconnection.HA_API;
 
 
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
+
 	
 	@Autowired
-	private PathRepository repository;
+	private RuleRepository ruleRepo;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ExplainableEngineApplication.class, args);
@@ -23,16 +29,21 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//initializeTestRepository();
-		HA_API.test();
+		initializeTestRepository();
+		HA_API.printAPIStatus();
 	}
 
 	public void initializeTestRepository() {
-		repository.deleteAll();
+		//repository.deleteAll();
 
-		repository.save(new Path("testRule1", "playing", "tvMuted"));
-		repository.save(new Path("testRule1", "meeting", "tvMuted"));
+		//repository.save(new Path("testRule1", "playing", "tvMuted"));
+		//repository.save(new Path("testRule1", "meeting", "tvMuted"));
+		List<String> conditions = new ArrayList<String>();
+		conditions.add("meeting");
+		conditions.add("tv playing");
+		ruleRepo.save(new Rule("R1", new Trigger(conditions), "tv mute"));
 	}
+
 	/*
     repository.deleteAll();
 
