@@ -14,16 +14,10 @@ import exengine.haconnection.LogEntry;
 @Service
 public class CreateExService {
 
+	private List<Rule> dbRules;
+	
 	@Autowired
 	private RuleRepository ruleRepo;
-	
-	public List<Rule> findRules() {
-		return ruleRepo.findAll();
-	}
-	
-	public List<Rule> findRulesByName() {
-		return ruleRepo.findByRuleName("testRule1");
-	}
 	
 	public String getExplanation(int min) {
 		ArrayList<LogEntry> logEntries = HA_API.parseLastLogs(min);
@@ -31,12 +25,22 @@ public class CreateExService {
 		for(LogEntry l : logEntries)
 			System.out.println(l.toString());
 		
-		//TODO initialize lists for actions and rules
-		
+		//initialize lists for actions and rules from Logs
+		ArrayList<String> foundActions = new ArrayList<String>();
+		ArrayList<String> foundRules = new ArrayList<String>();
+
+		//query Rules from DB
+		dbRules = findRules();
 		
 		//iterate through Log Entries in reversed order
 		for(int i = logEntries.size()-1; i>=0; i--) {
-//			if(logEntries.get(i).getName())
+			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
+			if(isInActions(entryData)) {
+				foundActions.add(entryData);
+			}
+			else if(isInRules(entryData)) {
+				foundRules.add(entryData);
+			}
 		}
 		/*
 		 * TODO
@@ -46,5 +50,36 @@ public class CreateExService {
 		
 		return explanation;
 	}
+	
+	public boolean isInActions(String toCheck) {
+		boolean result = false;
+		for(Rule r : dbRules) {
+			if(r.getAction().equals(toCheck)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+	
+	public boolean isInRules(String toCheck) {
+		boolean result = false;
+		for(Rule r : dbRules) {
+			if(r.getRuleName().equals(toCheck)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+	
+	public List<Rule> findRules() {
+		return ruleRepo.findAll();
+	}
+	
+	/*
+	public List<Rule> findRulesByName() {
+		return ruleRepo.findByRuleName("testRule1");
+	}
+	*/
+	
 	
 }

@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import exengine.database.Rule;
 import exengine.database.RuleRepository;
-import exengine.database.Trigger;
 import exengine.haconnection.HA_API;
 
 
@@ -34,14 +33,15 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	}
 
 	public void initializeTestRepository() {
-		//repository.deleteAll();
-
-		//repository.save(new Path("testRule1", "playing", "tvMuted"));
-		//repository.save(new Path("testRule1", "meeting", "tvMuted"));
-		List<String> conditions = new ArrayList<String>();
-		conditions.add("meeting");
-		conditions.add("tv playing");
-		ruleRepo.save(new Rule("R1", new Trigger(conditions), "tv mute"));
+		ruleRepo.deleteAll();
+		ruleRepo.save(new Rule("sc1: Goal-Order-Conflict null", null, "Smart Plug Social Room Coffee off"));
+		List<String> triggers = new ArrayList<String>();
+		triggers.add("Lab TV playing");
+		ruleRepo.save(new Rule("sc2: Multi-User-Conflict null", triggers, "tv_mute "));
+		
+		triggers = new ArrayList<String>();
+		triggers.add("Deebot idle");
+		ruleRepo.save(new Rule("Deebot error", triggers, "Deebot last error 104"));
 	}
 
 	/*
