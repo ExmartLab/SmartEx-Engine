@@ -33,15 +33,25 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	}
 
 	public void initializeTestRepository() {
-		ruleRepo.deleteAll();
-		ruleRepo.save(new Rule("sc1: Goal-Order-Conflict null", null, "Smart Plug Social Room Coffee off"));
+
 		List<String> triggers = new ArrayList<String>();
+		List<String> actions = new ArrayList<String>();
+		
+		ruleRepo.deleteAll();
+		
+		actions.add("Smart Plug Social Room Coffee off");
+		ruleRepo.save(new Rule("sc1: Goal-Order-Conflict null", null, actions));
+		
 		triggers.add("Lab TV playing");
-		ruleRepo.save(new Rule("sc2: Multi-User-Conflict null", triggers, "tv_mute "));
+		actions = new ArrayList<String>();
+		actions.add("tv_mute null");
+		ruleRepo.save(new Rule("sc2: Multi-User-Conflict null", triggers, actions));
 		
 		triggers = new ArrayList<String>();
 		triggers.add("Deebot idle");
-		ruleRepo.save(new Rule("Deebot error", triggers, "Deebot last error 104"));
+		actions = new ArrayList<String>();
+		actions.add("Deebot last error 104");
+		ruleRepo.save(new Rule("Deebot error", triggers, actions));
 	}
 
 	/*

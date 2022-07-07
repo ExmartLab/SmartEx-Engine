@@ -11,20 +11,22 @@ public class Rule {
 
 	public String ruleName;
 	public List<String> trigger;
-	public String action;
+	public List<String> actions;
 
 	public Rule() {
 	}
 
-	public Rule(String ruleName, List<String> trigger, String action) {
+	public Rule(String ruleName, List<String> trigger, List<String> actions) {
 		this.ruleName = ruleName;
 		this.trigger = trigger;
-		this.action = action;
+		this.actions = actions;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s']", id, ruleName, trigger.toString(), action);
+		String triggerString = trigger == null ? "[]" : trigger.toString();
+		String actionsString = actions == null ? "[]" : actions.toString();
+		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s']", id, ruleName, triggerString, actionsString);
 	}
 
 	public String getId() {
@@ -51,11 +53,11 @@ public class Rule {
 		this.trigger = trigger;
 	}
 
-	public String getAction() {
-		return action;
+	public List<String> getActions() {
+		return actions;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setActions(List<String> actions) {
+		this.actions = actions;
 	}
 }

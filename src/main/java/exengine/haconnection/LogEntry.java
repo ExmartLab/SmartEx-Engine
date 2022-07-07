@@ -16,7 +16,8 @@ public class LogEntry {
 	}
 	
 	public String toString() {
-		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entity_id + " other: " + other.toString();  
+		String otherString = other == null ? "[]" : other.toString();
+		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entity_id + " other: " + otherString;  
 	}
 
 	public String getTime() {
