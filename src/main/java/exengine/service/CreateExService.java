@@ -32,7 +32,9 @@ public class CreateExService {
 		initiateDemoEntries(scenario);
 		ArrayList<LogEntry> logEntries = demoEntries;
 
-		String explanation = "";
+		// default value for return string
+		String explanation = "found nothing to explain";
+
 		for (LogEntry l : logEntries)
 			System.out.println(l.toString());
 
@@ -43,11 +45,10 @@ public class CreateExService {
 		// query Rules from DB
 		dbRules = findRules();
 
-		
 		/*
 		 * START OF THE ALGORITHM
 		 */
-		
+
 		// iterate through Log Entries in reversed order
 		for (int i = logEntries.size() - 1; i >= 0; i--) { // read each line
 
@@ -68,12 +69,53 @@ public class CreateExService {
 
 					System.out.println("found rule: " + entryData);
 					foundRuleNames.add(entryData);
+					boolean areFoundActionsSubsetOfRuleActions = true;
+					Rule foundRule = null;
 					for (Rule r : dbRules) { // query db for Rule
-						if (r.getRuleName().equals(logEntries.get(i).getName())) {
+						
+						if (r.getRuleName().equals(entryData)) {
+							
+							foundRule = r;
+							// r is the rule we want to get the actions of
 							// TODO go through found actions, see if every action is part of rule we found
+
+							// iterating through found actions
+							for (String foundAction : foundActions) {
+
+								// flag if current found Action is part of the rule
+								boolean isfoundActionPartOfRule = false;
+
+								// iterating through actions of Rule
+								for (String ruleAction : r.actions) {
+
+									// if we find a Rule-action that matches, set part-of-rule-flag to true
+									if (foundAction.equals(ruleAction)) {
+										isfoundActionPartOfRule = true;
+									}
+
+								}
+
+								// if we didn't find any Rule-action, set the subset flag to false
+								if (!isfoundActionPartOfRule) {
+									areFoundActionsSubsetOfRuleActions = false;
+								}
+
+							} // closing for loop (iterating through found actions)
+
 						}
+
 					}
-				}
+
+					if (areFoundActionsSubsetOfRuleActions) {
+						// TODO look for triggers OR give out explanation?
+						if (foundRule != null) {
+							explanation = "System did " + foundRule.getActions().toString() + " because of "
+									+ foundRule.getRuleName();
+						}
+						System.out.println(explanation);
+					}
+
+				} // cloing case: we found an action before
 
 			} else {
 				continue;
