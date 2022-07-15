@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exengine.database.Rule;
 import exengine.database.RuleRepository;
+import exengine.datamodel.Rule;
 import exengine.haconnection.HA_API;
 import exengine.haconnection.LogEntry;
 
@@ -15,6 +15,11 @@ import exengine.haconnection.LogEntry;
 public class CreateExService {
 
 	private List<Rule> dbRules;
+
+	private boolean oneORSatisfied;
+	private String trigger;
+
+	private ArrayList<LogEntry> logEntries;
 
 	@Autowired
 	private RuleRepository ruleRepo;
@@ -24,13 +29,13 @@ public class CreateExService {
 	public String getExplanation(int min) {
 
 		// turned off for testing
-//		ArrayList<LogEntry> logEntries = HA_API.parseLastLogs(min);
+//		logEntries = HA_API.parseLastLogs(min);
 
 		// only for testing
 		int scenario = 2;
 		System.out.println("Demo for Scenario " + scenario);
 		initiateDemoEntries(scenario);
-		ArrayList<LogEntry> logEntries = demoEntries;
+		logEntries = demoEntries;
 
 		// default value for return string
 		String explanation = "found nothing to explain";
@@ -72,35 +77,14 @@ public class CreateExService {
 					boolean areFoundActionsSubsetOfRuleActions = true;
 					Rule foundRule = null;
 					for (Rule r : dbRules) { // query db for Rule
-						
+
 						if (r.getRuleName().equals(entryData)) {
-							
+
 							foundRule = r;
 							// r is the rule we want to get the actions of
-							// TODO go through found actions, see if every action is part of rule we found
 
-							// iterating through found actions
-							for (String foundAction : foundActions) {
-
-								// flag if current found Action is part of the rule
-								boolean isfoundActionPartOfRule = false;
-
-								// iterating through actions of Rule
-								for (String ruleAction : r.actions) {
-
-									// if we find a Rule-action that matches, set part-of-rule-flag to true
-									if (foundAction.equals(ruleAction)) {
-										isfoundActionPartOfRule = true;
-									}
-
-								}
-
-								// if we didn't find any Rule-action, set the subset flag to false
-								if (!isfoundActionPartOfRule) {
-									areFoundActionsSubsetOfRuleActions = false;
-								}
-
-							} // closing for loop (iterating through found actions)
+							areFoundActionsSubsetOfRuleActions = checkIfAreFoundActionsSubsetOfRuleActions(foundActions,
+									r);
 
 						}
 
@@ -108,11 +92,21 @@ public class CreateExService {
 
 					if (areFoundActionsSubsetOfRuleActions) {
 						// TODO look for triggers OR give out explanation?
-						if (foundRule != null) {
-							explanation = "System did " + foundRule.getActions().toString() + " because of "
-									+ foundRule.getRuleName();
+						/*
+						 * <Mery> for this TODO check the codes I wrote on the piece of paper. my idea
+						 * is that here you have to call the funcation " Trigger_Condition_check(i, r)
+						 */
+
+						oneORSatisfied = triggerConditionCheck(i, foundRule);
+						if (oneORSatisfied) {
+							if (foundRule != null) {
+								explanation = "actions: " + foundRule.getActionsString()
+										+ "\ntrigger: " + trigger
+										+ "\nconditions: " + foundRule.getConditionsString()
+										+ "\nrule: " + foundRule.getRuleName();
+							}
+							System.out.println(explanation);
 						}
-						System.out.println(explanation);
 					}
 
 				} // cloing case: we found an action before
@@ -151,6 +145,46 @@ public class CreateExService {
 
 	public List<Rule> findRules() {
 		return ruleRepo.findAll();
+	}
+
+	public boolean checkIfAreFoundActionsSubsetOfRuleActions(ArrayList<String> foundActions, Rule r) {
+		boolean areFoundActionsSubsetOfRuleActions = true;
+		for (String foundAction : foundActions) {
+
+			// flag if current found Action is part of the rule
+			boolean isfoundActionPartOfRule = false;
+
+			// iterating through actions of Rule
+			for (String ruleAction : r.actions) {
+
+				// if we find a Rule-action that matches, set part-of-rule-flag to true
+				if (foundAction.equals(ruleAction)) {
+					isfoundActionPartOfRule = true;
+				}
+
+			}
+
+			// if we didn't find any Rule-action, set the subset flag to false
+			if (!isfoundActionPartOfRule) {
+				areFoundActionsSubsetOfRuleActions = false;
+			}
+
+		} // closing for loop (iterating through found actions)
+		return areFoundActionsSubsetOfRuleActions;
+	}
+
+	public boolean triggerConditionCheck(int line, Rule r) {
+		if(r.getTrigger()==null)
+			return true;
+		for (int i = line; i >= 0; i--) { // go back from line
+			for (String trigger : r.getTrigger()) //look for last trigger
+				if ((logEntries.get(i).name + " " + logEntries.get(i).getState()).equals(trigger)) {
+					this.trigger = trigger;
+					return true;
+				}
+					
+		}
+		return false;
 	}
 
 	/*
