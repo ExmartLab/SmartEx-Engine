@@ -91,11 +91,6 @@ public class CreateExService {
 					}
 
 					if (areFoundActionsSubsetOfRuleActions) {
-						// TODO look for triggers OR give out explanation?
-						/*
-						 * <Mery> for this TODO check the codes I wrote on the piece of paper. my idea
-						 * is that here you have to call the funcation " Trigger_Condition_check(i, r)
-						 */
 
 						oneORSatisfied = triggerConditionCheck(i, foundRule);
 						if (oneORSatisfied) {
@@ -109,16 +104,12 @@ public class CreateExService {
 						}
 					}
 
-				} // cloing case: we found an action before
+				} // closing case: we found an action before
 
 			} else {
 				continue;
 			}
 		}
-		/*
-		 * TODO complete createExpl algorithm
-		 */
-
 		return explanation;
 	}
 
