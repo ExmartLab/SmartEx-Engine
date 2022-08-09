@@ -26,7 +26,7 @@ public class CreateExService {
 
 	ArrayList<LogEntry> demoEntries = new ArrayList<LogEntry>();
 
-	public String getExplanation(int min) {
+	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
 		// turned off for testing
 //		logEntries = HA_API.parseLastLogs(min);

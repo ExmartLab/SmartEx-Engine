@@ -18,15 +18,18 @@ public class Rule {
 	String conditionsString;
 	String actionsString;
 
+	String ownerId;
+
 	public Rule() {
 	}
 
-	public Rule(String ruleName, List<String> trigger, List<String> conditions, List<String> actions) {
-		this.ruleName = ruleName;		 
+	public Rule(String ruleName, List<String> trigger, List<String> conditions, List<String> actions, String ownerId) {
+		this.ruleName = ruleName;
 		this.trigger = trigger;
 		this.conditions = conditions;
 		this.actions = actions;
-		
+		this.ownerId = ownerId;
+
 		triggerString = trigger == null ? "[]" : trigger.toString();
 		conditionsString = conditions == null ? "[]" : conditions.toString();
 		actionsString = actions == null ? "[]" : actions.toString();
@@ -34,7 +37,8 @@ public class Rule {
 
 	@Override
 	public String toString() {
-		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s']", id, ruleName, triggerString, conditionsString, actionsString);
+		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s', owner='%s']", id, ruleName,
+				triggerString, conditionsString, actionsString, ownerId);
 	}
 
 	public String getId() {
@@ -99,5 +103,13 @@ public class Rule {
 
 	public void setActionsString(String actionsString) {
 		this.actionsString = actionsString;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 }

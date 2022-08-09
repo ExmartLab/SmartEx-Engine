@@ -35,17 +35,26 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		List<String> actions = new ArrayList<String>();
 
 		ruleRepo.deleteAll();
+		
+		/* TODO
+		 * create users
+		 * add owners to rules
+		 */
+
+		String owner1Id = null;
+		String owner2Id = null;
+		String owner3Id = null;
 
 		conditions.add("daily energy consumption bigger than threshold");
 		actions.add("Smart Plug Social Room Coffee off");
-		ruleRepo.save(new Rule("sc1: Goal-Order-Conflict null", null, conditions, actions));
+		ruleRepo.save(new Rule("sc1: Goal-Order-Conflict null", null, conditions, actions, owner1Id));
 
 		triggers.add("Lab TV playing");
 		actions = new ArrayList<String>();
 		conditions = new ArrayList<String>();
 		conditions.add("meeting going on");
 		actions.add("tv_mute null");
-		ruleRepo.save(new Rule("sc2: Multi-User-Conflict null", triggers, conditions, actions));
+		ruleRepo.save(new Rule("sc2: Multi-User-Conflict null", triggers, conditions, actions, owner2Id));
 
 		triggers = new ArrayList<String>();
 		triggers.add("Deebot idle");
@@ -57,7 +66,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 //		conditions.add("Deebot running");
 		actions = new ArrayList<String>();
 		actions.add("Deebot last error 104");
-		ruleRepo.save(new Rule("Deebot error", triggers, conditions, actions));
+		ruleRepo.save(new Rule("Deebot error", triggers, conditions, actions, owner3Id));
 	}
 
 	/*
