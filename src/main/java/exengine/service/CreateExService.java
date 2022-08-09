@@ -95,6 +95,14 @@ public class CreateExService {
 						oneORSatisfied = triggerConditionCheck(i, foundRule);
 						if (oneORSatisfied) {
 							if (foundRule != null) {
+								
+								/* TODO
+								 * 
+								 * Check which explanation has to be given (with Context)
+								 * 
+								 */
+								
+								
 								explanation = "actions: " + foundRule.getActionsString()
 										+ "\ntrigger: " + trigger
 										+ "\nconditions: " + foundRule.getConditionsString()
