@@ -1,7 +1,7 @@
 package exengine.explanationtypes;
 
 public enum ExplanationTypes {
-	FULLEX("full explanation"), FACTEX("fact explanation"), RULEEX("rule explanation"), RESTRICTEDEX("restricted explanation");
+	FULLEX("full explanation"), FACTEX("fact explanation"), RULEEX("rule explanation"), SIMPLYDEX("simplyfied explanation");
 
 	private String type;
 

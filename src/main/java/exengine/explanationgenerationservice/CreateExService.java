@@ -1,4 +1,4 @@
-package exengine.service;
+package exengine.explanationgenerationservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exengine.Cause;
-import exengine.findExplanationCause;
 import exengine.database.RuleRepository;
 import exengine.datamodel.Rule;
 import exengine.haconnection.HA_API;
@@ -56,6 +54,10 @@ public class CreateExService {
 			
 			/*
 			 * STEP 3: TODO ask rule engine what explanation to generate
+			 */
+			
+			/*
+			 * STEP 4: TODO generate the desired explanation
 			 */
 		}
 		
