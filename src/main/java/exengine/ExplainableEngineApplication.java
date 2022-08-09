@@ -30,9 +30,9 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	public void initializeTestRepository() {
 
-		List<String> triggers = new ArrayList<String>();
-		List<String> conditions = new ArrayList<String>();
-		List<String> actions = new ArrayList<String>();
+		ArrayList<String> triggers = new ArrayList<String>();
+		ArrayList<String> conditions = new ArrayList<String>();
+		ArrayList<String> actions = new ArrayList<String>();
 
 		ruleRepo.deleteAll();
 		

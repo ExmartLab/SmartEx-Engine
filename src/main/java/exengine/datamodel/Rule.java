@@ -1,5 +1,6 @@
 package exengine.datamodel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -10,9 +11,9 @@ public class Rule {
 	public String id;
 
 	public String ruleName;
-	public List<String> trigger;
-	public List<String> conditions;
-	public List<String> actions;
+	public ArrayList<String> trigger;
+	public ArrayList<String> conditions;
+	public ArrayList<String> actions;
 
 	String triggerString;
 	String conditionsString;
@@ -23,7 +24,7 @@ public class Rule {
 	public Rule() {
 	}
 
-	public Rule(String ruleName, List<String> trigger, List<String> conditions, List<String> actions, String ownerId) {
+	public Rule(String ruleName, ArrayList<String> trigger, ArrayList<String> conditions, ArrayList<String> actions, String ownerId) {
 		this.ruleName = ruleName;
 		this.trigger = trigger;
 		this.conditions = conditions;
@@ -57,27 +58,27 @@ public class Rule {
 		this.ruleName = ruleName;
 	}
 
-	public List<String> getTrigger() {
+	public ArrayList<String> getTrigger() {
 		return trigger;
 	}
 
-	public void setTrigger(List<String> trigger) {
+	public void setTrigger(ArrayList<String> trigger) {
 		this.trigger = trigger;
 	}
 
-	public List<String> getActions() {
+	public ArrayList<String> getActions() {
 		return actions;
 	}
 
-	public void setActions(List<String> actions) {
+	public void setActions(ArrayList<String> actions) {
 		this.actions = actions;
 	}
 
-	public List<String> getConditions() {
+	public ArrayList<String> getConditions() {
 		return conditions;
 	}
 
-	public void setConditions(List<String> conditions) {
+	public void setConditions(ArrayList<String> conditions) {
 		this.conditions = conditions;
 	}
 

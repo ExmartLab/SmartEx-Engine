@@ -1,4 +1,4 @@
-package exengine.contextprovider;
+package exengine.contextmanagement;
 
 public class LocationProvider {
 
