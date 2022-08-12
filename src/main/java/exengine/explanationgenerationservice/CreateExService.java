@@ -6,15 +6,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import exengine.contextmanagement.ContextManager;
 import exengine.database.RuleRepository;
+import exengine.datamodel.Context;
+import exengine.datamodel.Occurrence;
+import exengine.datamodel.Role;
 import exengine.datamodel.Rule;
+import exengine.datamodel.State;
+import exengine.datamodel.Technicality;
+import exengine.explanationtypes.ExplanationType;
+import exengine.explanationtypes.FactExplanation;
+import exengine.explanationtypes.FullExplanation;
+import exengine.explanationtypes.RuleExplanation;
+import exengine.explanationtypes.SimplyfiedExplanation;
 import exengine.haconnection.HA_API;
 import exengine.haconnection.LogEntry;
+import exengine.rulebook.RuleOperator;
 
 @Service
 public class CreateExService {
-
-	
 
 	private ArrayList<LogEntry> logEntries;
 
@@ -36,39 +46,66 @@ public class CreateExService {
 
 		// default value for return string
 		String explanation = "";
-		
+
 		// query Rules from DB
 		List<Rule> dbRules = findRules();
 
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
-		
+
 		Cause cause = findExplanationCause.findCause(logEntries, dbRules);
-		if(cause == null)
-			explanation = "found nothing to explain";
-		else {
-			/*
-			 * STEP 2: TODO get context
-			 */
-			
-			/*
-			 * STEP 3: TODO ask rule engine what explanation to generate
-			 */
-			
-			/*
-			 * STEP 4: TODO generate the desired explanation
-			 */
-		}
+
+		//return in case no cause has been found
+		if (cause == null)
+			return "found nothing to explain";
+
+		/*
+		 * STEP 2: TODO get context (method in class)
+		 */
 		
+		Context context = ContextManager.getAllContext(cause, dbRules);
+		
+		//for testing
+		context = new Context(Role.OWNER, Occurrence.FIRST, Technicality.TECHNICAL, State.BREAK, null);
+
+		/*
+		 * STEP 3: TODO ask rule engine what explanation type to generate
+		 */
+		ExplanationType type = RuleOperator.getExplanationType(context);
+
+		// test until step 3 completed
+		// ExplanationType type = ExplanationType.FACTEX;
+
+		/*
+		 * STEP 4: TODO generate the desired explanation (methods in classes) MORE
+		 * CONTEXT NEEDED
+		 */
+		if (type == null)
+			return "no explanation for given context";
+
+		switch (type) {
+		case FULLEX:
+			explanation = FullExplanation.getFullExplanation(cause, context);
+			break;
+		case RULEEX:
+			explanation = RuleExplanation.getRuleExplanation(cause, context);
+			break;
+		case FACTEX:
+			explanation = FactExplanation.getFactExplanation(cause, context);
+			break;
+		case SIMPLYDEX:
+			explanation = SimplyfiedExplanation.getSimplyfiedExplanation(cause, context);
+			break;
+		}
+
 		return explanation;
 	}
-
 
 	public List<Rule> findRules() {
 		return ruleRepo.findAll();
 	}
-	
+
 	/*
 	 * public List<Rule> findRulesByName() { return
 	 * ruleRepo.findByRuleName("testRule1"); }

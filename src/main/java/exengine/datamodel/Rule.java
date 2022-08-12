@@ -1,7 +1,6 @@
 package exengine.datamodel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.data.annotation.Id;
 
@@ -64,6 +63,7 @@ public class Rule {
 
 	public void setTrigger(ArrayList<String> trigger) {
 		this.trigger = trigger;
+		triggerString = trigger == null ? "[]" : trigger.toString();
 	}
 
 	public ArrayList<String> getActions() {
@@ -80,6 +80,7 @@ public class Rule {
 
 	public void setConditions(ArrayList<String> conditions) {
 		this.conditions = conditions;
+		conditionsString = conditions == null ? "[]" : conditions.toString();
 	}
 
 	public String getTriggerString() {
@@ -104,6 +105,7 @@ public class Rule {
 
 	public void setActionsString(String actionsString) {
 		this.actionsString = actionsString;
+		actionsString = actions == null ? "[]" : actions.toString();
 	}
 
 	public String getOwnerId() {
