@@ -6,22 +6,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exengine.contextmanagement.ContextManager;
-import exengine.database.RuleRepository;
-import exengine.datamodel.Context;
-import exengine.datamodel.Occurrence;
-import exengine.datamodel.Role;
-import exengine.datamodel.Rule;
-import exengine.datamodel.State;
-import exengine.datamodel.Technicality;
-import exengine.explanationtypes.ExplanationType;
-import exengine.explanationtypes.FactExplanation;
-import exengine.explanationtypes.FullExplanation;
-import exengine.explanationtypes.RuleExplanation;
-import exengine.explanationtypes.SimplyfiedExplanation;
-import exengine.haconnection.HA_API;
+import exengine.contextmanagement.ContextService;
+import exengine.database.*;
+import exengine.datamodel.*;
+import exengine.explanationtypes.*;
 import exengine.haconnection.LogEntry;
-import exengine.rulebook.RuleOperator;
+import exengine.rulebook.ExTypeOperator;
 
 @Service
 public class CreateExService {
@@ -29,12 +19,25 @@ public class CreateExService {
 	private ArrayList<LogEntry> logEntries;
 
 	@Autowired
-	private RuleRepository ruleRepo;
+	DatabaseService dataSer;
+	
+	@Autowired
+	FindCauseService findCauseSer;
+	
+	@Autowired
+	ContextService conSer;
 
 	ArrayList<LogEntry> demoEntries = new ArrayList<LogEntry>();
 
-	public String getExplanation(int min, String userId, String userState, String userLocation) {
+	public String getExplanation(int min, int userId, String userState, String userLocation) {
 
+		//test for valid userId
+		/*
+		 * TODO test if user with userId is in db
+		 */
+		if(userId == 0)
+			return "unvalid userId";
+			
 		// turned off for testing
 //		logEntries = HA_API.parseLastLogs(min);
 
@@ -45,37 +48,40 @@ public class CreateExService {
 		logEntries = demoEntries;
 
 		// default value for return string
-		String explanation = "";
+		String explanation = "no explanation found";
 
 		// query Rules from DB
-		List<Rule> dbRules = findRules();
+		List<Rule> dbRules = dataSer.findAllRules();
 
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
+		Cause cause = findCauseSer.findCause(logEntries, dbRules);
 
-		Cause cause = findExplanationCause.findCause(logEntries, dbRules);
-
-		//return in case no cause has been found
+		// return in case no cause has been found
 		if (cause == null)
 			return "found nothing to explain";
 
 		/*
 		 * STEP 2: TODO get context (method in class)
 		 */
+		//default state break
+		State state = State.BREAK;
+		//test for other cases
+		if(userState.equals(State.WORKING.toString()))
+			state = State.WORKING;
+		else if(userState.equals(State.MEETING.toString()))
+			state = State.MEETING;
+
+		//Context context = conSer.getAllContext(cause, userId, state, userLocation);
 		
-		Context context = ContextManager.getAllContext(cause, dbRules);
-		
-		//for testing
-		context = new Context(Role.OWNER, Occurrence.FIRST, Technicality.TECHNICAL, State.BREAK, null);
+		// for testing
+		Context context = new Context(Role.GUEST, Occurrence.SECOND, Technicality.MEDTECH, State.WORKING, null);
 
 		/*
-		 * STEP 3: TODO ask rule engine what explanation type to generate
+		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		ExplanationType type = RuleOperator.getExplanationType(context);
-
-		// test until step 3 completed
-		// ExplanationType type = ExplanationType.FACTEX;
+		ExplanationType type = ExTypeOperator.getExplanationType(context);
 
 		/*
 		 * STEP 4: TODO generate the desired explanation (methods in classes) MORE
@@ -100,10 +106,6 @@ public class CreateExService {
 		}
 
 		return explanation;
-	}
-
-	public List<Rule> findRules() {
-		return ruleRepo.findAll();
 	}
 
 	/*

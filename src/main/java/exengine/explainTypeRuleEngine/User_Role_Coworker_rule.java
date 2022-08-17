@@ -1,9 +1,10 @@
-package exengine.explainRule;
+package exengine.explainTypeRuleEngine;
+
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static java.util.stream.Collectors.toList;
 
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Result;
@@ -13,17 +14,17 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import exengine.datamodel.*;
 
-@Rule(order = 1)
-public class User_state_working_rule {
+@Rule(order = 4)
+public class User_Role_Coworker_rule {
 
-// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> workingAllowedTypes = new ArrayList<Integer>();
+	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
+	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-
-			workingAllowedTypes.add(1);
-			workingAllowedTypes.add(2);
-
+			more_times_AllowedTypes.add(1);
+			more_times_AllowedTypes.add(2);
+			more_times_AllowedTypes.add(3);
+			more_times_AllowedTypes.add(4);
 		}
 	}
 
@@ -37,7 +38,7 @@ public class User_state_working_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getState() == State.WORKING);
+		return con.stream().anyMatch(context -> context.getExplaineeRole() == Role.COWORKER);
 	}
 
 	@Then
@@ -47,7 +48,15 @@ public class User_state_working_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(workingAllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(more_times_AllowedTypes::contains).collect(toList());
+
+		if (exType.isEmpty()) {
+			exType = currentAllowedTypes;
+		}
+
 		con.get(0).setTheExpType(Collections.max(exType));
+
 	}
+	
 }
+

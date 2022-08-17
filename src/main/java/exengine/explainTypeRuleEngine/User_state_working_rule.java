@@ -1,4 +1,4 @@
-package exengine.explainRule;
+package exengine.explainTypeRuleEngine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,14 +14,15 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 import exengine.datamodel.*;
 
 @Rule(order = 1)
-public class User_state_meeting_rule {
+public class User_state_working_rule {
 
 // According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> meetingAllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> workingAllowedTypes = new ArrayList<Integer>();
 	{
 		{
 
-			meetingAllowedTypes.add(1);
+			workingAllowedTypes.add(1);
+			workingAllowedTypes.add(2);
 
 		}
 	}
@@ -36,7 +37,7 @@ public class User_state_meeting_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getState() == State.MEETING);
+		return con.stream().anyMatch(context -> context.getExplaineeState() == State.WORKING);
 	}
 
 	@Then
@@ -46,7 +47,7 @@ public class User_state_meeting_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(meetingAllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(workingAllowedTypes::contains).collect(toList());
 		con.get(0).setTheExpType(Collections.max(exType));
 	}
 }

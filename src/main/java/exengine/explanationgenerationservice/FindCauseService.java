@@ -3,16 +3,18 @@ package exengine.explanationgenerationservice;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
 
 import exengine.datamodel.Rule;
 import exengine.haconnection.LogEntry;
 
-public class findExplanationCause {
+@Service
+public class FindCauseService {
 
-	private static boolean oneORSatisfied;
-	private static String trigger;
+	private boolean oneORSatisfied;
+	private String trigger;
 
-	public static Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules) {
+	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules) {
 		Cause cause = null;
 		
 		for (LogEntry l : logEntries)
@@ -89,7 +91,7 @@ public class findExplanationCause {
 		return cause;
 	}
 	
-	public static boolean isInActions(String toCheck, List<Rule> dbRules) {
+	public boolean isInActions(String toCheck, List<Rule> dbRules) {
 		boolean result = false;
 		for (Rule r : dbRules) {
 			for (String action : r.getActions())
@@ -100,7 +102,7 @@ public class findExplanationCause {
 		return result;
 	}
 
-	public static boolean isInRules(String toCheck, List<Rule> dbRules) {
+	public boolean isInRules(String toCheck, List<Rule> dbRules) {
 		boolean result = false;
 		for (Rule r : dbRules) {
 			if (r.getRuleName().equals(toCheck)) {
@@ -110,7 +112,7 @@ public class findExplanationCause {
 		return result;
 	}
 
-	public static boolean checkIfAreFoundActionsSubsetOfRuleActions(ArrayList<String> foundActions, Rule r) {
+	public boolean checkIfAreFoundActionsSubsetOfRuleActions(ArrayList<String> foundActions, Rule r) {
 		boolean areFoundActionsSubsetOfRuleActions = true;
 		for (String foundAction : foundActions) {
 
@@ -136,7 +138,7 @@ public class findExplanationCause {
 		return areFoundActionsSubsetOfRuleActions;
 	}
 
-	public static boolean triggerConditionCheck(int line, Rule r, ArrayList<LogEntry> logEntries) {
+	public boolean triggerConditionCheck(int line, Rule r, ArrayList<LogEntry> logEntries) {
 		if(r.getTrigger()==null)
 			return true;
 		for (int i = line; i >= 0; i--) { // go back from line

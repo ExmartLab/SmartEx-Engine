@@ -67,12 +67,16 @@ public class Context {
 		this.explaineeName = explaineeName;
 	}
 
-	public String getOwnername() {
+	public String getOwnerName() {
 		return ownerName;
 	}
 
-	public void setOwnername(String ownername) {
+	public void setOwnerName(String ownername) {
 		this.ownerName = ownername;
+	}
+
+	public void setExplaineeRole(Role explaineeRole) {
+		this.explaineeRole = explaineeRole;
 	}
 
 }

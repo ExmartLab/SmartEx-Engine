@@ -9,13 +9,9 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 
 import exengine.datamodel.Context;
-import exengine.datamodel.Occurrence;
-import exengine.datamodel.Role;
-import exengine.datamodel.State;
-import exengine.datamodel.Technicality;
 import exengine.explanationtypes.ExplanationType;
 
-public class RuleOperator {
+public class ExTypeOperator {
 	
 	/*
 	public static <T> void main(String[] args) {
@@ -48,8 +44,7 @@ public class RuleOperator {
 
 
 	public static ExplanationType getExplanationType(Context c1) {
-		System.out.println("DEBUG: getType");
-	    RuleBookRunner ruleBook2 = new RuleBookRunner("explainRule");
+	    RuleBookRunner ruleBook2 = new RuleBookRunner("exengine.explainTypeRuleEngine");
 	    NameValueReferableMap<Context> exfacts = new FactMap<>();
 	    List<Integer> exTypes= new ArrayList<Integer>();
 	    exTypes.add(1);

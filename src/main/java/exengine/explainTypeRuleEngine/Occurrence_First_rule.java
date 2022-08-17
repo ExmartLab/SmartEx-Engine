@@ -1,4 +1,4 @@
-package exengine.explainRule;
+package exengine.explainTypeRuleEngine;
 
 import static java.util.stream.Collectors.toList;
 
@@ -15,14 +15,13 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 import exengine.datamodel.*;
 
 @Rule(order = 2)
-public class Occurrence_Second_rule {
+public class Occurrence_First_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> second_times_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> first_times_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			second_times_AllowedTypes.add(2);
-			second_times_AllowedTypes.add(3);
+			first_times_AllowedTypes.add(4);
 		}
 	}
 
@@ -36,7 +35,7 @@ public class Occurrence_Second_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getOccurrence() == Occurrence.SECOND);
+		return con.stream().anyMatch(context -> context.getOccurrence() == Occurrence.FIRST);
 	}
 
 	@Then
@@ -46,7 +45,7 @@ public class Occurrence_Second_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(second_times_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(first_times_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;

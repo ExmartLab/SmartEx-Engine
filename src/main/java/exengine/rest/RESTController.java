@@ -31,13 +31,15 @@ public class RESTController {
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
 			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
 		int minNumber = 30;
+		int idNumber = 0;
 		try {
 			minNumber = Integer.parseInt(min);
+			idNumber = Integer.parseInt(userId);
 		} catch (Exception e) {
 		}
 		if (debug)
-			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userId);
-		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
+			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + idNumber);
+		String explanation = createExSer.getExplanation(minNumber, idNumber, userState, userLocation);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 

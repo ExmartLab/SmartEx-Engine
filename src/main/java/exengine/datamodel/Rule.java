@@ -9,6 +9,7 @@ public class Rule {
 	@Id
 	public String id;
 
+	public int ruleId;
 	public String ruleName;
 	public ArrayList<String> trigger;
 	public ArrayList<String> conditions;
@@ -18,12 +19,13 @@ public class Rule {
 	String conditionsString;
 	String actionsString;
 
-	String ownerId;
+	int ownerId;
 
 	public Rule() {
 	}
 
-	public Rule(String ruleName, ArrayList<String> trigger, ArrayList<String> conditions, ArrayList<String> actions, String ownerId) {
+	public Rule(int ruleId, String ruleName, ArrayList<String> trigger, ArrayList<String> conditions, ArrayList<String> actions, int ownerId) {
+		this.ruleId = ruleId;
 		this.ruleName = ruleName;
 		this.trigger = trigger;
 		this.conditions = conditions;
@@ -108,11 +110,19 @@ public class Rule {
 		actionsString = actions == null ? "[]" : actions.toString();
 	}
 
-	public String getOwnerId() {
+	public int getOwnerId() {
 		return ownerId;
 	}
 
-	public void setOwnerId(String ownerId) {
+	public void setOwnerId(int ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public int getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(int ruleId) {
+		this.ruleId = ruleId;
 	}
 }

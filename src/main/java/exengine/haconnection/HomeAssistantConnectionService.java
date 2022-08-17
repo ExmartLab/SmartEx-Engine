@@ -11,18 +11,20 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
 
-public class HA_API {
+@Service
+public class HomeAssistantConnectionService {
 
-	static String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzMDlmODIyMzYxYTc0MDBmYmYxNTJhOTg2ZjU1MzlmMiIsImlhdCI6MTY0NjkwOTUwMiwiZXhwIjoxOTYyMjY5NTAyfQ.Fdov6W_HistZahjSurVQp4Tiln7UivGJR3JkqhXRSDk";
+	String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzMDlmODIyMzYxYTc0MDBmYmYxNTJhOTg2ZjU1MzlmMiIsImlhdCI6MTY0NjkwOTUwMiwiZXhwIjoxOTYyMjY5NTAyfQ.Fdov6W_HistZahjSurVQp4Tiln7UivGJR3JkqhXRSDk";
 	//homeassistant.local can in URLs be replaced by 192.168.0.113
-	static String apiurl = "http://homeassistant.local:8123/api/";
-	static String logsurl = "http://homeassistant.local:8123/api/logbook/"; //without timecode
-	static String jsonsample = "[{\"when\": \"2022-04-07T13:40:19.738143+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:40:57.255034+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:07.102948+00:00\", \"name\": \"Worldclock Sensor\", \"state\": \"15:42\", \"entity_id\": \"sensor.worldclock_sensor\", \"icon\": \"mdi:clock\"}, {\"when\": \"2022-04-07T13:42:07.255856+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:17.580947+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}]";
+	String apiurl = "http://homeassistant.local:8123/api/";
+	String logsurl = "http://homeassistant.local:8123/api/logbook/"; //without timecode
+	String jsonsample = "[{\"when\": \"2022-04-07T13:40:19.738143+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:40:57.255034+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:07.102948+00:00\", \"name\": \"Worldclock Sensor\", \"state\": \"15:42\", \"entity_id\": \"sensor.worldclock_sensor\", \"icon\": \"mdi:clock\"}, {\"when\": \"2022-04-07T13:42:07.255856+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:17.580947+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}]";
 
-	static String s ="";
+	String s ="";
 	
-	public static void printAPIStatus() {
+	public void printAPIStatus() {
 		System.out.print("API status: ");
 		String status = "not reachable";
 		try {
@@ -33,15 +35,15 @@ public class HA_API {
 		System.out.println(status);
 	}
 	
-	public static ArrayList<LogEntry> parseLastLogs(int min) {
+	public ArrayList<LogEntry> parseLastLogs(int min) {
 		return parseJSON(executeHttpClient(getURLlastXMin(min)));
 	}
 	
-	public static ArrayList<LogEntry> parseLogsLastHour() {
+	public ArrayList<LogEntry> parseLogsLastHour() {
 		return parseJSON(executeHttpClient(getURLlastHour()));
 	}
 
-	public static String executeHttpClient(String url) {
+	public String executeHttpClient(String url) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().setHeader("Authorization", "Bearer " + token).build();
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {s = resp;}).join();
@@ -49,7 +51,7 @@ public class HA_API {
 		//client.sendAsync(request, BodyHandlers.ofFileDownload(Paths.get("C:\\Users\\PC\\Documents\\logs.txt")), null);
 	}
 	
-	public static ArrayList<LogEntry> parseJSON(String json) {
+	public ArrayList<LogEntry> parseJSON(String json) {
 		ArrayList<LogEntry> logsArrList = new ArrayList<LogEntry>();
 		//System.out.println(json);
 		//remove front and back brackets
@@ -100,7 +102,7 @@ public class HA_API {
 		return logsArrList;
 	}
 	
-	public static String getURLlastHour() {
+	public String getURLlastHour() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String s = logsurl + formatter.format(new Date())+"+03:00";
 		String[] arr = s.split(" ");
@@ -109,7 +111,7 @@ public class HA_API {
 	}
 
 	//returns URL for the last X minutes
-	public static String getURLlastXMin(int min) {
+	public String getURLlastXMin(int min) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		/*
 		 * TODO Consider Daylight Saving Time
@@ -129,7 +131,7 @@ public class HA_API {
 		return s;
 	}
 	
-	public static String getURLentireDay() {
+	public String getURLentireDay() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		String s = logsurl + formatter.format(new Date())+"T00:00:00+00:00";
 		return s;
