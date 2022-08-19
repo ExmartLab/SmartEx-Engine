@@ -7,7 +7,6 @@ public class User {
 	@Id
 	public String id;
 
-	private int userId;
 	private String name;
 	private int age;
 	private Role role;
@@ -15,23 +14,36 @@ public class User {
 	private State state;
 	private String location;
 
-	public User() {
+	private String stateString = "null";
+	
+	private int userId;
+
+	public User(String name, int userId, Role role, Technicality technicality) {
+		this.userId = userId;
+		this.name = name;
+		this.role = role;
+		this.technicality = technicality;
 	}
 
-	public User(int userId, String name, int age, Role role, Technicality technicality, State state, String location) {
-		this.userId = userId;
+	public User(String name, int age, Role role, Technicality technicality, State state, String location) {
 		this.name = name;
 		this.age = age;
 		this.role = role;
 		this.technicality = technicality;
 		this.state = state;
+		stateString = state.toString();
 		this.location = location;
+	}
+
+	public User() {
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Customer[id=%s, name=%s, age=%d, role=%s, expertise=%d, state=%s, location=%s]", id, name,
-				age, role.toString(), technicality.toString(), state.toString(), location);
+		return String.format("User[id=%s, userId=%d, name=%s, role=%s, expertise=%s]", id, userId, name, role.toString(), technicality.toString());
+		// return String.format("User[id=%s, name=%s, age=%d, role=%s, expertise=%s,
+		// state=%s, location=%s]", id, name, age, role.toString(),
+		// technicality.toString(), stateString, location);
 	}
 
 	public String getId() {
@@ -40,14 +52,6 @@ public class User {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public int getUserId() {
-		return userId;
-	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
 	}
 
 	public String getName() {
@@ -88,6 +92,7 @@ public class User {
 
 	public void setState(State state) {
 		this.state = state;
+		stateString = state.toString();
 	}
 
 	public String getLocation() {
@@ -96,5 +101,21 @@ public class User {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getStateString() {
+		return stateString;
+	}
+
+	public void setStateString(String stateString) {
+		this.stateString = stateString;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 }

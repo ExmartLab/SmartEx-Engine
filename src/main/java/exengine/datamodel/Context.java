@@ -10,6 +10,7 @@ public class Context {
 	
 	private String explaineeName;
 	private String ownerName;
+	private String ruleDescription;
 
 	public Context(Role explaineeRole, Occurrence occurrence, Technicality explaineeTechnicality, State explaineeState, Integer theExpType) {
 		this.explaineeRole = explaineeRole;
@@ -17,6 +18,17 @@ public class Context {
 		this.explaineeTechnicality = explaineeTechnicality;
 		this.explaineeState = explaineeState;
 		this.theExpType = theExpType;
+	}
+
+	//constructor for creating context by context service
+	public Context(Role explaineeRole, Occurrence occurrence, Technicality explaineeTechnicality, State explaineeState, String explaineeName, String ownerName, String ruleDescription) {
+		this.explaineeRole = explaineeRole;
+		this.occurrence = occurrence;
+		this.explaineeTechnicality = explaineeTechnicality;
+		this.explaineeState = explaineeState;
+		this.explaineeName = explaineeName;
+		this.ownerName = ownerName;
+		this.ruleDescription = ruleDescription;
 	}
 
 	public Role getExplaineeRole() {
@@ -77,6 +89,14 @@ public class Context {
 
 	public void setExplaineeRole(Role explaineeRole) {
 		this.explaineeRole = explaineeRole;
+	}
+
+	public String getRuleDescription() {
+		return ruleDescription;
+	}
+
+	public void setRuleDescription(String ruleDescription) {
+		this.ruleDescription = ruleDescription;
 	}
 
 }

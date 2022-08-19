@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import exengine.explanationgenerationservice.CreateExService;
+import exengine.createexplanation.CreateExService;
 
 //@RequestMapping("/ExEngine")
 @RestController
@@ -30,16 +30,20 @@ public class RESTController {
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
 			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
+		
+		//initiating integer variables
 		int minNumber = 30;
-		int idNumber = 0;
+		int userIdNumber = 0;
+		
+		//trying to assign the given values to the integer variables
 		try {
 			minNumber = Integer.parseInt(min);
-			idNumber = Integer.parseInt(userId);
+			userIdNumber = Integer.parseInt(userId);
 		} catch (Exception e) {
 		}
 		if (debug)
-			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + idNumber);
-		String explanation = createExSer.getExplanation(minNumber, idNumber, userState, userLocation);
+			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userIdNumber);
+		String explanation = createExSer.getExplanation(minNumber, userIdNumber, userState, userLocation);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 

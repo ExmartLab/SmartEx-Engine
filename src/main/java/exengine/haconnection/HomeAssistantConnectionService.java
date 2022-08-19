@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import exengine.datamodel.LogEntry;
+
 @Service
 public class HomeAssistantConnectionService {
 

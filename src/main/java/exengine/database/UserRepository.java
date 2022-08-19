@@ -9,7 +9,7 @@ import exengine.datamodel.User;
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
 
-	@Query(value = "{'ruleName' : '?0'}")
+	@Query(value = "{'name' : '?0'}")
 	User findByName(String userName);
 	
 	@Query(value = "{'userId' : '?0'}")

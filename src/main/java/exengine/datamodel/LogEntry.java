@@ -1,4 +1,4 @@
-package exengine.haconnection;
+package exengine.datamodel;
 
 import java.util.ArrayList;
 

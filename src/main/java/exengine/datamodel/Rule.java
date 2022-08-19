@@ -9,28 +9,34 @@ public class Rule {
 	@Id
 	public String id;
 
-	public int ruleId;
 	public String ruleName;
-	public ArrayList<String> trigger;
+	public LogEntry ruleEntry;
+	public ArrayList<LogEntry> trigger;
 	public ArrayList<String> conditions;
-	public ArrayList<String> actions;
+	public ArrayList<LogEntry> actions;
 
-	String triggerString;
-	String conditionsString;
-	String actionsString;
-
-	int ownerId;
+	public String triggerString;
+	public String conditionsString;
+	public String actionsString;
+	public int ownerId;
+	private String ruleDescription;
+	private boolean isError;
+	public int ruleId;
 
 	public Rule() {
 	}
 
-	public Rule(int ruleId, String ruleName, ArrayList<String> trigger, ArrayList<String> conditions, ArrayList<String> actions, int ownerId) {
-		this.ruleId = ruleId;
+	public Rule(String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
+			ArrayList<LogEntry> actions, int ownerId, String ruleDescription, boolean isError) {
 		this.ruleName = ruleName;
+		this.ruleId = ruleId;
+		this.ruleEntry = ruleEntry;
 		this.trigger = trigger;
 		this.conditions = conditions;
 		this.actions = actions;
 		this.ownerId = ownerId;
+		this.ruleDescription = ruleDescription;
+		this.setError(isError);
 
 		triggerString = trigger == null ? "[]" : trigger.toString();
 		conditionsString = conditions == null ? "[]" : conditions.toString();
@@ -39,8 +45,8 @@ public class Rule {
 
 	@Override
 	public String toString() {
-		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s', owner='%s']", id, ruleName,
-				triggerString, conditionsString, actionsString, ownerId);
+		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s', owner='%s', error=%b]", id, ruleName,
+				triggerString, conditionsString, actionsString, ownerId, isError);
 	}
 
 	public String getId() {
@@ -59,20 +65,20 @@ public class Rule {
 		this.ruleName = ruleName;
 	}
 
-	public ArrayList<String> getTrigger() {
+	public ArrayList<LogEntry> getTrigger() {
 		return trigger;
 	}
 
-	public void setTrigger(ArrayList<String> trigger) {
+	public void setTrigger(ArrayList<LogEntry> trigger) {
 		this.trigger = trigger;
 		triggerString = trigger == null ? "[]" : trigger.toString();
 	}
 
-	public ArrayList<String> getActions() {
+	public ArrayList<LogEntry> getActions() {
 		return actions;
 	}
 
-	public void setActions(ArrayList<String> actions) {
+	public void setActions(ArrayList<LogEntry> actions) {
 		this.actions = actions;
 	}
 
@@ -118,11 +124,35 @@ public class Rule {
 		this.ownerId = ownerId;
 	}
 
+	public String getRuleDescription() {
+		return ruleDescription;
+	}
+
+	public void setRuleDescription(String ruleDescription) {
+		this.ruleDescription = ruleDescription;
+	}
+
+	public boolean isError() {
+		return isError;
+	}
+
+	public void setError(boolean isError) {
+		this.isError = isError;
+	}
+
 	public int getRuleId() {
 		return ruleId;
 	}
 
 	public void setRuleId(int ruleId) {
 		this.ruleId = ruleId;
+	}
+
+	public LogEntry getRuleEntry() {
+		return ruleEntry;
+	}
+
+	public void setRuleEntry(LogEntry ruleEntry) {
+		this.ruleEntry = ruleEntry;
 	}
 }
