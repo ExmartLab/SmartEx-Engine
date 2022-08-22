@@ -12,6 +12,6 @@ import exengine.datamodel.OccurrenceEntry;
 public interface OccurrenceEntryRepository extends MongoRepository<OccurrenceEntry, String> {
 
 	@Query(value = "{'userId' : '?0'} && {'ruleId' : '?0'}")
-	ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(int userId, int ruleId);
+	ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String userId, String ruleId);
 
 }

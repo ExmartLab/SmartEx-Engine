@@ -4,32 +4,32 @@ import java.sql.Timestamp;
 
 public class OccurrenceEntry {
 
-	private int userId;
-	private int ruleId;
+	private String userId;
+	private String ruleId;
 	private Timestamp time;
 	
 	public OccurrenceEntry() {
 	}
 	
-	public OccurrenceEntry(int userId, int ruleId, Timestamp time) {
+	public OccurrenceEntry(String userId, String ruleId, Timestamp time) {
 		this.setUserId(userId);
 		this.setRuleId(ruleId);
 		this.setTime(time);
 	}
 
-	public int getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	public int getRuleId() {
+	public String getRuleId() {
 		return ruleId;
 	}
 
-	public void setRuleId(int ruleId) {
+	public void setRuleId(String ruleId) {
 		this.ruleId = ruleId;
 	}
 

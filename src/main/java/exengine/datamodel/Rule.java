@@ -18,16 +18,16 @@ public class Rule {
 	public String triggerString;
 	public String conditionsString;
 	public String actionsString;
-	public int ownerId;
+	public String ownerId;
 	private String ruleDescription;
 	private boolean isError;
-	public int ruleId;
+	public String ruleId;
 
 	public Rule() {
 	}
 
-	public Rule(String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
-			ArrayList<LogEntry> actions, int ownerId, String ruleDescription, boolean isError) {
+	public Rule(String ruleName, String ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
+			ArrayList<LogEntry> actions, String ownerId, String ruleDescription, boolean isError) {
 		this.ruleName = ruleName;
 		this.ruleId = ruleId;
 		this.ruleEntry = ruleEntry;
@@ -116,11 +116,11 @@ public class Rule {
 		actionsString = actions == null ? "[]" : actions.toString();
 	}
 
-	public int getOwnerId() {
+	public String getOwnerId() {
 		return ownerId;
 	}
 
-	public void setOwnerId(int ownerId) {
+	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
 
@@ -140,11 +140,11 @@ public class Rule {
 		this.isError = isError;
 	}
 
-	public int getRuleId() {
+	public String getRuleId() {
 		return ruleId;
 	}
 
-	public void setRuleId(int ruleId) {
+	public void setRuleId(String ruleId) {
 		this.ruleId = ruleId;
 	}
 

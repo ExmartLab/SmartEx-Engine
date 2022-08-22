@@ -12,10 +12,13 @@ public class ContextService {
 	@Autowired
 	DatabaseService dataSer;
 
-	public Context getAllContext(Cause cause, int explaineeId, State userState, String userLocation) {
+	public Context getAllContext(Cause cause, String explaineeId, State userState, String userLocation) {
 
 		// get explainee and ruleOwner from database
 		User explainee = dataSer.findUserByUserId(explaineeId);
+		System.out.println("explaineeId: " + explaineeId);
+		System.out.println(explainee.getUserId());
+		System.out.println(explainee.getName());
 		User ruleOwner = dataSer.findOwnerByRuleName(cause.getRule().getRuleName());
 		
 		String ruleDescription = cause.getRule().getRuleDescription();

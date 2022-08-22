@@ -33,17 +33,15 @@ public class RESTController {
 		
 		//initiating integer variables
 		int minNumber = 30;
-		int userIdNumber = 0;
 		
 		//trying to assign the given values to the integer variables
 		try {
 			minNumber = Integer.parseInt(min);
-			userIdNumber = Integer.parseInt(userId);
 		} catch (Exception e) {
 		}
 		if (debug)
-			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userIdNumber);
-		String explanation = createExSer.getExplanation(minNumber, userIdNumber, userState, userLocation);
+			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userId);
+		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 

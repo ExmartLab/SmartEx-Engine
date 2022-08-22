@@ -41,6 +41,10 @@ public class DatabaseService {
 		return ruleRepo.findByName(ruleName);
 	}
 
+	public Rule findRuleByRuleId(String ruleId) {
+		return ruleRepo.findByRuleId(ruleId);
+	}
+
 	public String findRuleDescriptionByRuleName(String ruleName) {
 		return ruleRepo.findByName(ruleName).getRuleDescription();
 	}
@@ -57,46 +61,45 @@ public class DatabaseService {
 	}
 
 	public User findUserByName(String userName) {
-		System.out.println("finding user by name: " + userName);
-		User foundUser = userRepo.findByName(userName);
-		System.out.println(foundUser.toString());
-
-		return foundUser;
-
-//		return userRepo.findByName(userName);
+		return userRepo.findByName(userName);
 	}
 
-	public User findUserById(String userId) {
+	public User findUserById(String id) {
 		User user;
 		try {
-			user = userRepo.findById(userId).get();
+			user = userRepo.findById(id).get();
 		} catch (Exception e) {
 			user = null;
 		}
 		return user;
 	}
 
-	public User findUserByUserId(int userId) {
-		return userRepo.findByUserId(userId);
+	public User findUserByUserId(String userId) {
+		User user;
+		try {
+			user = userRepo.findByUserId(userId);
+		} catch (Exception e) {
+			user = null;
+		}
+		return user;
 	}
 
-	
 	/*
 	 * OCCURENCE OPERATIONS
 	 */
-	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(int userId, int ruleId) {
+	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String  userId, String  ruleId) {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 	}
 
-	public Occurrence findOccurrence(int userId, int ruleId, int days){
+	public Occurrence findOccurrence(String userId, String ruleId, int days) {
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
-		Timestamp reference = new Timestamp(new Date().getTime() - (long)(days)*24l*60l*60l*1000l);
-		for(OccurrenceEntry entry : entries)
-			if(entry.getTime().after(reference))
+		Timestamp reference = new Timestamp(new Date().getTime() - (long) (days) * 24l * 60l * 60l * 1000l);
+		for (OccurrenceEntry entry : entries)
+			if (entry.getTime().after(reference))
 				count++;
-		
-		switch(count) {
+
+		switch (count) {
 		case 0:
 			return Occurrence.FIRST;
 		case 1:
@@ -110,7 +113,7 @@ public class DatabaseService {
 	 * MISC.
 	 */
 	public User findOwnerByRuleName(String ruleName) {
-		int ownerId = findRuleByName(ruleName).getOwnerId();
+		String ownerId = findRuleByName(ruleName).getOwnerId();
 		return findUserByUserId(ownerId);
 	}
 

@@ -24,6 +24,9 @@ public interface RuleRepository extends MongoRepository<Rule, String> {
 	
 	
 	@Query(value="{'ruleName' : '?0'}")
-	Rule findByName(String ruleName);
+	Rule findByName(String ruleName);	
+	
+	@Query(value="{'ruleId' : '?0'}")
+	Rule findByRuleId(String ruleId);
 
 }

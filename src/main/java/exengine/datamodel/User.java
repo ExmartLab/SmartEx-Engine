@@ -16,10 +16,10 @@ public class User {
 
 	private String stateString = "null";
 	
-	private int userId;
+	private String userid;
 
-	public User(String name, int userId, Role role, Technicality technicality) {
-		this.userId = userId;
+	public User(String name, String userid, Role role, Technicality technicality) {
+		this.userid = userid;
 		this.name = name;
 		this.role = role;
 		this.technicality = technicality;
@@ -40,7 +40,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return String.format("User[id=%s, userId=%d, name=%s, role=%s, expertise=%s]", id, userId, name, role.toString(), technicality.toString());
+		return String.format("User[id=%s, userId=%d, name=%s, role=%s, expertise=%s]", id, userid, name, role.toString(), technicality.toString());
 		// return String.format("User[id=%s, name=%s, age=%d, role=%s, expertise=%s,
 		// state=%s, location=%s]", id, name, age, role.toString(),
 		// technicality.toString(), stateString, location);
@@ -111,11 +111,11 @@ public class User {
 		this.stateString = stateString;
 	}
 
-	public int getUserId() {
-		return userId;
+	public String getUserId() {
+		return userid;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUserId(String userid) {
+		this.userid = userid;
 	}
 }

@@ -43,31 +43,31 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public void intializeTestUserRepository() {
 		dataSer.deleteAllUsers();
 		
-		User alice = new User("Alice", 1, Role.COWORKER, Technicality.TECHNICAL);
+		User alice = new User("Alice", "1", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(alice);
 		
-		User bob = new User("Bob", 2, Role.COWORKER, Technicality.TECHNICAL);
+		User bob = new User("Bob", "2", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(bob);
 		
-		User chuck = new User("Chuck", 3, Role.COWORKER, Technicality.TECHNICAL);
-		dataSer.saveNewUser(chuck);
-		
-		User dana = new User("Dana", 4, Role.COWORKER, Technicality.MEDTECH);
-		dataSer.saveNewUser(dana);
-		
-		User freyja = new User("Freyja", 5, Role.GUEST, Technicality.TECHNICAL);
-		dataSer.saveNewUser(freyja);
-		
-		User grace = new User("Grace", 5, Role.GUEST, Technicality.TECHNICAL);
-		dataSer.saveNewUser(grace);
+//		User chuck = new User("Chuck", 3, Role.COWORKER, Technicality.TECHNICAL);
+//		dataSer.saveNewUser(chuck);
+//		
+//		User dana = new User("Dana", 4, Role.COWORKER, Technicality.MEDTECH);
+//		dataSer.saveNewUser(dana);
+//		
+//		User freyja = new User("Freyja", 5, Role.GUEST, Technicality.TECHNICAL);
+//		dataSer.saveNewUser(freyja);
+//		
+//		User grace = new User("Grace", 5, Role.GUEST, Technicality.TECHNICAL);
+//		dataSer.saveNewUser(grace);
 	}
 
 	public void initializeTestRuleRepository() {
 
 		dataSer.deleteAllRules();
 
-		int idAlice = 1;
-		int idBob = 2;
+		String idAlice = "1";
+		String idBob = "2";
 
 		ArrayList<LogEntry> triggers;
 		ArrayList<String> conditions;
@@ -78,7 +78,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		actions.add(demoEntries.get(1));		
 		conditions = new ArrayList<String>();
 		conditions.add("daily energy consumption is bigger than the set threshold");
-		dataSer.saveNewRule(new Rule("rule 1 (coffee)", 1, demoEntries.get(0), null, conditions, actions, idAlice, "rule1 description", false));
+		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(0), null, conditions, actions, idAlice, "rule1 description", false));
 
 		//(String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, int ownerId, String ruleDescription, boolean isError)
 
@@ -88,10 +88,10 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(3));
 		conditions = new ArrayList<String>();
-		conditions.add("meeting going on");
+		conditions.add("meeting is going on");
 //		actions.add("tv_mute null");
 		
-		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", 2, demoEntries.get(2), triggers, conditions, actions, idBob, "rule2 description", false));
+		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "rule2 mutes the tv if a meeting is going on", false));
 
 //		triggers = new ArrayList<String>();
 //		triggers.add("Deebot idle");

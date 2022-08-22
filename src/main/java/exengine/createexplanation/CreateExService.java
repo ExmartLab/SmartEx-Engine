@@ -32,8 +32,10 @@ public class CreateExService {
 	
 	@Autowired
 	ExplanationGenerationService exGenSer;
+	
+	private boolean debug = true;
 
-	public String getExplanation(int min, int userId, String userState, String userLocation) {
+	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
 		/*
 		 * test for valid userId by checking if user with userId is in db
@@ -43,11 +45,20 @@ public class CreateExService {
 //			return "unvalid userId";
 		
 
-		User user = dataSer.findUserByName("Bob");
-		if(user == null)
-			return "unvalid userId";
+//		User user = dataSer.findUserByName("Bob");
+//		if(user == null)
+//			return "unvalid userId";
+
+//		if(debug)
+//			System.out.println("found user: " + user.getName());
+
 		
-		System.out.println("found user: " + user.getName());
+		User user2 = dataSer.findUserByUserId(userId);
+		if(user2 == null)
+			return "unvalid userId";
+
+		if(debug)
+			System.out.println("found user: " + user2.getName());
 			
 		// turned off for testing
 //		logEntries = HA_API.parseLastLogs(min);
@@ -85,10 +96,10 @@ public class CreateExService {
 			state = State.MEETING;
 
 		//turned off until occurrence is working
-		//Context context = conSer.getAllContext(cause, userId, state, userLocation);
+		Context context = conSer.getAllContext(cause, userId, state, userLocation);
 		
 		// for testing
-		Context context = new Context(Role.GUEST, Occurrence.SECOND, Technicality.MEDTECH, State.WORKING, null);
+		//Context context = new Context(Role.GUEST, Occurrence.SECOND, Technicality.MEDTECH, State.WORKING, null);
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
