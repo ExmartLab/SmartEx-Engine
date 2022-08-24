@@ -11,7 +11,7 @@ public class ExplanationGenerationService {
 	public String getFullExplanation(Cause cause, Context context) {
 		return cause.getRule().isError() ? "error full explanation"
 				: String.format(
-						"Hi %s,\n" + "%s because %s set up a rule: %s\n"
+						"Hi %s,\n" + "%s because %s set up a rule: \"%s\"\n"
 								+ "and currently %s and %s, so the rule has been fired.",
 						context.getExplaineeName(), getActionsString(cause), getOwnerString(context),
 						context.getRuleDescription(), getConditionsString(cause), getTriggerString(cause));
@@ -20,15 +20,14 @@ public class ExplanationGenerationService {
 	public String getRuleExplanation(Cause cause, Context context) {
 		return cause.getRule().isError() ? "error rule explanation"
 				: String.format(
-				"Hi %s,\n" + "%s because there is a rule: %s\n"
-						+ "and currently %s and %s, so the rule has been fired.",
-				context.getExplaineeName(), getActionsString(cause), context.getRuleDescription());
+				"Hi %s,\nthe rule: \"%s\"\nhas been fired.",
+				context.getExplaineeName(), context.getRuleDescription());
 	}
 
 	public String getFactExplanation(Cause cause, Context context) {
 		return cause.getRule().isError() ? "error fact explanation"
 				: String.format("Hi %s,\n" + "%s because currently %s and %s", context.getExplaineeName(),
-				getActionsString(cause), getConditionsString(cause), cause.getTrigger());
+				getActionsString(cause), getConditionsString(cause), getTriggerString(cause));
 	}
 
 	public String getSimplifiedExplanation(Cause cause, Context context) {
@@ -62,7 +61,7 @@ public class ExplanationGenerationService {
 	}
 	
 	public String getTriggerString(Cause cause) {
-		return cause.getTrigger().getName() + " is " + cause.getTrigger().getState();
+		return cause.getTrigger() == null ? "the rule was triggered" : (cause.getTrigger().getName() + " is " + cause.getTrigger().getState()).replaceAll("is null", "has happened"); //TODO move replacing to earlier step in the process
 	}
 
 }

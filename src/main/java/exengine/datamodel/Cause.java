@@ -9,11 +9,18 @@ public class Cause {
 	private LogEntry trigger;
 	private ArrayList<String> conditions;
 	private ArrayList<LogEntry> actions;
+
+	private String conditionsString;
+	private String actionsString;
+	private String triggerString;
 	
 	public Cause(LogEntry trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, Rule rule) {
 		this.trigger = trigger;
+		setTriggerString();
 		this.conditions = conditions;
+		setConditionsString();
 		this.actions = actions;
+		setActionsString();
 		this.rule = rule;
 	}
 
@@ -31,6 +38,7 @@ public class Cause {
 
 	public void setConditions(ArrayList<String> conditions) {
 		this.conditions = conditions;
+		setConditionsString();
 	}
 
 	public ArrayList<LogEntry> getActions() {
@@ -39,6 +47,7 @@ public class Cause {
 
 	public void setActions(ArrayList<LogEntry> actions) {
 		this.actions = actions;
+		setActionsString();
 	}
 
 	public Rule getRule() {
@@ -47,6 +56,37 @@ public class Cause {
 
 	public void setRule(Rule rule) {
 		this.rule = rule;
-	}	
+	}
 	
+	public void setConditionsString() {
+		conditionsString = "[";
+		for(String c : conditions) {
+			conditionsString = getConditionsString() + c +";";
+		}
+		conditionsString = getConditionsString() + "]";
+	}
+	
+	public void setActionsString() {
+		actionsString = "[";
+		for(LogEntry a : actions) {
+			actionsString = getActionsString() + a.name + "|" + a.state +";";
+		}
+		actionsString = getActionsString() + "]";
+	}
+
+	public String getConditionsString() {
+		return conditionsString;
+	}
+
+	public String getActionsString() {
+		return actionsString;
+	}
+	
+	public void setTriggerString() {
+		triggerString = trigger == null ? "null" : trigger.name + " " + trigger.state;
+	}
+	
+	public String getTriggerString() {
+		return triggerString;
+	}
 }

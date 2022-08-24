@@ -1,5 +1,8 @@
 package exengine.contextmanagement;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +19,16 @@ public class ContextService {
 
 		// get explainee and ruleOwner from database
 		User explainee = dataSer.findUserByUserId(explaineeId);
-		System.out.println("explaineeId: " + explaineeId);
-		System.out.println(explainee.getUserId());
-		System.out.println(explainee.getName());
+
 		User ruleOwner = dataSer.findOwnerByRuleName(cause.getRule().getRuleName());
-		
+
 		String ruleDescription = cause.getRule().getRuleDescription();
 
 		// TODO test occurrence
 		Occurrence occurrence = dataSer.findOccurrence(explaineeId, cause.getRule().getRuleId(), 90);
+		
+		//adding the current occurrence
+		dataSer.saveNewOccurrenceEntry(new OccurrenceEntry(explaineeId, cause.getRule().getRuleId(), new Date().getTime()));
 
 		// check if explainee is Owner and set Role accordingly
 		if (explainee.getId().equals(ruleOwner.getId()))

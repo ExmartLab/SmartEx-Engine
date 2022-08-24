@@ -7,20 +7,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import exengine.ExplainableEngineApplication;
 import exengine.createexplanation.CreateExService;
 
 //@RequestMapping("/ExEngine")
 @RestController
 public class RESTController {
 
-	boolean debug = true;
-
 	@Autowired
 	CreateExService createExSer;
 
 	@GetMapping("/status")
 	public ResponseEntity<String> getStatus() {
-		if (debug)
+		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Status returned");
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
@@ -39,7 +38,7 @@ public class RESTController {
 			minNumber = Integer.parseInt(min);
 		} catch (Exception e) {
 		}
-		if (debug)
+		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userId);
 		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
@@ -47,22 +46,22 @@ public class RESTController {
 
 	@PostMapping("/debugoff")
 	public ResponseEntity<String> debugOff() {
-		if (debug)
+		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP POST: Debugging turned off");
-		debug = false;
+		ExplainableEngineApplication.debug = false;
 		return new ResponseEntity<>("Debugging turned off", HttpStatus.CREATED);
 	}
 
 	@PostMapping("/debugon")
 	public ResponseEntity<String> debugOn() {
 		System.out.println("HTTP POST: Debugging turned on");
-		debug = true;
+		ExplainableEngineApplication.debug = true;
 		return new ResponseEntity<>("Debugging turned on", HttpStatus.CREATED);
 	}
 
 	@GetMapping("/greeting")
 	public ResponseEntity<String> greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-		if (debug)
+		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Greeting for " + name + " requested");
 		return new ResponseEntity<>("Hello " + name + "!", HttpStatus.OK);
 	}

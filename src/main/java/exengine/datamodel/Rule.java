@@ -66,7 +66,9 @@ public class Rule {
 	}
 
 	public ArrayList<LogEntry> getTrigger() {
-		return trigger;
+		if(trigger != null) //TODO
+			return trigger;
+		return null;
 	}
 
 	public void setTrigger(ArrayList<LogEntry> trigger) {

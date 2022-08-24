@@ -20,6 +20,8 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	@Autowired
 	DatabaseService dataSer;
 	
+	public static boolean debug = true;
+	
 	public static ArrayList<LogEntry> demoEntries;
 
 	public static void main(String[] args) {
@@ -28,7 +30,8 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		intializeTestUserRepository();
+		initializeTestOccurrenceRepository();
+		initializeTestUserRepository();
 		initializeTestRuleRepository();
 		haService.printAPIStatus();
 
@@ -40,7 +43,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	}
 	
-	public void intializeTestUserRepository() {
+	public void initializeTestUserRepository() {
 		dataSer.deleteAllUsers();
 		
 		User alice = new User("Alice", "1", Role.COWORKER, Technicality.TECHNICAL);
@@ -49,16 +52,16 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		User bob = new User("Bob", "2", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(bob);
 		
-//		User chuck = new User("Chuck", 3, Role.COWORKER, Technicality.TECHNICAL);
-//		dataSer.saveNewUser(chuck);
-//		
-//		User dana = new User("Dana", 4, Role.COWORKER, Technicality.MEDTECH);
-//		dataSer.saveNewUser(dana);
-//		
-//		User freyja = new User("Freyja", 5, Role.GUEST, Technicality.TECHNICAL);
+		User chuck = new User("Chuck", "3", Role.GUEST, Technicality.NONTECH);
+		dataSer.saveNewUser(chuck);
+
+		User dana = new User("Dana", "4", Role.GUEST, Technicality.TECHNICAL);
+		dataSer.saveNewUser(dana);
+	
+//		User freyja = new User("Freyja", "5", Role.GUEST, Technicality.MEDTECH);
 //		dataSer.saveNewUser(freyja);
 //		
-//		User grace = new User("Grace", 5, Role.GUEST, Technicality.TECHNICAL);
+//		User grace = new User("Grace", "6", Role.GUEST, Technicality.TECHNICAL);
 //		dataSer.saveNewUser(grace);
 	}
 
@@ -91,7 +94,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		conditions.add("meeting is going on");
 //		actions.add("tv_mute null");
 		
-		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "rule2 mutes the tv if a meeting is going on", false));
+		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "(rule2) mutes the tv if a meeting is going on", false));
 
 //		triggers = new ArrayList<String>();
 //		triggers.add("Deebot idle");
@@ -106,11 +109,20 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 //		dataSer.saveNewRule(new Rule("Deebot error", triggers, conditions, actions, idLars, "error", true));
 	}
 	
+	public void initializeTestOccurrenceRepository() {
+		dataSer.deleteAllOccurrencies();
+	}
+	
 	public static void initiateDemoEntries(int scenario) {
 		demoEntries = new ArrayList<LogEntry>();
 		ArrayList<String> other;
 		switch (scenario) {
 		case 1:
+			
+			//TODO Add Logg Entry
+			//time: 022-08-24T13:23:36.238090+00:00 name: null state: null entity_id: null other: [state":"2022-08-24T13:23:36.237939+00:00", entity_id":"scene.state_change", name":"state change", context_event_type":"automation_triggered", context_domain":"automation", context_name":"state change log", context_message":"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption", context_source":"state of sensor.smart_plug_social_room_coffee_today_s_consumption", context_entity_id":"automation.state_change_log", context_entity_id_name":"state change log"]
+
+			
 			other = new ArrayList<String>();
 			other.add("message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");
 			other.add("source\": \"state of sensor.smart_plug_social_room_coffee_today_s_consumption");

@@ -87,18 +87,33 @@ public class DatabaseService {
 	/*
 	 * OCCURENCE OPERATIONS
 	 */
-	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String  userId, String  ruleId) {
+	
+	public void deleteAllOccurrencies() {
+		occEntrRepo.deleteAll();
+	}
+
+	public void saveNewOccurrenceEntry(OccurrenceEntry occurrenceEntry) {
+		occEntrRepo.save(occurrenceEntry);
+	}
+
+	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String userId, String ruleId) {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 	}
 
 	public Occurrence findOccurrence(String userId, String ruleId, int days) {
+		System.out.println("getting occurrence for user " + userId + " and rule " + ruleId);
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
-		Timestamp reference = new Timestamp(new Date().getTime() - (long) (days) * 24l * 60l * 60l * 1000l);
+		long reference = (long) (days) * 24l * 60l * 60l * 1000l;
 		for (OccurrenceEntry entry : entries)
-			if (entry.getTime().after(reference))
+		{
+			System.out.println("looking at entry: " + new Date(entry.getTime()).toString());
+			if (entry.getTime() > reference) {
 				count++;
-
+				System.out.println("count: " + count);
+			}
+				
+		}
 		switch (count) {
 		case 0:
 			return Occurrence.FIRST;

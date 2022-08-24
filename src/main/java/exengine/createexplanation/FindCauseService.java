@@ -15,13 +15,14 @@ public class FindCauseService {
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
 	
-	boolean debug = true;
+	boolean debug = false;
 
 	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules) {
 		Cause cause = null;
 
 		for (LogEntry l : logEntries)
-			System.out.println(l.toString());
+			if(debug)
+				System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
 		ArrayList<String> foundActions = new ArrayList<String>();
@@ -30,9 +31,6 @@ public class FindCauseService {
 		/*
 		 * START OF THE ALGORITHM
 		 */
-		
-		if(debug)
-			System.out.println("----- STARTING CAUSE ALGORITHM ------");
 
 		// iterate through Log Entries in reversed order
 		for (int i = logEntries.size() - 1; i >= 0; i--) { // read each line
@@ -82,11 +80,6 @@ public class FindCauseService {
 							if (foundRule != null) {
 								cause = new Cause(trigger, foundRule.getConditions(), foundRule.getActions(),
 										foundRule);
-//								System.out.println("actions: " + foundRule.getActionsString()
-//										+ "\ntrigger: " + trigger
-//										+ "\nconditions: " + foundRule.getConditionsString()
-//										+ "\nrule: " + foundRule.getRuleName());
-
 							}
 						}
 					}

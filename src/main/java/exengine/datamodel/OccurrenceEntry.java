@@ -1,20 +1,18 @@
 package exengine.datamodel;
 
-import java.sql.Timestamp;
-
 public class OccurrenceEntry {
 
 	private String userId;
 	private String ruleId;
-	private Timestamp time;
+	private long time;
 	
 	public OccurrenceEntry() {
 	}
 	
-	public OccurrenceEntry(String userId, String ruleId, Timestamp time) {
-		this.setUserId(userId);
-		this.setRuleId(ruleId);
-		this.setTime(time);
+	public OccurrenceEntry(String userId, String ruleId, long time) {
+		setUserId(userId);
+		setRuleId(ruleId);
+		setTime(time);
 	}
 
 	public String getUserId() {
@@ -33,11 +31,11 @@ public class OccurrenceEntry {
 		this.ruleId = ruleId;
 	}
 
-	public Timestamp getTime() {
+	public long getTime() {
 		return time;
 	}
 
-	public void setTime(Timestamp time) {
+	public void setTime(long time) {
 		this.time = time;
 	}
 }

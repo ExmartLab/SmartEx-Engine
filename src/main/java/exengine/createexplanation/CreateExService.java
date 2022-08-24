@@ -20,52 +20,36 @@ public class CreateExService {
 
 	@Autowired
 	DatabaseService dataSer;
-	
+
 	@Autowired
 	FindCauseService findCauseSer;
-	
+
 	@Autowired
 	ContextService conSer;
-	
+
 	@Autowired
 	ExplanationTypeService exTypeSer;
-	
+
 	@Autowired
 	ExplanationGenerationService exGenSer;
-	
-	private boolean debug = true;
 
 	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
-		/*
-		 * test for valid userId by checking if user with userId is in db
-		 */
-//		User user = dataSer.findUserByUserId(userId);
-//		if(user == null)
-//			return "unvalid userId";
-		
-
-//		User user = dataSer.findUserByName("Bob");
-//		if(user == null)
-//			return "unvalid userId";
-
-//		if(debug)
-//			System.out.println("found user: " + user.getName());
-
-		
-		User user2 = dataSer.findUserByUserId(userId);
-		if(user2 == null)
+		// test for valid userId by checking if user with userId is in db
+		User user = dataSer.findUserByUserId(userId);
+		if (user == null)
 			return "unvalid userId";
 
-		if(debug)
-			System.out.println("found user: " + user2.getName());
-			
+		if (ExplainableEngineApplication.debug)
+			System.out.println("found user: " + user.getName());
+
 		// turned off for testing
 //		logEntries = HA_API.parseLastLogs(min);
 
 		// only for testing
 		int scenario = 2;
-		System.out.println("Demo for Scenario " + scenario);
+		if (ExplainableEngineApplication.debug)
+			System.out.println("Demo for Scenario " + scenario);
 		ExplainableEngineApplication.initiateDemoEntries(scenario);
 		logEntries = ExplainableEngineApplication.demoEntries;
 
@@ -74,6 +58,9 @@ public class CreateExService {
 
 		// query Rules from DB
 		List<Rule> dbRules = dataSer.findAllRules();
+
+		if (ExplainableEngineApplication.debug)
+			System.out.println("\n------ EXPLANATION ALGORITHM ------");
 
 		/*
 		 * STEP 1: FIND CAUSE
@@ -84,37 +71,53 @@ public class CreateExService {
 		if (cause == null)
 			return "couldn't find cause to explain";
 
+		if (ExplainableEngineApplication.debug) {
+			System.out.println("\nCause:");
+			System.out.println("ruleId: " + cause.getRule().ruleId);
+			System.out.println("trigger: " + cause.getTriggerString());
+			System.out.println("conditions: " + cause.getConditionsString());
+			System.out.println("actions: " + cause.getActionsString());
+		}
+
 		/*
-		 * STEP 2: TODO get context (method in class)
+		 * STEP 2: GET CONTEXT
 		 */
-		//default state break
+		// default state break
 		State state = State.BREAK;
-		//test for other cases
-		if(userState.equals(State.WORKING.toString()))
+
+		// test for other cases
+		if (userState.equals(State.WORKING.toString()))
 			state = State.WORKING;
-		else if(userState.equals(State.MEETING.toString()))
+		else if (userState.equals(State.MEETING.toString()))
 			state = State.MEETING;
 
-		//turned off until occurrence is working
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);
-		
+
 		// for testing
-		//Context context = new Context(Role.GUEST, Occurrence.SECOND, Technicality.MEDTECH, State.WORKING, null);
+		// Context context = new Context(Role.GUEST, Occurrence.SECOND,
+		// Technicality.MEDTECH, State.WORKING, null);
+
+		if (ExplainableEngineApplication.debug) {
+			System.out.println("\nContext:");
+			System.out.println("owner: " + context.getOwnerName());
+			System.out.println("rule: " + context.getRuleDescription());
+			System.out.println("explainee: " + context.getExplaineeName());
+			System.out.println("role: " + context.getExplaineeRole().toString());
+			System.out.println("state: " + context.getExplaineeState().toString());
+			System.out.println("technicality: " + context.getExplaineeTechnicality().toString());
+			System.out.println("occurrence: " + context.getOccurrence());
+		}
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
 		ExplanationType type = exTypeSer.getExplanationType(context);
 
-		//TESTING
-		type = ExplanationType.FULLEX;
-		
 		/*
-		 * STEP 4: TODO generate the desired explanation (methods in classes) MORE
-		 * CONTEXT NEEDED
+		 * STEP 4: generate the desired explanation
 		 */
 		if (type == null)
-			return "no explanation for given context";
+			return "coudln't determine explanation type";
 
 		switch (type) {
 		case FULLEX:
@@ -131,12 +134,13 @@ public class CreateExService {
 			break;
 		}
 
+		if (ExplainableEngineApplication.debug) {
+			System.out.println("\nFinalExplanation:");
+			System.out.println(explanation);
+			System.out.println("\n------ EXPLANATION CREATED ------\n");
+		}
+
 		return explanation;
 	}
-
-	/*
-	 * public List<Rule> findRulesByName() { return
-	 * ruleRepo.findByRuleName("testRule1"); }
-	 */
 
 }
