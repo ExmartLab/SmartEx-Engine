@@ -21,13 +21,14 @@ public class Rule {
 	public String ownerId;
 	private String ruleDescription;
 	private boolean isError;
+	private String errorSolution;
 	public String ruleId;
 
 	public Rule() {
 	}
 
 	public Rule(String ruleName, String ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
-			ArrayList<LogEntry> actions, String ownerId, String ruleDescription, boolean isError) {
+			ArrayList<LogEntry> actions, String ownerId, String ruleDescription, boolean isError, String errorSolution) {
 		this.ruleName = ruleName;
 		this.ruleId = ruleId;
 		this.ruleEntry = ruleEntry;
@@ -36,6 +37,7 @@ public class Rule {
 		this.actions = actions;
 		this.ownerId = ownerId;
 		this.ruleDescription = ruleDescription;
+		this.errorSolution = errorSolution;
 		this.setError(isError);
 
 		triggerString = trigger == null ? "[]" : trigger.toString();
@@ -156,5 +158,13 @@ public class Rule {
 
 	public void setRuleEntry(LogEntry ruleEntry) {
 		this.ruleEntry = ruleEntry;
+	}
+
+	public String getErrorSolution() {
+		return errorSolution;
+	}
+
+	public void setErrorSolution(String errorSolution) {
+		this.errorSolution = errorSolution;
 	}
 }

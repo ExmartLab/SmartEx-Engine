@@ -30,19 +30,16 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		initializeTestOccurrenceRepository();
+		deleteAllOccurrencies();
+		//initializeTestOccurrenceRepository();
 		initializeTestUserRepository();
 		initializeTestRuleRepository();
+
+		//print out current API Status to see that HA is reachable
 		haService.printAPIStatus();
-
-//		System.out.println(ruleRepo.findRuleById("ObjectId('62f66091fc241a67fa73fc4c')").get(0).ruleName);
-//		System.out.println(ruleRepo.findById("62fa0875a078fc18d5a07165").get().ruleName);
-//
-//		System.out.println(ruleRepo.findRuleByName("sc1: Goal-Order-Conflict null").get(0).ruleName);
-//		System.out.println(ruleRepo.findRuleByName("sc1: Goal-Order-Conflict null").get(0).id);
-
 	}
-	
+
+	//initializes a Repository with Users for demonstration and testing in the database
 	public void initializeTestUserRepository() {
 		dataSer.deleteAllUsers();
 		
@@ -65,23 +62,27 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 //		dataSer.saveNewUser(grace);
 	}
 
+	//initializes a Repository with Rules for demonstration and testing in the database
 	public void initializeTestRuleRepository() {
 
 		dataSer.deleteAllRules();
 
 		String idAlice = "1";
 		String idBob = "2";
+		String idNoOwner = "0";
 
 		ArrayList<LogEntry> triggers;
 		ArrayList<String> conditions;
 		ArrayList<LogEntry> actions;
 
 		initiateDemoEntries(1);
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(0));
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(1));		
 		conditions = new ArrayList<String>();
 		conditions.add("daily energy consumption is bigger than the set threshold");
-		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(0), null, conditions, actions, idAlice, "rule1 description", false));
+		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(1), triggers, conditions, actions, idAlice, "(rule1) allows coffee to be made until the daily energy consumption threshold is reached", false, null));
 
 		//(String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, int ownerId, String ruleDescription, boolean isError)
 
@@ -94,34 +95,33 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		conditions.add("meeting is going on");
 //		actions.add("tv_mute null");
 		
-		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "(rule2) mutes the tv if a meeting is going on", false));
+		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "(rule2) mutes the tv if a meeting is going on", false, null));
 
-//		triggers = new ArrayList<String>();
-//		triggers.add("Deebot idle");
-//
-//		conditions = new ArrayList<String>();
-		/*
-		 * Do we need a condition here? There is no rule
-		 */
-//		conditions.add("Deebot running");
-//		actions = new ArrayList<String>();
-//		actions.add("Deebot last error 104");
-//		dataSer.saveNewRule(new Rule("Deebot error", triggers, conditions, actions, idLars, "error", true));
+		initiateDemoEntries(5);
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(0));
+		conditions = new ArrayList<String>();
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(2));
+		dataSer.saveNewRule(new Rule("Deebot error", "5", demoEntries.get(1), triggers, conditions, actions, idNoOwner, "the robotic vacuum cleaner is stuck", true, "remove barrier or set robot back on track"));
 	}
 	
 	public void initializeTestOccurrenceRepository() {
+		//TODO	
+	}
+	
+	void deleteAllOccurrencies() {
 		dataSer.deleteAllOccurrencies();
 	}
 	
+	// initiates the demoEntries-List with LogEntries for Demonstration and Testing
 	public static void initiateDemoEntries(int scenario) {
 		demoEntries = new ArrayList<LogEntry>();
 		ArrayList<String> other;
 		switch (scenario) {
 		case 1:
 			
-			//TODO Add Logg Entry
-			//time: 022-08-24T13:23:36.238090+00:00 name: null state: null entity_id: null other: [state":"2022-08-24T13:23:36.237939+00:00", entity_id":"scene.state_change", name":"state change", context_event_type":"automation_triggered", context_domain":"automation", context_name":"state change log", context_message":"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption", context_source":"state of sensor.smart_plug_social_room_coffee_today_s_consumption", context_entity_id":"automation.state_change_log", context_entity_id_name":"state change log"]
-
+			demoEntries.add(new LogEntry("2022-06-23T09:50:50.014573+00:00", "state change", null, "scene.state_change", null));
 			
 			other = new ArrayList<String>();
 			other.add("message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");

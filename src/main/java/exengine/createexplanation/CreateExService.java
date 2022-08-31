@@ -47,7 +47,7 @@ public class CreateExService {
 //		logEntries = HA_API.parseLastLogs(min);
 
 		// only for testing
-		int scenario = 2;
+		int scenario = 5;
 		if (ExplainableEngineApplication.debug)
 			System.out.println("Demo for Scenario " + scenario);
 		ExplainableEngineApplication.initiateDemoEntries(scenario);
@@ -91,6 +91,7 @@ public class CreateExService {
 		else if (userState.equals(State.MEETING.toString()))
 			state = State.MEETING;
 
+		//get final context from context service
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);
 
 		// for testing

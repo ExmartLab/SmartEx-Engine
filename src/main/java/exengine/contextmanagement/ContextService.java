@@ -21,14 +21,18 @@ public class ContextService {
 		User explainee = dataSer.findUserByUserId(explaineeId);
 
 		User ruleOwner = dataSer.findOwnerByRuleName(cause.getRule().getRuleName());
+		// set dummy user in case rule has no owner (e.g. errors)
+		if (ruleOwner == null)
+			ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);
 
 		String ruleDescription = cause.getRule().getRuleDescription();
 
 		// TODO test occurrence
 		Occurrence occurrence = dataSer.findOccurrence(explaineeId, cause.getRule().getRuleId(), 90);
-		
-		//adding the current occurrence
-		dataSer.saveNewOccurrenceEntry(new OccurrenceEntry(explaineeId, cause.getRule().getRuleId(), new Date().getTime()));
+
+		// adding the current occurrence
+		dataSer.saveNewOccurrenceEntry(
+				new OccurrenceEntry(explaineeId, cause.getRule().getRuleId(), new Date().getTime()));
 
 		// check if explainee is Owner and set Role accordingly
 		if (explainee.getId().equals(ruleOwner.getId()))
