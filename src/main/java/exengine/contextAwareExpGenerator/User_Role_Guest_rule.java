@@ -1,4 +1,4 @@
-package exengine.explainTypeRuleEngine;
+package exengine.contextAwareExpGenerator;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,14 +14,15 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import exengine.datamodel.*;
 
-@Rule(order = 2)
-public class Occurrence_More_rule {
+@Rule(order = 4)
+public class User_Role_Guest_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
 	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
 			more_times_AllowedTypes.add(1);
+			more_times_AllowedTypes.add(2);
 		}
 	}
 
@@ -35,7 +36,7 @@ public class Occurrence_More_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getOccurrence() == Occurrence.MORE);
+		return con.stream().anyMatch(context -> context.getExplaineeRole() == Role.GUEST);
 	}
 
 	@Then
@@ -54,5 +55,7 @@ public class Occurrence_More_rule {
 		con.get(0).setTheExpType(Collections.max(exType));
 
 	}
-
+	
 }
+
+

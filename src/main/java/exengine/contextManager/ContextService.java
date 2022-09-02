@@ -1,6 +1,5 @@
-package exengine.contextmanagement;
+package exengine.contextManager;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ public class ContextService {
 
 		String ruleDescription = cause.getRule().getRuleDescription();
 
-		// TODO test occurrence
 		Occurrence occurrence = dataSer.findOccurrence(explaineeId, cause.getRule().getRuleId(), 90);
 
 		// adding the current occurrence

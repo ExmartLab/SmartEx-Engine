@@ -1,4 +1,4 @@
-package exengine.rulebook;
+package exengine.contextAwareExpGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +12,18 @@ import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 
 import exengine.ExplainableEngineApplication;
 import exengine.datamodel.Context;
-import exengine.explanationtypes.ExplanationType;
+import exengine.expPresentation.ExplanationType;
 
 @Service
-public class ExplanationTypeService {
+public class ExplanationContextMappingService {
 
 	public ExplanationType getExplanationType(Context c1) {
-		RuleBookRunner ruleBook2 = new RuleBookRunner("exengine.explainTypeRuleEngine");
+		
+		// IMPORTANT: Parameter needs to be exact name of the package with the rulebook classes
+		RuleBookRunner ruleBook2 = new RuleBookRunner("exengine.contextAwareExpGenerator");
 		NameValueReferableMap<Context> exfacts = new FactMap<>();
+		
+		//as a default, all explanation types are possible
 		List<Integer> exTypes = new ArrayList<Integer>();
 		exTypes.add(1);
 		exTypes.add(2);

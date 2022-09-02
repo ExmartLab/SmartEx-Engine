@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import exengine.ExplainableEngineApplication;
-import exengine.createexplanation.CreateExService;
+import exengine.engineService.CreateExService;
 
 //@RequestMapping("/ExEngine")
 @RestController
@@ -17,6 +17,7 @@ public class RESTController {
 	@Autowired
 	CreateExService createExSer;
 
+	// returns a status if the explainable engine is running
 	@GetMapping("/status")
 	public ResponseEntity<String> getStatus() {
 		if (ExplainableEngineApplication.debug)
@@ -24,16 +25,17 @@ public class RESTController {
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
 
+	// returns the explanation as a String by calling the createExplanationService
 	@GetMapping("/explain")
 	public ResponseEntity<String> getExplanation(@RequestParam(value = "min", defaultValue = "30") String min,
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
 			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
-		
-		//initiating integer variables
+
+		// initiating integer variables
 		int minNumber = 30;
-		
-		//trying to assign the given values to the integer variables
+
+		// trying to assign the given values to the integer variables
 		try {
 			minNumber = Integer.parseInt(min);
 		} catch (Exception e) {
@@ -65,13 +67,5 @@ public class RESTController {
 			System.out.println("HTTP GET: Greeting for " + name + " requested");
 		return new ResponseEntity<>("Hello " + name + "!", HttpStatus.OK);
 	}
-
-	/*
-	 * private static final String template = "Hellooo, %s!";
-	 * 
-	 * @GetMapping("/greeting") public Status greeting(@RequestParam(value = "name",
-	 * defaultValue = "World") String name) { return new
-	 * Status(String.format(template, name)); }
-	 */
 
 }

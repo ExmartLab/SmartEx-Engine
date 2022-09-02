@@ -1,4 +1,4 @@
-package exengine.createexplanation;
+package exengine.engineService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.contextmanagement.ContextService;
+import exengine.algorithmicExpGenerator.FindCauseService;
+import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
+import exengine.contextManager.ContextService;
 import exengine.database.*;
 import exengine.datamodel.*;
-import exengine.explanationtypes.*;
-import exengine.rulebook.ExplanationTypeService;
+import exengine.expPresentation.*;
+import exengine.haconnection.HomeAssistantConnectionService;
 
 @Service
 public class CreateExService {
@@ -22,16 +24,19 @@ public class CreateExService {
 	DatabaseService dataSer;
 
 	@Autowired
+	HomeAssistantConnectionService haSer;
+
+	@Autowired
 	FindCauseService findCauseSer;
 
 	@Autowired
 	ContextService conSer;
 
 	@Autowired
-	ExplanationTypeService exTypeSer;
+	ExplanationContextMappingService exTypeSer;
 
 	@Autowired
-	ExplanationGenerationService exGenSer;
+	TransformationFunctionService exGenSer;
 
 	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
@@ -39,19 +44,20 @@ public class CreateExService {
 		User user = dataSer.findUserByUserId(userId);
 		if (user == null)
 			return "unvalid userId";
-
 		if (ExplainableEngineApplication.debug)
 			System.out.println("found user: " + user.getName());
 
-		// turned off for testing
-//		logEntries = HA_API.parseLastLogs(min);
-
-		// only for testing
-		int scenario = 5;
-		if (ExplainableEngineApplication.debug)
-			System.out.println("Demo for Scenario " + scenario);
-		ExplainableEngineApplication.initiateDemoEntries(scenario);
-		logEntries = ExplainableEngineApplication.demoEntries;
+		// getting the log Entries
+		if (!ExplainableEngineApplication.testing) {
+			// getting logs from Home Assistant
+			logEntries = haSer.parseLastLogs(min);
+		} else {
+			// getting demo logs
+			if (ExplainableEngineApplication.debug)
+				System.out.println("Demo for Scenario " + ExplainableEngineApplication.testingScenario);
+			ExplainableEngineApplication.initiateDemoEntries(ExplainableEngineApplication.testingScenario);
+			logEntries = ExplainableEngineApplication.demoEntries;
+		}
 
 		// default value for return string
 		String explanation = "no explanation found";
@@ -91,7 +97,7 @@ public class CreateExService {
 		else if (userState.equals(State.MEETING.toString()))
 			state = State.MEETING;
 
-		//get final context from context service
+		// get final context from context service
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);
 
 		// for testing

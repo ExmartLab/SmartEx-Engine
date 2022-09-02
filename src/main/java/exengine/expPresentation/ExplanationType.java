@@ -1,4 +1,4 @@
-package exengine.explanationtypes;
+package exengine.expPresentation;
 
 public enum ExplanationType {
 	FULLEX(4), FACTEX(3), RULEEX(2), SIMPLDEX(1);

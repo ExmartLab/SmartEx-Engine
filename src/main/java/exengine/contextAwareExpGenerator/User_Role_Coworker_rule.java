@@ -1,4 +1,4 @@
-package exengine.explainTypeRuleEngine;
+package exengine.contextAwareExpGenerator;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,8 +14,8 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import exengine.datamodel.*;
 
-@Rule(order = 3)
-public class User_Technicality_High_rule {
+@Rule(order = 4)
+public class User_Role_Coworker_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
 	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
@@ -24,6 +24,7 @@ public class User_Technicality_High_rule {
 			more_times_AllowedTypes.add(1);
 			more_times_AllowedTypes.add(2);
 			more_times_AllowedTypes.add(3);
+			more_times_AllowedTypes.add(4);
 		}
 	}
 
@@ -37,7 +38,7 @@ public class User_Technicality_High_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getExplaineeTechnicality() == Technicality.TECHNICAL);
+		return con.stream().anyMatch(context -> context.getExplaineeRole() == Role.COWORKER);
 	}
 
 	@Then
@@ -58,3 +59,4 @@ public class User_Technicality_High_rule {
 	}
 	
 }
+

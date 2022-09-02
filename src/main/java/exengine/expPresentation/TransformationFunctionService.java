@@ -1,4 +1,4 @@
-package exengine.explanationtypes;
+package exengine.expPresentation;
 
 import org.springframework.stereotype.Service;
 
@@ -6,12 +6,12 @@ import exengine.datamodel.Cause;
 import exengine.datamodel.Context;
 
 @Service
-public class ExplanationGenerationService {
+public class TransformationFunctionService {
 
 	// compose resulting explanation string for full explanation
 	public String getFullExplanation(Cause cause, Context context) {
 		return cause.getRule().isError()
-				? String.format("Hi %s,\nbecause %s, %s. To solve, %s.", context.getExplaineeName(),
+				? String.format("Hi %s,\nbecause %s, %s. To resolve, %s.", context.getExplaineeName(),
 						getActionsString(cause), context.getRuleDescription(), cause.getRule().getErrorSolution())
 				: String.format(
 						"Hi %s,\n" + "%s because %s set up a rule: \"%s\"\n"

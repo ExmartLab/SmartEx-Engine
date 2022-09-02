@@ -19,9 +19,11 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Autowired
 	DatabaseService dataSer;
-	
+
 	public static boolean debug = true;
-	
+	public static boolean testing = true;
+	public static int testingScenario = 1;
+
 	public static ArrayList<LogEntry> demoEntries;
 
 	public static void main(String[] args) {
@@ -30,31 +32,35 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		deleteAllOccurrencies();
-		//initializeTestOccurrenceRepository();
-		initializeTestUserRepository();
-		initializeTestRuleRepository();
+		if (testing) {
+			deleteAllOccurrencies();
+			// initializeTestOccurrenceRepository();
+			initializeTestUserRepository();
+			initializeTestRuleRepository();
+		}
 
-		//print out current API Status to see that HA is reachable
+		// print out current API Status to see that HA is reachable
 		haService.printAPIStatus();
 	}
 
-	//initializes a Repository with Users for demonstration and testing in the database
+	// initializes a Repository with Users for demonstration and testing in the
+	// database
 	public void initializeTestUserRepository() {
 		dataSer.deleteAllUsers();
-		
+
 		User alice = new User("Alice", "1", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(alice);
-		
+
 		User bob = new User("Bob", "2", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(bob);
-		
+
 		User chuck = new User("Chuck", "3", Role.GUEST, Technicality.NONTECH);
 		dataSer.saveNewUser(chuck);
 
 		User dana = new User("Dana", "4", Role.GUEST, Technicality.TECHNICAL);
 		dataSer.saveNewUser(dana);
-	
+
+		// more test users, currently commented because not neccessary for test cases
 //		User freyja = new User("Freyja", "5", Role.GUEST, Technicality.MEDTECH);
 //		dataSer.saveNewUser(freyja);
 //		
@@ -62,13 +68,15 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 //		dataSer.saveNewUser(grace);
 	}
 
-	//initializes a Repository with Rules for demonstration and testing in the database
+	// initializes a Repository with Rules for demonstration and testing in the
+	// database
 	public void initializeTestRuleRepository() {
 
 		dataSer.deleteAllRules();
 
-		String idAlice = "1";
-		String idBob = "2";
+		// getting userIds from database to set as ownerIds for the rules
+		String idAlice = dataSer.findUserByName("Alice").getUserId();
+		String idBob = dataSer.findUserByName("Bob").getUserId();
 		String idNoOwner = "0";
 
 		ArrayList<LogEntry> triggers;
@@ -79,12 +87,16 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(0));
 		actions = new ArrayList<LogEntry>();
-		actions.add(demoEntries.get(1));		
+		actions.add(demoEntries.get(2));
 		conditions = new ArrayList<String>();
-		conditions.add("daily energy consumption is bigger than the set threshold");
-		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(1), triggers, conditions, actions, idAlice, "(rule1) allows coffee to be made until the daily energy consumption threshold is reached", false, null));
+		conditions.add("daily energy consumption is higher than the threshold");
+		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(1), triggers, conditions, actions, idAlice,
+				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached", false,
+				null));
 
-		//(String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, int ownerId, String ruleDescription, boolean isError)
+		// (String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry>
+		// trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, int
+		// ownerId, String ruleDescription, boolean isError)
 
 		initiateDemoEntries(2);
 		triggers = new ArrayList<LogEntry>();
@@ -92,10 +104,11 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(3));
 		conditions = new ArrayList<String>();
-		conditions.add("meeting is going on");
+		conditions.add("a meeting in room 1 is going on");
 //		actions.add("tv_mute null");
-		
-		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob, "(rule2) mutes the tv if a meeting is going on", false, null));
+
+		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob,
+				"Rule_2: mutes the TV if TV is playing while a meeting is going on", false, null));
 
 		initiateDemoEntries(5);
 		triggers = new ArrayList<LogEntry>();
@@ -103,26 +116,28 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		conditions = new ArrayList<String>();
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(2));
-		dataSer.saveNewRule(new Rule("Deebot error", "5", demoEntries.get(1), triggers, conditions, actions, idNoOwner, "the robotic vacuum cleaner is stuck", true, "remove barrier or set robot back on track"));
+		dataSer.saveNewRule(new Rule("Deebot error", "5", demoEntries.get(1), triggers, conditions, actions, idNoOwner,
+				"the robotic vacuum cleaner is stuck", true, "remove barrier or set robot back on track"));
 	}
-	
+
 	public void initializeTestOccurrenceRepository() {
-		//TODO	
+		// TODO
 	}
-	
+
 	void deleteAllOccurrencies() {
 		dataSer.deleteAllOccurrencies();
 	}
-	
+
 	// initiates the demoEntries-List with LogEntries for Demonstration and Testing
 	public static void initiateDemoEntries(int scenario) {
 		demoEntries = new ArrayList<LogEntry>();
 		ArrayList<String> other;
 		switch (scenario) {
 		case 1:
-			
-			demoEntries.add(new LogEntry("2022-06-23T09:50:50.014573+00:00", "state change", null, "scene.state_change", null));
-			
+
+			demoEntries.add(
+					new LogEntry("2022-06-23T09:50:50.014573+00:00", "state change", null, "scene.state_change", null));
+
 			other = new ArrayList<String>();
 			other.add("message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");
 			other.add("source\": \"state of sensor.smart_plug_social_room_coffee_today_s_consumption");

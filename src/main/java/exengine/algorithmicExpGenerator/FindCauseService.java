@@ -1,10 +1,11 @@
-package exengine.createexplanation;
+package exengine.algorithmicExpGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import exengine.ExplainableEngineApplication;
 import exengine.datamodel.Cause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
@@ -14,14 +15,12 @@ public class FindCauseService {
 
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
-	
-	boolean debug = false;
 
 	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules) {
 		Cause cause = null;
 
 		for (LogEntry l : logEntries)
-			if(debug)
+			if(ExplainableEngineApplication.debug)
 				System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
@@ -36,11 +35,11 @@ public class FindCauseService {
 		for (int i = logEntries.size() - 1; i >= 0; i--) { // read each line
 
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
-			if(debug)
+			if(ExplainableEngineApplication.debug)
 				System.out.println(i + ":\n" + entryData);
 
 			if (isInActions(entryData, dbRules)) { // if it is an action
-				if(debug)
+				if(ExplainableEngineApplication.debug)
 					System.out.println("found action: " + entryData);
 				foundActions.add(entryData); // store in action list
 
@@ -50,7 +49,7 @@ public class FindCauseService {
 					continue;
 
 				} else { // case: we found an action before
-					if(debug)
+					if(ExplainableEngineApplication.debug)
 						System.out.println("found rule: " + entryData);
 					foundRuleNames.add(entryData);
 					boolean areFoundActionsSubsetOfRuleActions = true;
@@ -71,7 +70,7 @@ public class FindCauseService {
 
 					if (areFoundActionsSubsetOfRuleActions) {
 						
-						if(debug)
+						if(ExplainableEngineApplication.debug)
 							System.out.println("found actoins are subset of rule actions");
 						
 						if (foundRule != null)
