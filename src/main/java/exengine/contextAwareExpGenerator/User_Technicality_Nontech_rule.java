@@ -22,8 +22,6 @@ public class User_Technicality_Nontech_rule {
 	{
 		{
 			more_times_AllowedTypes.add(1);
-			more_times_AllowedTypes.add(2);
-			more_times_AllowedTypes.add(3);
 		}
 	}
 
