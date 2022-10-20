@@ -22,7 +22,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	public static boolean debug = true;
 	public static boolean testing = true;
-	public static int testingScenario = 1;
+	public static int testingScenario = 2;
 
 	public static ArrayList<LogEntry> demoEntries;
 
@@ -48,13 +48,13 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public void initializeTestUserRepository() {
 		dataSer.deleteAllUsers();
 
-		User alice = new User("Alice", "1", Role.COWORKER, Technicality.TECHNICAL);
+		User alice = new User("Alice", "1", Role.COWORKER, Technicality.MEDTECH);
 		dataSer.saveNewUser(alice);
 
 		User bob = new User("Bob", "2", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(bob);
 
-		User chuck = new User("Chuck", "3", Role.GUEST, Technicality.NONTECH);
+		User chuck = new User("Chuck", "3", Role.COWORKER, Technicality.TECHNICAL);
 		dataSer.saveNewUser(chuck);
 
 		User dana = new User("Dana", "4", Role.GUEST, Technicality.TECHNICAL);

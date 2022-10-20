@@ -18,13 +18,12 @@ import exengine.datamodel.*;
 public class User_Role_Owner_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> role_owner_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			more_times_AllowedTypes.add(1);
-			more_times_AllowedTypes.add(2);
-			more_times_AllowedTypes.add(3);
-			more_times_AllowedTypes.add(4);
+			role_owner_AllowedTypes.add(1);
+			role_owner_AllowedTypes.add(2);
+			role_owner_AllowedTypes.add(3);
 		}
 	}
 
@@ -48,7 +47,7 @@ public class User_Role_Owner_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(more_times_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(role_owner_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;

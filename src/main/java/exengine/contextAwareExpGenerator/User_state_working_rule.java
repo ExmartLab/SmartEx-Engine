@@ -23,6 +23,7 @@ public class User_state_working_rule {
 
 			workingAllowedTypes.add(1);
 			workingAllowedTypes.add(2);
+			workingAllowedTypes.add(3);
 
 		}
 	}

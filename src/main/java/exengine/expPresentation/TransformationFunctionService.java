@@ -32,7 +32,7 @@ public class TransformationFunctionService {
 	public String getFactExplanation(Cause cause, Context context) {
 		return cause.getRule().isError()
 				? String.format("Hi %s,\n%s.", context.getExplaineeName(), cause.getRule().getErrorSolution())
-				: String.format("Hi %s,\n" + "%s because currently %s and %s", context.getExplaineeName(),
+				: String.format("Hi %s,\n" + "%s because currently %s and %s.", context.getExplaineeName(),
 						getActionsString(cause), getConditionsString(cause), getTriggerString(cause));
 	}
 

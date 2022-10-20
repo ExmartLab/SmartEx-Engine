@@ -22,6 +22,7 @@ public class User_state_meeting_rule {
 		{
 
 			meetingAllowedTypes.add(1);
+			meetingAllowedTypes.add(2);
 
 		}
 	}

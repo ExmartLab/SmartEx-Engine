@@ -44,9 +44,9 @@ public class ExplanationContextMappingService {
 		case 1:
 			return ExplanationType.SIMPLDEX;
 		case 2:
-			return ExplanationType.FACTEX;
-		case 3:
 			return ExplanationType.RULEEX;
+		case 3:
+			return ExplanationType.FACTEX;
 		case 4:
 			return ExplanationType.FULLEX;
 		}

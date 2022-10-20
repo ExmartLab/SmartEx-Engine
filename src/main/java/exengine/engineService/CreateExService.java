@@ -126,6 +126,9 @@ public class CreateExService {
 		if (type == null)
 			return "coudln't determine explanation type";
 
+		if (ExplainableEngineApplication.debug)
+			System.out.println("type: " + type.getValue());
+		
 		switch (type) {
 		case FULLEX:
 			explanation = exGenSer.getFullExplanation(cause, context);

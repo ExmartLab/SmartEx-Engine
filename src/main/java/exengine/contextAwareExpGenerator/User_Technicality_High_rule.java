@@ -18,12 +18,13 @@ import exengine.datamodel.*;
 public class User_Technicality_High_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> technical_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			more_times_AllowedTypes.add(1);
-			more_times_AllowedTypes.add(2);
-			more_times_AllowedTypes.add(3);
+			technical_AllowedTypes.add(1);
+			technical_AllowedTypes.add(2);
+			technical_AllowedTypes.add(3);
+			technical_AllowedTypes.add(4);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class User_Technicality_High_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(more_times_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(technical_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;

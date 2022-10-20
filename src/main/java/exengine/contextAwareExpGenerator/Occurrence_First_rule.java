@@ -22,6 +22,7 @@ public class Occurrence_First_rule {
 	{
 		{
 			first_times_AllowedTypes.add(4);
+			first_times_AllowedTypes.add(3);
 		}
 	}
 

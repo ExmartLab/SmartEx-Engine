@@ -18,11 +18,11 @@ import exengine.datamodel.*;
 public class User_Technicality_Medium_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> medtech_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			more_times_AllowedTypes.add(3);
-			more_times_AllowedTypes.add(4);
+			medtech_AllowedTypes.add(2);
+			medtech_AllowedTypes.add(4);
 		}
 	}
 
@@ -46,7 +46,7 @@ public class User_Technicality_Medium_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(more_times_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(medtech_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;
