@@ -18,12 +18,13 @@ import exengine.expPresentation.ExplanationType;
 public class ExplanationContextMappingService {
 
 	public ExplanationType getExplanationType(Context c1) {
-		
-		// IMPORTANT: Parameter needs to be exact name of the package with the rulebook classes
+
+		// IMPORTANT: Parameter needs to be exact name of the package with the rulebook
+		// classes
 		RuleBookRunner ruleBook2 = new RuleBookRunner("exengine.contextAwareExpGenerator");
 		NameValueReferableMap<Context> exfacts = new FactMap<>();
-		
-		//as a default, all explanation types are possible
+
+		// as a default, all explanation types are possible
 		List<Integer> exTypes = new ArrayList<Integer>();
 		exTypes.add(1);
 		exTypes.add(2);
@@ -32,24 +33,27 @@ public class ExplanationContextMappingService {
 
 		exfacts.put(new Fact<>(c1));
 
+		//running the rulebook
 		ruleBook2.setDefaultResult(exTypes);
 
 		ruleBook2.run(exfacts);
 		ruleBook2.getResult().ifPresent(result -> System.out.println("Final allowed Expalnation Types are: " + result));
 
-		if(ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.debug)
 			System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
 
-		switch (c1.getTheExpType()) {
-		case 1:
+		//getting the resulting type from the rulebook
+		int type = c1.getTheExpType();
+
+		//returning the resulting type as the respective enum constant
+		if (type == ExplanationType.SIMPLDEX.getValue())
 			return ExplanationType.SIMPLDEX;
-		case 2:
+		if (type == ExplanationType.RULEEX.getValue())
 			return ExplanationType.RULEEX;
-		case 3:
+		if (type == ExplanationType.FACTEX.getValue())
 			return ExplanationType.FACTEX;
-		case 4:
+		if (type == ExplanationType.FULLEX.getValue())
 			return ExplanationType.FULLEX;
-		}
 		return null;
 	}
 

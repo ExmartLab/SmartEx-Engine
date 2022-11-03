@@ -22,7 +22,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	public static boolean debug = true;
 	public static boolean testing = true;
-	public static int testingScenario = 2;
+	public static int testingScenario = 5;
 
 	public static ArrayList<LogEntry> demoEntries;
 
