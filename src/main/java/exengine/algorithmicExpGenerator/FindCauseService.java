@@ -6,9 +6,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.datamodel.Cause;
+import exengine.datamodel.RuleCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
+import exengine.datamodel.Cause;
+import exengine.datamodel.Error;
+import exengine.datamodel.ErrorCause;
 
 @Service
 public class FindCauseService {
@@ -16,15 +19,15 @@ public class FindCauseService {
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
 
-	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules) {
+	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors) {
 		Cause cause = null;
 
 		for (LogEntry l : logEntries)
-			if(ExplainableEngineApplication.debug)
+			if (ExplainableEngineApplication.debug)
 				System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
-		ArrayList<String> foundActions = new ArrayList<String>();
+		ArrayList<String> foundRuleActions = new ArrayList<String>();
 		ArrayList<String> foundRuleNames = new ArrayList<String>();
 
 		/*
@@ -34,22 +37,30 @@ public class FindCauseService {
 		// iterate through Log Entries in reversed order
 		for (int i = logEntries.size() - 1; i >= 0; i--) { // read each line
 
+			//
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
-			if(ExplainableEngineApplication.debug)
+			if (ExplainableEngineApplication.debug)
 				System.out.println(i + ":\n" + entryData);
 
-			if (isInActions(entryData, dbRules)) { // if it is an action
-				if(ExplainableEngineApplication.debug)
-					System.out.println("found action: " + entryData);
-				foundActions.add(entryData); // store in action list
+			// error-if case before?
+			if (isInErrorActions(entryData, dbErrors) && foundRuleActions.isEmpty()) {
+				// need to check for empty rule action list to be sure the error is the event to
+				// be explained (because no rule was triggered aftwerwards)
+				return getErrorCause(entryData);
+			}
+
+			if (isInRuleActions(entryData, dbRules)) { // if it is an action
+				if (ExplainableEngineApplication.debug)
+					System.out.println("found rule action: " + entryData);
+				foundRuleActions.add(entryData); // store in action list
 
 			} else if (isInRules(entryData, dbRules)) { // if it is a rule
 
-				if (foundActions.isEmpty()) {
+				if (foundRuleActions.isEmpty()) {
 					continue;
 
 				} else { // case: we found an action before
-					if(ExplainableEngineApplication.debug)
+					if (ExplainableEngineApplication.debug)
 						System.out.println("found rule: " + entryData);
 					foundRuleNames.add(entryData);
 					boolean areFoundActionsSubsetOfRuleActions = true;
@@ -61,23 +72,23 @@ public class FindCauseService {
 							foundRule = r;
 							// r is the rule we want to get the actions of
 
-							areFoundActionsSubsetOfRuleActions = checkIfFoundActionsAreSubsetOfRuleActions(foundActions,
-									r);
+							areFoundActionsSubsetOfRuleActions = checkIfFoundActionsAreSubsetOfRuleActions(
+									foundRuleActions, r);
 
 						}
 
 					}
 
 					if (areFoundActionsSubsetOfRuleActions) {
-						
-						if(ExplainableEngineApplication.debug)
+
+						if (ExplainableEngineApplication.debug)
 							System.out.println("found actoins are subset of rule actions");
-						
+
 						if (foundRule != null)
 							oneORSatisfied = triggerConditionCheck(i, foundRule, logEntries);
 						if (oneORSatisfied) {
 							if (foundRule != null) {
-								cause = new Cause(trigger, foundRule.getConditions(), foundRule.getActions(),
+								cause = new RuleCause(trigger, foundRule.getConditions(), foundRule.getActions(),
 										foundRule);
 							}
 						}
@@ -93,10 +104,31 @@ public class FindCauseService {
 		return cause;
 	}
 
-	public boolean isInActions(String toCheck, List<Rule> dbRules) {
+	public ErrorCause getErrorCause(String entryData) {
+		ErrorCause errorCause = new ErrorCause(null, null, null);
+		// TODO create real errorCause
+		return errorCause;
+	}
+
+	// checks if entry data string is in rule actions
+	public boolean isInRuleActions(String toCheck, List<Rule> dbRules) {
 		boolean result = false;
+		// check for rule actions
 		for (Rule r : dbRules) {
 			for (LogEntry action : r.getActions())
+				if ((action.name + " " + action.state).equals(toCheck)) {
+					result = true;
+				}
+		}
+		return result;
+	}
+
+	// checks if entry data string is in error actions
+	public boolean isInErrorActions(String toCheck, List<Error> dbErrors) {
+		boolean result = false;
+		// check for error actions
+		for (Error e : dbErrors) {
+			for (LogEntry action : e.getActions())
 				if ((action.name + " " + action.state).equals(toCheck)) {
 					result = true;
 				}

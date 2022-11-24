@@ -18,10 +18,12 @@ import exengine.datamodel.LogEntry;
 @Service
 public class HomeAssistantConnectionService {
 
+	//token needs to be a long lived home assistant bearer token (create one under http://IP_ADDRESS:8123/profile)
 	String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIzMDlmODIyMzYxYTc0MDBmYmYxNTJhOTg2ZjU1MzlmMiIsImlhdCI6MTY0NjkwOTUwMiwiZXhwIjoxOTYyMjY5NTAyfQ.Fdov6W_HistZahjSurVQp4Tiln7UivGJR3JkqhXRSDk";
 	//homeassistant.local can in URLs be replaced by 192.168.0.113
 	String apiurl = "http://homeassistant.local:8123/api/";
 	String logsurl = "http://homeassistant.local:8123/api/logbook/"; //without timecode
+	static String explanationurl = "http://homeassistant.local:8123/api/states/sensor.virtual_explanation";
 	String jsonsample = "[{\"when\": \"2022-04-07T13:40:19.738143+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:40:57.255034+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:07.102948+00:00\", \"name\": \"Worldclock Sensor\", \"state\": \"15:42\", \"entity_id\": \"sensor.worldclock_sensor\", \"icon\": \"mdi:clock\"}, {\"when\": \"2022-04-07T13:42:07.255856+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"off\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}, {\"when\": \"2022-04-07T13:42:17.580947+00:00\", \"name\": \"motion 1 ias_zone\", \"state\": \"on\", \"entity_id\": \"binary_sensor.lumi_lumi_sensor_motion_aq2_ias_zone\"}]";
 
 	String s ="";
@@ -51,6 +53,22 @@ public class HomeAssistantConnectionService {
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {s = resp;}).join();
 		return s;
 		//client.sendAsync(request, BodyHandlers.ofFileDownload(Paths.get("C:\\Users\\PC\\Documents\\logs.txt")), null);
+	}
+
+	//testing main method
+//	public static void main(String[] args) {
+//		HomeAssistantConnectionService haSer = new HomeAssistantConnectionService();
+//		haSer.postExplanation("test");
+//	}
+//	
+	public String postExplanation(String state) {
+		HttpClient client = HttpClient.newHttpClient();
+
+		String json = "{\"entity_id\": \"sensor.virtual_explanation\" ,\"state\": \"+ state +\",\"attributes\": {\"friendly_name\":\"Explanation\",\"unique_id\":\"explanation\",\"device_class\": \"string\"}}";
+		
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(explanationurl)).POST(HttpRequest.BodyPublishers.ofString(json)).setHeader("Authorization", "Bearer " + token).build();
+		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {s = resp;}).join();
+		return s;
 	}
 	
 	public ArrayList<LogEntry> parseJSON(String json) {

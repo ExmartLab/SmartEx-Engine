@@ -46,6 +46,16 @@ public class RESTController {
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 
+	@PostMapping("/show")
+	public ResponseEntity<String> runShowCases() {
+		/* 
+		 * TODO implement showcases (from the paper)
+		 * initialize scenario
+		 * + post it to HA to display
+		 */
+		return new ResponseEntity<>("Debugging turned off", HttpStatus.OK);
+	}
+
 	@PostMapping("/debugoff")
 	public ResponseEntity<String> debugOff() {
 		if (ExplainableEngineApplication.debug)

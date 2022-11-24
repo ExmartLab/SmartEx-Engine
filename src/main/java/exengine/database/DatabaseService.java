@@ -1,6 +1,5 @@
 package exengine.database;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +17,9 @@ public class DatabaseService {
 
 	@Autowired
 	RuleRepository ruleRepo;
+
+	@Autowired
+	ErrorRepository errorRepo;
 
 	@Autowired
 	OccurrenceEntryRepository occEntrRepo;
@@ -47,6 +49,17 @@ public class DatabaseService {
 
 	public String findRuleDescriptionByRuleName(String ruleName) {
 		return ruleRepo.findByName(ruleName).getRuleDescription();
+	}
+	
+	/*
+	 * ERROR OPERATIONS
+	 */
+	public List<exengine.datamodel.Error> findAllErrors() {
+		return errorRepo.findAll();
+	}
+
+	public void saveNewError (exengine.datamodel.Error error) {
+		errorRepo.save(error);
 	}
 
 	/*
@@ -100,11 +113,12 @@ public class DatabaseService {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 	}
 
+	//TODO commenting and debugging instead of printing
 	public Occurrence findOccurrence(String userId, String ruleId, int days) {
 		System.out.println("getting occurrence for user " + userId + " and rule " + ruleId);
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
-		long reference = (long) (days) * 24l * 60l * 60l * 1000l;
+		long reference =  new Date().getTime() - ((long) (days) * 24l * 60l * 60l * 1000l);
 		for (OccurrenceEntry entry : entries)
 		{
 			System.out.println("looking at entry: " + new Date(entry.getTime()).toString());

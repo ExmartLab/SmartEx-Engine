@@ -12,6 +12,7 @@ import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
 import exengine.contextManager.ContextService;
 import exengine.database.*;
 import exengine.datamodel.*;
+import exengine.datamodel.Error;
 import exengine.expPresentation.*;
 import exengine.haconnection.HomeAssistantConnectionService;
 
@@ -62,8 +63,9 @@ public class CreateExService {
 		// default value for return string
 		String explanation = "no explanation found";
 
-		// query Rules from DB
+		// query Rules & Errors from DB
 		List<Rule> dbRules = dataSer.findAllRules();
+		List<Error> dbErrors = dataSer.findAllErrors();
 
 		if (ExplainableEngineApplication.debug)
 			System.out.println("\n------ EXPLANATION ALGORITHM ------");
@@ -71,19 +73,21 @@ public class CreateExService {
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules);
+		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors);
+		// RuleCause cause = findCauseSer.findCause(logEntries, dbRules);
 
 		// return in case no cause has been found
 		if (cause == null)
 			return "couldn't find cause to explain";
 
-		if (ExplainableEngineApplication.debug) {
-			System.out.println("\nCause:");
-			System.out.println("ruleId: " + cause.getRule().ruleId);
-			System.out.println("trigger: " + cause.getTriggerString());
-			System.out.println("conditions: " + cause.getConditionsString());
-			System.out.println("actions: " + cause.getActionsString());
-		}
+		//TODO debugging
+//		if (ExplainableEngineApplication.debug) {
+//			System.out.println("\nCause:");
+//			System.out.println("ruleId: " + cause.getRule().ruleId);
+//			System.out.println("trigger: " + cause.getTriggerString());
+//			System.out.println("conditions: " + cause.getConditionsString());
+//			System.out.println("actions: " + cause.getActionsString());
+//		}
 
 		/*
 		 * STEP 2: GET CONTEXT

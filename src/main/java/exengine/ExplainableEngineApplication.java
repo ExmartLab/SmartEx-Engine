@@ -91,12 +91,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		conditions = new ArrayList<String>();
 		conditions.add("daily energy consumption is higher than the threshold");
 		dataSer.saveNewRule(new Rule("rule 1 (coffee)", "1", demoEntries.get(1), triggers, conditions, actions, idAlice,
-				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached", false,
-				null));
-
-		// (String ruleName, int ruleId, LogEntry ruleEntry, ArrayList<LogEntry>
-		// trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, int
-		// ownerId, String ruleDescription, boolean isError)
+				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"));
 
 		initiateDemoEntries(2);
 		triggers = new ArrayList<LogEntry>();
@@ -108,16 +103,19 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 //		actions.add("tv_mute null");
 
 		dataSer.saveNewRule(new Rule("rule 2 (tv mute)", "2", demoEntries.get(2), triggers, conditions, actions, idBob,
-				"Rule_2: mutes the TV if TV is playing while a meeting is going on", false, null));
+				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
 
-		initiateDemoEntries(5);
-		triggers = new ArrayList<LogEntry>();
-		triggers.add(demoEntries.get(0));
-		conditions = new ArrayList<String>();
-		actions = new ArrayList<LogEntry>();
-		actions.add(demoEntries.get(2));
-		dataSer.saveNewRule(new Rule("Deebot error", "5", demoEntries.get(1), triggers, conditions, actions, idNoOwner,
-				"the robotic vacuum cleaner is stuck", true, "remove barrier or set robot back on track"));
+		/*
+		 * TODO add error to db
+		 */
+//		initiateDemoEntries(5);
+//		triggers = new ArrayList<LogEntry>();
+//		triggers.add(demoEntries.get(0));
+//		conditions = new ArrayList<String>();
+//		actions = new ArrayList<LogEntry>();
+//		actions.add(demoEntries.get(2));
+//		dataSer.saveNewRule(new Rule("Deebot error", "5", demoEntries.get(1), triggers, conditions, actions, idNoOwner,
+//				"the robotic vacuum cleaner is stuck", true, "remove barrier or set robot back on track"));
 	}
 
 	public void initializeTestOccurrenceRepository() {
@@ -135,9 +133,11 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		switch (scenario) {
 		case 1:
 
+			//trigger LogEntry
 			demoEntries.add(
 					new LogEntry("2022-06-23T09:50:50.014573+00:00", "state change", null, "scene.state_change", null));
 
+			//rule LogEntry
 			other = new ArrayList<String>();
 			other.add("message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");
 			other.add("source\": \"state of sensor.smart_plug_social_room_coffee_today_s_consumption");
@@ -145,6 +145,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			demoEntries.add(new LogEntry("2022-06-23T09:50:50.229746+00:00", "sc1: Goal-Order-Conflict", null,
 					"automation.test_scenario_watching_tv_light_off", other));
 
+			//action LogEntry
 			other = new ArrayList<String>();
 			other.add("context_event_type\": \"automation_triggered");
 			other.add("context_domain\": \"automation");
@@ -170,9 +171,11 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			demoEntries.add(
 					new LogEntry("2022-06-23T11:19:30.181206+00:00", "Lab TV", "idle", "media_player.lab_tv", other));
 
+			//trigger LogEntry
 			demoEntries.add(
 					new LogEntry("2022-06-23T11:19:31.024951+00:00", "Lab TV", "playing", "media_player.lab_tv", null));
 
+			//rule LogEntry
 			other = new ArrayList<String>();
 			other.add("message\": \"triggered by state of media_player.lab_tv");
 			other.add("source\": \"state of media_player.lab_tv");
@@ -184,6 +187,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			demoEntries.add(new LogEntry("2022-06-23T11:19:31.028089+00:00", "sc2: Multi-User-Conflict", "null",
 					"automation.sc2_multi_user_conflict", other));
 
+			//action LogEntry
 			other = new ArrayList<String>();
 			other.add("icon\": \"mdi:television");
 			other.add("context_event_type\": \"automation_triggered");
@@ -202,6 +206,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			break;
 
 		case 5:
+			//TODO name LogEntries in error case
 			demoEntries.add(new LogEntry("2022-06-23T09:07:26.920189+00:00", "Deebot", "idle", "vacuum.deebot", null));
 			demoEntries.add(new LogEntry("2022-06-23T09:07:26.932243+00:00", "Deebot", "error", "vacuum.deebot", null));
 

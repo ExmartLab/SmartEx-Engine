@@ -1,4 +1,4 @@
-package exengine.contextAwareExpGenerator;
+package exengine.contextAwareExpGenerator.ruleBookForRules;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,17 +14,14 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import exengine.datamodel.*;
 
-@Rule(order = 4)
-public class User_Role_Coworker_rule {
+@Rule(order = 2)
+public class Occurrence_More_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> role_coworker_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> more_times_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			role_coworker_AllowedTypes.add(1);
-			role_coworker_AllowedTypes.add(2);
-			role_coworker_AllowedTypes.add(3);
-			role_coworker_AllowedTypes.add(4);
+			more_times_AllowedTypes.add(1);
 		}
 	}
 
@@ -38,7 +35,7 @@ public class User_Role_Coworker_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getExplaineeRole() == Role.COWORKER);
+		return con.stream().anyMatch(context -> context.getOccurrence() == Occurrence.MORE);
 	}
 
 	@Then
@@ -48,7 +45,7 @@ public class User_Role_Coworker_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(role_coworker_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(more_times_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;
@@ -57,6 +54,5 @@ public class User_Role_Coworker_rule {
 		con.get(0).setTheExpType(Collections.max(exType));
 
 	}
-	
-}
 
+}
