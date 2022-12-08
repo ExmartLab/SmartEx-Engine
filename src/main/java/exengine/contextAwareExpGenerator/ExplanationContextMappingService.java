@@ -73,7 +73,6 @@ public class ExplanationContextMappingService {
 			exTypes.add(1);
 			exTypes.add(2);
 			exTypes.add(3);
-			exTypes.add(4);
 
 			exfacts.put(new Fact<>(c1));
 
@@ -91,14 +90,12 @@ public class ExplanationContextMappingService {
 			int type = c1.getTheExpType();
 
 			// returning the resulting type as the respective enum constant
-			if (type == ExplanationType.SIMPLDEX.getValue())
-				return ExplanationType.SIMPLDEX;
-			if (type == ExplanationType.RULEEX.getValue())
-				return ExplanationType.RULEEX;
-			if (type == ExplanationType.FACTEX.getValue())
-				return ExplanationType.FACTEX;
-			if (type == ExplanationType.FULLEX.getValue())
-				return ExplanationType.FULLEX;
+			if (type == ExplanationType.ERRFULLEX.getValue())
+				return ExplanationType.ERRFULLEX;
+			if (type == ExplanationType.ERRSOLEX.getValue())
+				return ExplanationType.ERRSOLEX;
+			if (type == ExplanationType.ERROREX.getValue())
+				return ExplanationType.ERROREX;
 			return null;
 
 		}

@@ -111,7 +111,6 @@ public class CreateExService {
 		if (ExplainableEngineApplication.debug) {
 			System.out.println("\nContext:");
 			System.out.println("owner: " + context.getOwnerName());
-			System.out.println("rule: " + context.getRuleDescription());
 			System.out.println("explainee: " + context.getExplaineeName());
 			System.out.println("role: " + context.getExplaineeRole().toString());
 			System.out.println("state: " + context.getExplaineeState().toString());
@@ -122,8 +121,9 @@ public class CreateExService {
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		ExplanationType type = exTypeSer.getExplanationType(context);
-
+		ExplanationType type = exTypeSer.getExplanationType(context, cause);
+		type = ExplanationType.FULLEX; //TODO remove
+		
 		/*
 		 * STEP 4: generate the desired explanation
 		 */
@@ -133,20 +133,8 @@ public class CreateExService {
 		if (ExplainableEngineApplication.debug)
 			System.out.println("type: " + type.getValue());
 		
-		switch (type) {
-		case FULLEX:
-			explanation = exGenSer.getFullExplanation(cause, context);
-			break;
-		case RULEEX:
-			explanation = exGenSer.getRuleExplanation(cause, context);
-			break;
-		case FACTEX:
-			explanation = exGenSer.getFactExplanation(cause, context);
-			break;
-		case SIMPLDEX:
-			explanation = exGenSer.getSimplifiedExplanation(cause, context);
-			break;
-		}
+		explanation = exGenSer.transformExplanation(type, cause, context);
+		
 
 		if (ExplainableEngineApplication.debug) {
 			System.out.println("\nFinalExplanation:");

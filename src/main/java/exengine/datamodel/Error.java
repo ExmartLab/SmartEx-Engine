@@ -29,5 +29,31 @@ public class Error {
 		this.actions = actions;
 	}
 
+	public String getErrorId() {
+		return errorId;
+	}
+
+	public void setErrorId(String errorId) {
+		this.errorId = errorId;
+	}
+
+	public String getSolution() {
+		return solution;
+	}
+
+	public void setSolution(String solution) {
+		this.solution = solution;
+	}
+
+	public String getImplication() {
+		return implication;
+	}
+
+	public void setImplication(String implication) {
+		this.implication = implication;
+	}
+	
+	
+
 	
 }

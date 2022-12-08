@@ -21,7 +21,11 @@ public class FindCauseService {
 
 	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors) {
 		Cause cause = null;
-
+		System.out.println("Errors:");
+		for(Error e : dbErrors)
+			for(LogEntry en : e.actions)
+				System.out.println(en.name + " " + en.state);
+			
 		for (LogEntry l : logEntries)
 			if (ExplainableEngineApplication.debug)
 				System.out.println(l.toString());
@@ -45,8 +49,9 @@ public class FindCauseService {
 			// error-if case before?
 			if (isInErrorActions(entryData, dbErrors) && foundRuleActions.isEmpty()) {
 				// need to check for empty rule action list to be sure the error is the event to
-				// be explained (because no rule was triggered aftwerwards)
-				return getErrorCause(entryData);
+				// be explained (because no rule was triggered after the error occurred)
+				System.out.println("returning error Cause");
+				return getErrorCause(logEntries, i, dbErrors);
 			}
 
 			if (isInRuleActions(entryData, dbRules)) { // if it is an action
@@ -104,9 +109,17 @@ public class FindCauseService {
 		return cause;
 	}
 
-	public ErrorCause getErrorCause(String entryData) {
-		ErrorCause errorCause = new ErrorCause(null, null, null);
-		// TODO create real errorCause
+	public ErrorCause getErrorCause(ArrayList<LogEntry> logEntries, int line, List<Error> dbErrors) {
+		ErrorCause errorCause = null;
+		LogEntry actionEntry = logEntries.get(line);
+		for(Error e : dbErrors)
+		{
+			for(LogEntry action : e.actions) {
+				if((action.name + " " + action.state).equals(actionEntry.name + " " + actionEntry.state)) {
+					return new ErrorCause(e.actions, e.implication, e.solution, e);
+				}
+			}
+		}
 		return errorCause;
 	}
 

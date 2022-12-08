@@ -64,7 +64,7 @@ public class HomeAssistantConnectionService {
 	public String postExplanation(String state) {
 		HttpClient client = HttpClient.newHttpClient();
 
-		String json = "{\"entity_id\": \"sensor.virtual_explanation\" ,\"state\": \"+ state +\",\"attributes\": {\"friendly_name\":\"Explanation\",\"unique_id\":\"explanation\",\"device_class\": \"string\"}}";
+		String json = "{\"entity_id\": \"sensor.virtual_explanation\" ,\"state\": \"" + state + "\",\"attributes\": {\"friendly_name\":\"Explanation\",\"unique_id\":\"explanation\",\"device_class\": \"string\"}}";
 		
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(explanationurl)).POST(HttpRequest.BodyPublishers.ofString(json)).setHeader("Authorization", "Bearer " + token).build();
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {s = resp;}).join();
