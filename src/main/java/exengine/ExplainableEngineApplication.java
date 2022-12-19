@@ -52,7 +52,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		User alice = new User("Alice", "1", Role.COWORKER, Technicality.MEDTECH);
 		dataSer.saveNewUser(alice);
 
-		User bob = new User("Bob", "2", Role.COWORKER, Technicality.TECHNICAL);
+		User bob = new User("Bob", "2", Role.COWORKER, Technicality.NONTECH);
 		dataSer.saveNewUser(bob);
 
 		User chuck = new User("Chuck", "3", Role.COWORKER, Technicality.TECHNICAL);

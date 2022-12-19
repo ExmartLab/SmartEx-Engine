@@ -34,10 +34,10 @@ public class CreateExService {
 	ContextService conSer;
 
 	@Autowired
-	ExplanationContextMappingService exTypeSer;
+	ExplanationContextMappingService contextMappingSer;
 
 	@Autowired
-	TransformationFunctionService exGenSer;
+	TransformationFunctionService transformFuncSer;
 
 	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
@@ -121,8 +121,7 @@ public class CreateExService {
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		ExplanationType type = exTypeSer.getExplanationType(context, cause);
-		type = ExplanationType.FULLEX; //TODO remove
+		ExplanationType type = contextMappingSer.getExplanationType(context, cause);
 		
 		/*
 		 * STEP 4: generate the desired explanation
@@ -133,7 +132,7 @@ public class CreateExService {
 		if (ExplainableEngineApplication.debug)
 			System.out.println("type: " + type.getValue());
 		
-		explanation = exGenSer.transformExplanation(type, cause, context);
+		explanation = transformFuncSer.transformExplanation(type, cause, context);
 		
 
 		if (ExplainableEngineApplication.debug) {
@@ -141,7 +140,11 @@ public class CreateExService {
 			System.out.println(explanation);
 			System.out.println("\n------ EXPLANATION CREATED ------\n");
 		}
-
+		
+		//display explanation in home assistant
+//		haSer.postExplanation(explanation);
+//		haSer.postExplanation("test");
+		
 		return explanation;
 	}
 

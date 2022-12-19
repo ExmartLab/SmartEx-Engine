@@ -46,14 +46,32 @@ public class RESTController {
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 
-	@PostMapping("/show")
-	public ResponseEntity<String> runShowCases() {
-		/* 
-		 * TODO implement showcases (from the paper)
-		 * initialize scenario
-		 * + post it to HA to display
-		 */
-		return new ResponseEntity<>("Debugging turned off", HttpStatus.OK);
+	@GetMapping("/show")
+	public ResponseEntity<String> runShowCases(
+			@RequestParam(value = "scenarioid", defaultValue = "0") String scenarioId,
+			@RequestParam(value = "userid", defaultValue = "0") String userId,
+			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
+			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
+
+		// initiating integer variables
+		int minNumber = 30;
+		int scenarioNumber = 0;
+
+		// trying to assign the given values to the integer variables
+		try {
+			scenarioNumber = Integer.parseInt(scenarioId);
+		} catch (Exception e) {
+		}
+		if (ExplainableEngineApplication.debug)
+			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
+		ExplainableEngineApplication.testingScenario = scenarioNumber;
+		ExplainableEngineApplication.initiateDemoEntries(scenarioNumber);
+		ExplainableEngineApplication.testing = true;
+		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
+		
+		// turn testing off again
+		ExplainableEngineApplication.testing = false;
+		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 
 	@PostMapping("/debugoff")
@@ -69,6 +87,21 @@ public class RESTController {
 		System.out.println("HTTP POST: Debugging turned on");
 		ExplainableEngineApplication.debug = true;
 		return new ResponseEntity<>("Debugging turned on", HttpStatus.CREATED);
+	}
+
+	@PostMapping("/testingoff")
+	public ResponseEntity<String> testingOff() {
+		if (ExplainableEngineApplication.debug)
+			System.out.println("HTTP POST: Testing turned off");
+		ExplainableEngineApplication.testing = false;
+		return new ResponseEntity<>("Testing turned off", HttpStatus.CREATED);
+	}
+
+	@PostMapping("/testingon")
+	public ResponseEntity<String> testingOn() {
+		System.out.println("HTTP POST: Testing turned on");
+		ExplainableEngineApplication.testing = true;
+		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}
 
 	@GetMapping("/greeting")

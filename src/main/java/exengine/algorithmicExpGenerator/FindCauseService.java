@@ -21,10 +21,6 @@ public class FindCauseService {
 
 	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors) {
 		Cause cause = null;
-		System.out.println("Errors:");
-		for(Error e : dbErrors)
-			for(LogEntry en : e.actions)
-				System.out.println(en.name + " " + en.state);
 			
 		for (LogEntry l : logEntries)
 			if (ExplainableEngineApplication.debug)

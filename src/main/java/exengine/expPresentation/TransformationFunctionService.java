@@ -82,10 +82,12 @@ public class TransformationFunctionService {
 						getActionsString(cause), cause.getError().getImplication(), cause.getError().getSolution());
 				break;
 			case ERRSOLEX:
-				//TODO
+				explanation = String.format("Hi %s,\nto resolve, %s.", context.getExplaineeName(),
+						cause.getError().getSolution());
 				break;
 			case ERROREX:
-				//TODO
+				explanation = String.format("Hi %s,\n%s.", context.getExplaineeName(),
+						cause.getError().getImplication());
 				break;
 			default:
 				break;
