@@ -20,15 +20,13 @@ public class Rule {
 	public String actionsString;
 	public String ownerId;
 	private String ruleDescription;
-	private boolean isError;
-	private String errorSolution;
 	public String ruleId;
 
 	public Rule() {
 	}
 
 	public Rule(String ruleName, String ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
-			ArrayList<LogEntry> actions, String ownerId, String ruleDescription, boolean isError, String errorSolution) {
+			ArrayList<LogEntry> actions, String ownerId, String ruleDescription) {
 		this.ruleName = ruleName;
 		this.ruleId = ruleId;
 		this.ruleEntry = ruleEntry;
@@ -37,8 +35,6 @@ public class Rule {
 		this.actions = actions;
 		this.ownerId = ownerId;
 		this.ruleDescription = ruleDescription;
-		this.errorSolution = errorSolution;
-		this.setError(isError);
 
 		triggerString = trigger == null ? "[]" : trigger.toString();
 		conditionsString = conditions == null ? "[]" : conditions.toString();
@@ -47,8 +43,8 @@ public class Rule {
 
 	@Override
 	public String toString() {
-		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s', owner='%s', error=%b]", id, ruleName,
-				triggerString, conditionsString, actionsString, ownerId, isError);
+		return String.format("Path[id=%s, name='%s', trigger='%s', action='%s', owner='%s']", id, ruleName,
+				triggerString, conditionsString, actionsString, ownerId);
 	}
 
 	public String getId() {
@@ -136,14 +132,6 @@ public class Rule {
 		this.ruleDescription = ruleDescription;
 	}
 
-	public boolean isError() {
-		return isError;
-	}
-
-	public void setError(boolean isError) {
-		this.isError = isError;
-	}
-
 	public String getRuleId() {
 		return ruleId;
 	}
@@ -158,13 +146,5 @@ public class Rule {
 
 	public void setRuleEntry(LogEntry ruleEntry) {
 		this.ruleEntry = ruleEntry;
-	}
-
-	public String getErrorSolution() {
-		return errorSolution;
-	}
-
-	public void setErrorSolution(String errorSolution) {
-		this.errorSolution = errorSolution;
 	}
 }

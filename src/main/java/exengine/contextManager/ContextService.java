@@ -16,28 +16,46 @@ public class ContextService {
 
 	public Context getAllContext(Cause cause, String explaineeId, State userState, String userLocation) {
 
+		// initialize return value with null as default
+		Context context = null;
+		Occurrence occurrence = null;
+		String id = null;
+
 		// get explainee and ruleOwner from database
 		User explainee = dataSer.findUserByUserId(explaineeId);
 
-		User ruleOwner = dataSer.findOwnerByRuleName(cause.getRule().getRuleName());
-		// set dummy user in case rule has no owner (e.g. errors)
-		if (ruleOwner == null)
-			ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);
+		// Rule case
+		if (cause.getClass().equals(RuleCause.class)) {
+			
+			id = ((RuleCause) cause).getRule().getRuleId();
 
-		String ruleDescription = cause.getRule().getRuleDescription();
+			occurrence = dataSer.findOccurrence(explaineeId, id, 90);
 
-		Occurrence occurrence = dataSer.findOccurrence(explaineeId, cause.getRule().getRuleId(), 90);
+			User ruleOwner = dataSer.findOwnerByRuleName(((RuleCause) cause).getRule().getRuleName());
+			// set default user in case rule has no owner
+			if (ruleOwner == null)
+				ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);
 
+			// check if explainee is Owner and set Role accordingly
+			if (explainee.getId().equals(ruleOwner.getId()))
+				explainee.setRole(Role.OWNER);
+
+			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), userState,
+					explainee.getName(), ruleOwner.getName());
+		}
+		// Error case
+		else if (cause.getClass().equals(ErrorCause.class)) {
+			
+			id = ((ErrorCause) cause).getError().getErrorId();
+					
+			occurrence = dataSer.findOccurrence(explaineeId, id, 90);
+			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), userState,
+					explainee.getName(), null);
+		}
 		// adding the current occurrence
 		dataSer.saveNewOccurrenceEntry(
-				new OccurrenceEntry(explaineeId, cause.getRule().getRuleId(), new Date().getTime()));
+		new OccurrenceEntry(explaineeId, id, new Date().getTime()));
 
-		// check if explainee is Owner and set Role accordingly
-		if (explainee.getId().equals(ruleOwner.getId()))
-			explainee.setRole(Role.OWNER);
-
-		Context context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), userState,
-				explainee.getName(), ruleOwner.getName(), ruleDescription);
 		return context;
 	}
 

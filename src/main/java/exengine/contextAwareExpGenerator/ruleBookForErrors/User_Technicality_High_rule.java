@@ -1,4 +1,4 @@
-package exengine.contextAwareExpGenerator;
+package exengine.contextAwareExpGenerator.ruleBookForErrors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -14,14 +14,16 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 
 import exengine.datamodel.*;
 
-@Rule(order = 4)
-public class User_Role_Guest_rule {
+@Rule(order = 3)
+public class User_Technicality_High_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> role_guest_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> technical_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			role_guest_AllowedTypes.add(1);
+			technical_AllowedTypes.add(1);
+			technical_AllowedTypes.add(2);
+			technical_AllowedTypes.add(3);
 		}
 	}
 
@@ -35,7 +37,7 @@ public class User_Role_Guest_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getExplaineeRole() == Role.GUEST);
+		return con.stream().anyMatch(context -> context.getExplaineeTechnicality() == Technicality.TECHNICAL);
 	}
 
 	@Then
@@ -45,7 +47,7 @@ public class User_Role_Guest_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(role_guest_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(technical_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;
@@ -56,5 +58,3 @@ public class User_Role_Guest_rule {
 	}
 	
 }
-
-

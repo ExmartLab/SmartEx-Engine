@@ -12,6 +12,7 @@ import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
 import exengine.contextManager.ContextService;
 import exengine.database.*;
 import exengine.datamodel.*;
+import exengine.datamodel.Error;
 import exengine.expPresentation.*;
 import exengine.haconnection.HomeAssistantConnectionService;
 
@@ -33,10 +34,10 @@ public class CreateExService {
 	ContextService conSer;
 
 	@Autowired
-	ExplanationContextMappingService exTypeSer;
+	ExplanationContextMappingService contextMappingSer;
 
 	@Autowired
-	TransformationFunctionService exGenSer;
+	TransformationFunctionService transformFuncSer;
 
 	public String getExplanation(int min, String userId, String userState, String userLocation) {
 
@@ -62,8 +63,9 @@ public class CreateExService {
 		// default value for return string
 		String explanation = "no explanation found";
 
-		// query Rules from DB
+		// query Rules & Errors from DB
 		List<Rule> dbRules = dataSer.findAllRules();
+		List<Error> dbErrors = dataSer.findAllErrors();
 
 		if (ExplainableEngineApplication.debug)
 			System.out.println("\n------ EXPLANATION ALGORITHM ------");
@@ -71,19 +73,21 @@ public class CreateExService {
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules);
+		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors);
+		// RuleCause cause = findCauseSer.findCause(logEntries, dbRules);
 
 		// return in case no cause has been found
 		if (cause == null)
 			return "couldn't find cause to explain";
 
-		if (ExplainableEngineApplication.debug) {
-			System.out.println("\nCause:");
-			System.out.println("ruleId: " + cause.getRule().ruleId);
-			System.out.println("trigger: " + cause.getTriggerString());
-			System.out.println("conditions: " + cause.getConditionsString());
-			System.out.println("actions: " + cause.getActionsString());
-		}
+		//TODO debugging
+//		if (ExplainableEngineApplication.debug) {
+//			System.out.println("\nCause:");
+//			System.out.println("ruleId: " + cause.getRule().ruleId);
+//			System.out.println("trigger: " + cause.getTriggerString());
+//			System.out.println("conditions: " + cause.getConditionsString());
+//			System.out.println("actions: " + cause.getActionsString());
+//		}
 
 		/*
 		 * STEP 2: GET CONTEXT
@@ -107,7 +111,6 @@ public class CreateExService {
 		if (ExplainableEngineApplication.debug) {
 			System.out.println("\nContext:");
 			System.out.println("owner: " + context.getOwnerName());
-			System.out.println("rule: " + context.getRuleDescription());
 			System.out.println("explainee: " + context.getExplaineeName());
 			System.out.println("role: " + context.getExplaineeRole().toString());
 			System.out.println("state: " + context.getExplaineeState().toString());
@@ -118,8 +121,8 @@ public class CreateExService {
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		ExplanationType type = exTypeSer.getExplanationType(context);
-
+		ExplanationType type = contextMappingSer.getExplanationType(context, cause);
+		
 		/*
 		 * STEP 4: generate the desired explanation
 		 */
@@ -129,27 +132,19 @@ public class CreateExService {
 		if (ExplainableEngineApplication.debug)
 			System.out.println("type: " + type.getValue());
 		
-		switch (type) {
-		case FULLEX:
-			explanation = exGenSer.getFullExplanation(cause, context);
-			break;
-		case RULEEX:
-			explanation = exGenSer.getRuleExplanation(cause, context);
-			break;
-		case FACTEX:
-			explanation = exGenSer.getFactExplanation(cause, context);
-			break;
-		case SIMPLDEX:
-			explanation = exGenSer.getSimplifiedExplanation(cause, context);
-			break;
-		}
+		explanation = transformFuncSer.transformExplanation(type, cause, context);
+		
 
 		if (ExplainableEngineApplication.debug) {
 			System.out.println("\nFinalExplanation:");
 			System.out.println(explanation);
 			System.out.println("\n------ EXPLANATION CREATED ------\n");
 		}
-
+		
+		//display explanation in home assistant
+//		haSer.postExplanation(explanation);
+//		haSer.postExplanation("test");
+		
 		return explanation;
 	}
 

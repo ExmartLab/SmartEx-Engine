@@ -3,15 +3,15 @@ package exengine.datamodel;
 public class OccurrenceEntry {
 
 	private String userId;
-	private String ruleId;
+	private String causeId;
 	private long time;
 	
 	public OccurrenceEntry() {
 	}
 	
-	public OccurrenceEntry(String userId, String ruleId, long time) {
+	public OccurrenceEntry(String userId, String causeId, long time) {
 		setUserId(userId);
-		setRuleId(ruleId);
+		setCauseId(causeId);
 		setTime(time);
 	}
 
@@ -23,12 +23,12 @@ public class OccurrenceEntry {
 		this.userId = userId;
 	}
 
-	public String getRuleId() {
-		return ruleId;
+	public String getCauseId() {
+		return causeId;
 	}
 
-	public void setRuleId(String ruleId) {
-		this.ruleId = ruleId;
+	public void setCauseId(String causeId) {
+		this.causeId = causeId;
 	}
 
 	public long getTime() {

@@ -1,4 +1,4 @@
-package exengine.contextAwareExpGenerator;
+package exengine.contextAwareExpGenerator.ruleBookForErrors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -15,13 +15,14 @@ import com.deliveredtechnologies.rulebook.annotation.When;
 import exengine.datamodel.*;
 
 @Rule(order = 3)
-public class User_Technicality_Nontech_rule {
+public class User_Technicality_Medium_rule {
 
 	// According to our table, 1=Simplified Exp, 2=Fact Ex, 3= Rule Exp, 4= Full Exp
-	public static final List<Integer> nontech_AllowedTypes = new ArrayList<Integer>();
+	public static final List<Integer> medtech_AllowedTypes = new ArrayList<Integer>();
 	{
 		{
-			nontech_AllowedTypes.add(1);
+			medtech_AllowedTypes.add(1);
+			medtech_AllowedTypes.add(3);
 		}
 	}
 
@@ -35,7 +36,7 @@ public class User_Technicality_Nontech_rule {
 
 	@When
 	public boolean when() {
-		return con.stream().anyMatch(context -> context.getExplaineeTechnicality() == Technicality.NONTECH);
+		return con.stream().anyMatch(context -> context.getExplaineeTechnicality() == Technicality.MEDTECH);
 	}
 
 	@Then
@@ -45,7 +46,7 @@ public class User_Technicality_Nontech_rule {
 		// previous rules
 		currentAllowedTypes = exType;
 
-		exType = currentAllowedTypes.stream().filter(nontech_AllowedTypes::contains).collect(toList());
+		exType = currentAllowedTypes.stream().filter(medtech_AllowedTypes::contains).collect(toList());
 
 		if (exType.isEmpty()) {
 			exType = currentAllowedTypes;
