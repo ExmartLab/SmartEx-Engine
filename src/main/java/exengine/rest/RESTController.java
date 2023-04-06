@@ -30,7 +30,8 @@ public class RESTController {
 	public ResponseEntity<String> getExplanation(@RequestParam(value = "min", defaultValue = "30") String min,
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
-			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
+			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation,
+			@RequestParam(value = "device", defaultValue = "unknown") String device) {
 
 		// initiating integer variables
 		int minNumber = 30;
@@ -42,7 +43,7 @@ public class RESTController {
 		}
 		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userId);
-		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
+		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation, device);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 
@@ -51,7 +52,8 @@ public class RESTController {
 			@RequestParam(value = "scenarioid", defaultValue = "0") String scenarioId,
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
-			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation) {
+			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation,
+			@RequestParam(value = "device", defaultValue = "unknown") String device) {
 
 		// initiating integer variables
 		int minNumber = 30;
@@ -67,7 +69,7 @@ public class RESTController {
 		ExplainableEngineApplication.testingScenario = scenarioNumber;
 		ExplainableEngineApplication.initiateDemoEntries(scenarioNumber);
 		ExplainableEngineApplication.testing = true;
-		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation);
+		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation, device);
 		
 		// turn testing off again
 		ExplainableEngineApplication.testing = false;

@@ -39,7 +39,7 @@ public class CreateExService {
 	@Autowired
 	TransformationFunctionService transformFuncSer;
 
-	public String getExplanation(int min, String userId, String userState, String userLocation) {
+	public String getExplanation(int min, String userId, String userState, String userLocation, String device) {
 
 		// test for valid userId by checking if user with userId is in db
 		User user = dataSer.findUserByUserId(userId);
@@ -73,7 +73,7 @@ public class CreateExService {
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors);
+		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, device);
 		// RuleCause cause = findCauseSer.findCause(logEntries, dbRules);
 
 		// return in case no cause has been found
@@ -116,6 +116,7 @@ public class CreateExService {
 			System.out.println("state: " + context.getExplaineeState().toString());
 			System.out.println("technicality: " + context.getExplaineeTechnicality().toString());
 			System.out.println("occurrence: " + context.getOccurrence());
+			System.out.println("device: " + device);
 		}
 
 		/*

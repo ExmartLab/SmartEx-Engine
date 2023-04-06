@@ -19,7 +19,7 @@ public class FindCauseService {
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
 
-	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors) {
+	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors, String device) {
 		Cause cause = null;
 			
 		for (LogEntry l : logEntries)
