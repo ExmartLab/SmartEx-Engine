@@ -24,6 +24,9 @@ public class DatabaseService {
 	@Autowired
 	OccurrenceEntryRepository occEntrRepo;
 
+	@Autowired
+	EntityRepository entityRepo;
+
 	/*
 	 * RULE OPERATIONS
 	 */
@@ -96,7 +99,30 @@ public class DatabaseService {
 		}
 		return user;
 	}
-
+	
+	/*
+	 * HA ENTITY OPERATIONS
+	 */
+	public void deleteAllEntities() {
+		entityRepo.deleteAll();
+	}
+	
+	public void saveNewEntity(Entity entity) {
+		entityRepo.save(entity);
+	}
+	
+	public Entity findEntityByEntityId(String entityId) {
+		return entityRepo.findByEntityId(entityId);
+	}
+	
+	public Entity findEntityByDeviceName(String deviceName) {
+		return entityRepo.findByDeviceName(deviceName);
+	}
+	
+	public ArrayList<Entity> findEntitiesByDeviceName(String deviceName) {
+		return entityRepo.findEntitiesByDeviceName(deviceName);
+	}
+	
 	/*
 	 * OCCURENCE OPERATIONS
 	 */

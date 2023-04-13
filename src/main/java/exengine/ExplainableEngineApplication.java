@@ -12,7 +12,6 @@ import exengine.datamodel.*;
 import exengine.datamodel.Error;
 import exengine.haconnection.HomeAssistantConnectionService;
 
-// test
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
 
@@ -39,6 +38,22 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			// initializeTestOccurrenceRepository();
 			initializeTestUserRepository();
 			initializeTestRuleRepository();
+			
+			
+			dataSer.deleteAllEntities();
+			
+			Entity labFanCurrCons = new Entity("sensor.lab_fan_current_consumption", "Lab Fan");
+			dataSer.saveNewEntity(labFanCurrCons);
+			
+			Entity labFanSwitch = new Entity("switch.lab_fan", "Lab Fan");
+			dataSer.saveNewEntity(labFanSwitch);
+			
+			Entity doorPower = new Entity("sensor.door_power", "Lab Door");
+			dataSer.saveNewEntity(doorPower);
+			
+			ArrayList<Entity> entities = dataSer.findEntitiesByDeviceName("Lab Door");
+			System.out.println("first:" + entities.get(0).getEntityId());
+			//System.out.println("second:" + entities.get(1).getEntityId());
 		}
 
 		// print out current API Status to see that HA is reachable
