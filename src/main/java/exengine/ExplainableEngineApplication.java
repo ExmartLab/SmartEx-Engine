@@ -38,26 +38,29 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			// initializeTestOccurrenceRepository();
 			initializeTestUserRepository();
 			initializeTestRuleRepository();
-			
-			
-			dataSer.deleteAllEntities();
-			
-			Entity labFanCurrCons = new Entity("sensor.lab_fan_current_consumption", "Lab Fan");
-			dataSer.saveNewEntity(labFanCurrCons);
-			
-			Entity labFanSwitch = new Entity("switch.lab_fan", "Lab Fan");
-			dataSer.saveNewEntity(labFanSwitch);
-			
-			Entity doorPower = new Entity("sensor.door_power", "Lab Door");
-			dataSer.saveNewEntity(doorPower);
-			
-			ArrayList<Entity> entities = dataSer.findEntitiesByDeviceName("Lab Door");
-			System.out.println("first:" + entities.get(0).getEntityId());
-			//System.out.println("second:" + entities.get(1).getEntityId());
+			initializeTestEntityRepository();
 		}
 
 		// print out current API Status to see that HA is reachable
 		haService.printAPIStatus();
+	}
+
+	private void initializeTestEntityRepository() {
+		dataSer.deleteAllEntities();
+		
+		Entity newEntity = new Entity("sensor.lab_fan_current_consumption", "Lab Fan");
+		dataSer.saveNewEntity(newEntity);
+		
+		newEntity = new Entity("switch.lab_fan", "Lab Fan");
+		dataSer.saveNewEntity(newEntity);
+		
+		newEntity = new Entity("sensor.door_power", "Lab Door");
+		dataSer.saveNewEntity(newEntity);
+		
+		ArrayList<Entity> entities = dataSer.findEntitiesByDeviceName("Lab Fan");
+		System.out.println("first:" + entities.get(0).getEntityId());
+		System.out.println("second:" + entities.get(1).getEntityId());
+		
 	}
 
 	// initializes a Repository with Users for demonstration and testing in the
