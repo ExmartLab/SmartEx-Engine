@@ -12,6 +12,7 @@ import exengine.datamodel.*;
 import exengine.datamodel.Error;
 import exengine.haconnection.HomeAssistantConnectionService;
 
+// test
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
 
