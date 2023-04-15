@@ -62,7 +62,11 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		newEntity = new Entity("scene.tv_playing", "tv");
 		dataSer.saveNewEntity(newEntity);
 
-
+		newEntity = new Entity("sensor.deebot_last_error", "robo_cleaner");
+		dataSer.saveNewEntity(newEntity);
+		
+		newEntity = new Entity("vacuum.deebot", "robo_cleaner");
+		dataSer.saveNewEntity(newEntity);
 	}
 
 	// initializes a Repository with Users for demonstration and testing in the
@@ -106,6 +110,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		ArrayList<LogEntry> actions;
 
 		initiateDemoEntries();
+		
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
 		actions = new ArrayList<LogEntry>();

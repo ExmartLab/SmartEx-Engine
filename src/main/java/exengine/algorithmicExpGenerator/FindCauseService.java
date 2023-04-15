@@ -19,7 +19,20 @@ public class FindCauseService {
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
 
-	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors, String device) {
+	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors, ArrayList<String> entityIds) {
+		
+		// check if explanation shall be given for particular device
+		if (entityIds != null) {
+			// shorten the log accordingly
+			while (!entityIds.contains(logEntries.get(logEntries.size() - 1).entity_id)) {
+				if (ExplainableEngineApplication.debug) {
+					System.out.println("Remove logEntry item");
+				}
+				logEntries.remove(logEntries.get(logEntries.size() - 1));
+			}
+		}
+		
+		
 		Cause cause = null;
 			
 		for (LogEntry l : logEntries)
@@ -193,6 +206,16 @@ public class FindCauseService {
 
 		}
 		return false;
+	}
+	
+	public boolean isEntryInList(LogEntry entry, ArrayList<String> entityIds) {
+		boolean result = false;		
+		for (String entityId: entityIds) {
+			if (entry.entity_id == entityId) {
+				result = true;
+			}
+		}
+		return result;
 	}
 
 }

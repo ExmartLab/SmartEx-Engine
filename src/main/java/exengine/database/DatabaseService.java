@@ -123,6 +123,15 @@ public class DatabaseService {
 		return entityRepo.findEntitiesByDeviceName(deviceName);
 	}
 	
+	public ArrayList<String> findEntityIdsByDeviceName(String deviceName) {
+		ArrayList<Entity> entities = entityRepo.findEntitiesByDeviceName(deviceName);
+		ArrayList<String> entityIds = new ArrayList<String>();
+		for (Entity entity: entities) {
+			entityIds.add(entity.getEntityId());
+		}
+		return entityIds;
+	}
+	
 	/*
 	 * OCCURENCE OPERATIONS
 	 */

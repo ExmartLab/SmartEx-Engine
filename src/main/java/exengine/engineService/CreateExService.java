@@ -45,9 +45,11 @@ public class CreateExService {
 		User user = dataSer.findUserByUserId(userId);
 		if (user == null)
 			return "unvalid userId";
-		if (ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.debug) {
 			System.out.println("found user: " + user.getName());
-
+			System.out.println("device provided: " + device);
+		}
+		
 		// getting the log Entries
 		if (!ExplainableEngineApplication.testing) {
 			// getting logs from Home Assistant
@@ -57,7 +59,14 @@ public class CreateExService {
 			if (ExplainableEngineApplication.debug)
 			ExplainableEngineApplication.initiateDemoEntries();
 			logEntries = ExplainableEngineApplication.demoEntries;
-			
+		}
+		
+		ArrayList<String> entityIds = null;
+		
+		// check if explanation for particular device requested
+		if (!device.equals("unknown")) {
+			// get all associated entityIds
+			entityIds = dataSer.findEntityIdsByDeviceName(device);
 		}
 
 		// default value for return string
@@ -73,7 +82,7 @@ public class CreateExService {
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, device);
+		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, entityIds);
 		// RuleCause cause = findCauseSer.findCause(logEntries, dbRules);
 
 		// return in case no cause has been found
