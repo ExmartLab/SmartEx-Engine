@@ -24,11 +24,13 @@ public class FindCauseService {
 		// check if explanation shall be given for particular device
 		if (entityIds != null) {
 			// shorten the log accordingly
-			while (!entityIds.contains(logEntries.get(logEntries.size() - 1).entity_id)) {
+			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
+			while (!entityIds.contains(latestEntry.entity_id)) {
 				if (ExplainableEngineApplication.debug) {
 					System.out.println("Remove logEntry item");
 				}
-				logEntries.remove(logEntries.get(logEntries.size() - 1));
+				logEntries.remove(latestEntry);
+				latestEntry = logEntries.get(logEntries.size() - 1);
 			}
 		}
 		
