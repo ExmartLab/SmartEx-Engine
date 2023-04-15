@@ -132,6 +132,18 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		actions.add(demoEntries.get(2));
 		dataSer.saveNewError(new Error("Deebot error", "e1", actions, "the robotic vacuum cleaner is stuck",
 				"remove barrier or set robot back on track"));
+		
+		int scenario = 1;
+		if (scenario == 1) {
+			demoEntries.remove(9);
+			demoEntries.remove(8);
+			demoEntries.remove(7);
+			demoEntries.remove(6);
+			
+			demoEntries.remove(2);
+			demoEntries.remove(1);
+			demoEntries.remove(0);
+		}
 
 	}
 
@@ -245,7 +257,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 																														// 2:
 																														// index:
 																														// 3
-
+		
 	}
 
 }
