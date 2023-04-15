@@ -49,7 +49,6 @@ public class RESTController {
 
 	@GetMapping("/show")
 	public ResponseEntity<String> runShowCases(
-			@RequestParam(value = "scenarioid", defaultValue = "0") String scenarioId,
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userState", defaultValue = "unknown") String userState,
 			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation,
@@ -57,17 +56,10 @@ public class RESTController {
 
 		// initiating integer variables
 		int minNumber = 30;
-		int scenarioNumber = 0;
 
-		// trying to assign the given values to the integer variables
-		try {
-			scenarioNumber = Integer.parseInt(scenarioId);
-		} catch (Exception e) {
-		}
 		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
-		ExplainableEngineApplication.testingScenario = scenarioNumber;
-		ExplainableEngineApplication.initiateDemoEntries(scenarioNumber);
+		ExplainableEngineApplication.initiateDemoEntries();
 		ExplainableEngineApplication.testing = true;
 		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation, device);
 		
