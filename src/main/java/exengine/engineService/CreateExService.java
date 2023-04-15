@@ -55,8 +55,9 @@ public class CreateExService {
 		} else {
 			// getting demo logs
 			if (ExplainableEngineApplication.debug)
-			// ExplainableEngineApplication.initiateDemoEntries(); uncomment later
+			ExplainableEngineApplication.initiateDemoEntries();
 			logEntries = ExplainableEngineApplication.demoEntries;
+			
 		}
 
 		// default value for return string
