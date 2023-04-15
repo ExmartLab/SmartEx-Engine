@@ -47,18 +47,21 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	private void initializeTestEntityRepository() {
 		dataSer.deleteAllEntities();
 
-		Entity newEntity = new Entity("sensor.lab_fan_current_consumption", "Lab Fan");
+		Entity newEntity = new Entity("sensor.lab_fan_current_consumption", "lab_fan");
 		dataSer.saveNewEntity(newEntity);
 
-		newEntity = new Entity("switch.lab_fan", "Lab Fan");
+		newEntity = new Entity("switch.lab_fan", "lab_fan");
 		dataSer.saveNewEntity(newEntity);
 
-		newEntity = new Entity("sensor.door_power", "Lab Door");
+		newEntity = new Entity("sensor.door_power", "lab_door");
+		dataSer.saveNewEntity(newEntity);
+		
+		newEntity = new Entity("switch.smart_plug_social_room_coffee", "coffee_machine");
+		dataSer.saveNewEntity(newEntity);
+		
+		newEntity = new Entity("scene.tv_playing", "tv");
 		dataSer.saveNewEntity(newEntity);
 
-		ArrayList<Entity> entities = dataSer.findEntitiesByDeviceName("Lab Fan");
-		System.out.println("first:" + entities.get(0).getEntityId());
-		System.out.println("second:" + entities.get(1).getEntityId());
 
 	}
 

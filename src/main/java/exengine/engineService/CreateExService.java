@@ -55,8 +55,7 @@ public class CreateExService {
 		} else {
 			// getting demo logs
 			if (ExplainableEngineApplication.debug)
-				System.out.println("Demo for Scenario " + ExplainableEngineApplication.testingScenario);
-			ExplainableEngineApplication.initiateDemoEntries(ExplainableEngineApplication.testingScenario);
+			ExplainableEngineApplication.initiateDemoEntries();
 			logEntries = ExplainableEngineApplication.demoEntries;
 		}
 
