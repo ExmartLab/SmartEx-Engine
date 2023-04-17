@@ -35,7 +35,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		if (testing) {
 			deleteAllOccurrencies();
 			// initializeTestOccurrenceRepository();
-			initializeTestUserRepository();
+			//initializeTestUserRepository();
 			initializeTestRuleRepository();
 			initializeTestEntityRepository();
 		}
