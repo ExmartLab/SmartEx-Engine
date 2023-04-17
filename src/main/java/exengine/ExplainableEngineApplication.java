@@ -37,7 +37,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			// initializeTestOccurrenceRepository();
 			//initializeTestUserRepository();
 			initializeTestRuleRepository();
-			initializeTestEntityRepository();
+			//initializeTestEntityRepository();
 		}
 
 		// print out current API Status to see that HA is reachable
