@@ -5,6 +5,8 @@ public class Entity {
 	private String entityId;
 	private String deviceName;
 	
+	public Entity() {};
+	
 	public Entity(String entityId, String deviceName) {
 		this.entityId = entityId;
 		this.deviceName = deviceName;

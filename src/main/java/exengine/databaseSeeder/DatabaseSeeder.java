@@ -18,6 +18,7 @@ import exengine.database.DatabaseService;
 import exengine.datamodel.Role;
 import exengine.datamodel.Technicality;
 import exengine.datamodel.User;
+import exengine.datamodel.Entity;
 
 @Component
 public class DatabaseSeeder {
@@ -54,6 +55,23 @@ public class DatabaseSeeder {
 			dataSer.saveNewUser(user);
 		}
 		System.out.println("Users seeded");
+	}
+	
+	@PostConstruct
+	public void seedEntities() throws Exception {
+        List<Map<String, Object>> dataList = loadDataMap("seeds/entities.yaml");
+		
+		for (Map<String, Object> dataMap: dataList) {
+			Entity entity = new Entity();
+			if (dataMap.containsKey("entityId")) {
+				entity.setEntityId(dataMap.get("entityId").toString());
+			}
+			if (dataMap.containsKey("deviceName")) {
+				entity.setDevice(dataMap.get("deviceName").toString());
+			}
+			dataSer.saveNewEntity(entity);
+		}
+		System.out.println("Entities seeded");
 	}
 	
 	public List<Map<String, Object>> loadDataMap(String path) throws Exception {
