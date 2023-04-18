@@ -1,14 +1,20 @@
 - entityId: "sensor.lab_fan_current_consumption"
   deviceName: "lab_fan"
+  
 - entityId: "switch.lab_fan"
   deviceName: "lab_fan"
+  
 - entityId: "sensor.door_power"
   deviceName: "lab_door"
+  
 - entityId: "switch.smart_plug_social_room_coffee"
   deviceName: "coffee_machine"
+  
 - entityId: "scene.tv_playing"
   deviceName: "tv"
+  
 - entityId: "sensor.deebot_last_error"
   deviceName: "robo_cleaner"
+  
 - entityId: "vacuum.deebot"
   deviceName: "robo_cleaner"

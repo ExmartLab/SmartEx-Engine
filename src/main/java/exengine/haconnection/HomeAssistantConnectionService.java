@@ -54,11 +54,11 @@ public class HomeAssistantConnectionService {
 	}
 
 	public ArrayList<LogEntry> parseLastLogs(int min) throws IOException {
-		return JsonHandler.loadFromFile(executeHttpClient(getURLlastXMin(min)));
+		return JsonHandler.loadLogEntriesFromJson(executeHttpClient(getURLlastXMin(min)));
 	}
 
 	public ArrayList<LogEntry> parseLogsLastHour() throws IOException {
-		return JsonHandler.loadFromFile(executeHttpClient(getURLlastHour()));
+		return JsonHandler.loadLogEntriesFromJson(executeHttpClient(getURLlastHour()));
 	}
 
 	public String executeHttpClient(String url) {

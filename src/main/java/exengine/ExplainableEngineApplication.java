@@ -114,7 +114,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	
 	public static void populateDemoEntries(String fileName) throws IOException {
 		String logJSON = JsonHandler.loadFile(fileName);
-		demoEntries =  JsonHandler.loadFromFile(logJSON);
+		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 	}
 
 }

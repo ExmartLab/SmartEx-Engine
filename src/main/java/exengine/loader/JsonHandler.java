@@ -21,7 +21,7 @@ public class JsonHandler {
         return Files.readString(Path.of(filePath));
     }
 	
-	public static ArrayList<LogEntry> loadFromFile(String json) throws IOException {
+	public static ArrayList<LogEntry> loadLogEntriesFromJson(String json) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(json);
 
