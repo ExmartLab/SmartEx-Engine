@@ -35,64 +35,13 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		if (testing) {
 			deleteAllOccurrencies();
 			// initializeTestOccurrenceRepository();
-			//initializeTestUserRepository();
 			initializeTestRuleRepository();
-			//initializeTestEntityRepository();
 		}
 
 		// print out current API Status to see that HA is reachable
 		haService.printAPIStatus();
 	}
 
-	private void initializeTestEntityRepository() {
-		dataSer.deleteAllEntities();
-
-		Entity newEntity = new Entity("sensor.lab_fan_current_consumption", "lab_fan");
-		dataSer.saveNewEntity(newEntity);
-
-		newEntity = new Entity("switch.lab_fan", "lab_fan");
-		dataSer.saveNewEntity(newEntity);
-
-		newEntity = new Entity("sensor.door_power", "lab_door");
-		dataSer.saveNewEntity(newEntity);
-		
-		newEntity = new Entity("switch.smart_plug_social_room_coffee", "coffee_machine");
-		dataSer.saveNewEntity(newEntity);
-		
-		newEntity = new Entity("scene.tv_playing", "tv");
-		dataSer.saveNewEntity(newEntity);
-
-		newEntity = new Entity("sensor.deebot_last_error", "robo_cleaner");
-		dataSer.saveNewEntity(newEntity);
-		
-		newEntity = new Entity("vacuum.deebot", "robo_cleaner");
-		dataSer.saveNewEntity(newEntity);
-	}
-
-	// initializes a Repository with Users for demonstration and testing in the
-	// database
-	public void initializeTestUserRepository() {
-		dataSer.deleteAllUsers();
-
-		User alice = new User("Alice", "1", Role.COWORKER, Technicality.MEDTECH);
-		dataSer.saveNewUser(alice);
-
-		User bob = new User("Bob", "2", Role.COWORKER, Technicality.NONTECH);
-		dataSer.saveNewUser(bob);
-
-		User chuck = new User("Chuck", "3", Role.COWORKER, Technicality.TECHNICAL);
-		dataSer.saveNewUser(chuck);
-
-		User dana = new User("Dana", "4", Role.GUEST, Technicality.TECHNICAL);
-		dataSer.saveNewUser(dana);
-
-		// more test users, currently commented because not neccessary for test cases
-//		User freyja = new User("Freyja", "5", Role.GUEST, Technicality.MEDTECH);
-//		dataSer.saveNewUser(freyja);
-//		
-//		User grace = new User("Grace", "6", Role.GUEST, Technicality.TECHNICAL);
-//		dataSer.saveNewUser(grace);
-	}
 
 	// initializes a Repository with Rules for demonstration and testing in the
 	// database
@@ -147,6 +96,10 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	void deleteAllOccurrencies() {
 		dataSer.deleteAllOccurrencies();
+	}
+	
+	public void populateDemoEntries(String path) {
+		//demoEntries = haService.parseJSON();
 	}
 
 	// initiates the demoEntries-List with LogEntries for Demonstration and Testing

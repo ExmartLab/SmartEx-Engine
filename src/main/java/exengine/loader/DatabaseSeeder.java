@@ -1,4 +1,4 @@
-package exengine.databaseSeeder;
+package exengine.loader;
 
 import java.io.InputStream;
 
