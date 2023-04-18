@@ -62,7 +62,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		ArrayList<LogEntry> actions;
 		
 		try {
-			populateDemoEntries("demoLogs.json");
+			demoEntries = populateDemoEntries("demoLogs.json");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,9 +107,9 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		dataSer.deleteAllOccurrencies();
 	}
 	
-	public void populateDemoEntries(String fileName) throws IOException {
+	public ArrayList<LogEntry> populateDemoEntries(String fileName) throws IOException {
 		String logJSON = JsonHandler.loadFile(fileName);
-		demoEntries = JsonHandler.loadFromFile(logJSON);
+		return JsonHandler.loadFromFile(logJSON);
 	}
 
 }
