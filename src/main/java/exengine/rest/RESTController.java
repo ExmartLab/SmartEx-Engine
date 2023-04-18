@@ -1,5 +1,7 @@
 package exengine.rest;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +61,12 @@ public class RESTController {
 
 		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
-		ExplainableEngineApplication.initiateDemoEntries();
+		try {
+			ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ExplainableEngineApplication.testing = true;
 		String explanation = createExSer.getExplanation(minNumber, userId, userState, userLocation, device);
 		

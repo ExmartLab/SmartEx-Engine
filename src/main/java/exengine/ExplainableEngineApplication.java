@@ -16,6 +16,8 @@ import exengine.loader.JsonHandler;
 
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
+	
+	public final static String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
 	@Autowired
 	private HomeAssistantConnectionService haService;
@@ -37,6 +39,15 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		if (testing) {
 			deleteAllOccurrencies();
 			// initializeTestOccurrenceRepository();
+			
+			try {
+				populateDemoEntries(FILE_NAME_DEMO_LOGS);
+				System.out.println("3: " + demoEntries.get(3));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 			initializeTestRuleRepository();
 			
 		}
@@ -61,13 +72,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		ArrayList<String> conditions;
 		ArrayList<LogEntry> actions;
 		
-		try {
-			demoEntries = populateDemoEntries("demoLogs.json");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
+		
 		
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
@@ -107,9 +112,9 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		dataSer.deleteAllOccurrencies();
 	}
 	
-	public ArrayList<LogEntry> populateDemoEntries(String fileName) throws IOException {
+	public static void populateDemoEntries(String fileName) throws IOException {
 		String logJSON = JsonHandler.loadFile(fileName);
-		return JsonHandler.loadFromFile(logJSON);
+		demoEntries =  JsonHandler.loadFromFile(logJSON);
 	}
 
 }

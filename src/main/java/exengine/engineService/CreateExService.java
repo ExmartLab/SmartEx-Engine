@@ -1,5 +1,6 @@
 package exengine.engineService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +54,21 @@ public class CreateExService {
 		// getting the log Entries
 		if (!ExplainableEngineApplication.testing) {
 			// getting logs from Home Assistant
-			logEntries = haSer.parseLastLogs(min);
+			try {
+				logEntries = haSer.parseLastLogs(min);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			// getting demo logs
 			if (ExplainableEngineApplication.debug)
-			ExplainableEngineApplication.initiateDemoEntries();
+				try {
+					ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			logEntries = ExplainableEngineApplication.demoEntries;
 		}
 		
