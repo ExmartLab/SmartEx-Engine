@@ -1,5 +1,6 @@
 package exengine.haconnection;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -52,12 +53,12 @@ public class HomeAssistantConnectionService {
 		System.out.println(status);
 	}
 
-	public ArrayList<LogEntry> parseLastLogs(int min) {
-		return JsonHandler.parseJsonLog(executeHttpClient(getURLlastXMin(min)));
+	public ArrayList<LogEntry> parseLastLogs(int min) throws IOException {
+		return JsonHandler.loadFromFile(executeHttpClient(getURLlastXMin(min)));
 	}
 
-	public ArrayList<LogEntry> parseLogsLastHour() {
-		return JsonHandler.parseJsonLog(executeHttpClient(getURLlastHour()));
+	public ArrayList<LogEntry> parseLogsLastHour() throws IOException {
+		return JsonHandler.loadFromFile(executeHttpClient(getURLlastHour()));
 	}
 
 	public String executeHttpClient(String url) {

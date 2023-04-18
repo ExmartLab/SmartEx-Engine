@@ -1,5 +1,6 @@
 package exengine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import exengine.database.DatabaseService;
 import exengine.datamodel.*;
 import exengine.datamodel.Error;
 import exengine.haconnection.HomeAssistantConnectionService;
+import exengine.loader.JsonHandler;
 
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
@@ -36,6 +38,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			deleteAllOccurrencies();
 			// initializeTestOccurrenceRepository();
 			initializeTestRuleRepository();
+			
 		}
 
 		// print out current API Status to see that HA is reachable
@@ -57,8 +60,14 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		ArrayList<LogEntry> triggers;
 		ArrayList<String> conditions;
 		ArrayList<LogEntry> actions;
-
-		initiateDemoEntries();
+		
+		try {
+			populateDemoEntries("demoLogs.json");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
@@ -98,112 +107,9 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		dataSer.deleteAllOccurrencies();
 	}
 	
-	public void populateDemoEntries(String path) {
-		//demoEntries = haService.parseJSON();
+	public void populateDemoEntries(String fileName) throws IOException {
+		String logJSON = JsonHandler.loadFile(fileName);
+		demoEntries = JsonHandler.loadFromFile(logJSON);
 	}
 
-	// initiates the demoEntries-List with LogEntries for Demonstration and Testing
-	public static void initiateDemoEntries() {
-		demoEntries = new ArrayList<LogEntry>();
-		ArrayList<String> other;
-
-		// TODO name LogEntries in error case
-		demoEntries.add(new LogEntry("2022-06-23T09:07:26.920189+00:00", "Deebot", "idle", "vacuum.deebot", null)); // 0
-																													// scenario
-																													// 5:
-																													// index:
-																													// 0
-		demoEntries.add(new LogEntry("2022-06-23T09:07:26.932243+00:00", "Deebot", "error", "vacuum.deebot", null)); // 1
-																														// scenario
-																														// 5:
-																														// index:
-																														// 1
-
-		other = new ArrayList<String>();
-		other.add("icon\": \"mdi:alert-circle");
-		demoEntries.add(new LogEntry("2022-06-23T09:07:26.933444+00:00", "Deebot last error", "104", // 2 scenario 5:
-																										// index: 2
-				"sensor.deebot_last_error", other));
-
-		// trigger LogEntry
-		demoEntries.add(
-				new LogEntry("2022-06-23T09:50:50.014573+00:00", "state change", null, "scene.state_change", null)); // 3
-																														// scenario
-																														// 1:
-																														// index:
-																														// 0
-
-		// rule LogEntry
-		other = new ArrayList<String>();
-		other.add("message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");
-		other.add("source\": \"state of sensor.smart_plug_social_room_coffee_today_s_consumption");
-		other.add("context_id\": \"01G67ZHDBKS302M9XP2GJTZAJH\", \"domain\": \"automation");
-		demoEntries.add(new LogEntry("2022-06-23T09:50:50.229746+00:00", "sc1: Goal-Order-Conflict", null,
-				"automation.test_scenario_watching_tv_light_off", other)); // 4 scenario 1: index: 1
-
-		// action LogEntry
-		other = new ArrayList<String>();
-		other.add("context_event_type\": \"automation_triggered");
-		other.add("context_domain\": \"automation");
-		other.add("context_name\": \"sc1: Goal-Order-Conflict");
-		other.add(
-				"context_message\": \"triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption");
-		other.add("context_source\": \"state of sensor.smart_plug_social_room_coffee_today_s_consumption");
-		other.add("context_entity_id\": \"automation.test_scenario_watching_tv_light_off");
-		other.add("context_entity_id_name\": \"sc1: Goal-Order-Conflict");
-		demoEntries.add(new LogEntry("2022-06-23T09:50:50.848452+00:00", "Smart Plug Social Room Coffee", "off",
-				"switch.smart_plug_social_room_coffee", other)); // 5 scenario 1: index: 2
-
-		other = new ArrayList<String>();
-		other.add("context_event_type\": \"automation_triggered");
-		other.add("context_domain\": \"automation");
-		other.add("context_name\": \"Welcome");
-		other.add("context_message\": \"triggered by state of binary_sensor.door");
-		other.add("context_source\": \"state of binary_sensor.door");
-		other.add("context_entity_id\": \"automation.presence_notification");
-		other.add("context_entity_id_name\": \"Welcome");
-		demoEntries
-				.add(new LogEntry("2022-06-23T11:19:30.181206+00:00", "Lab TV", "idle", "media_player.lab_tv", other)); // 6
-																														// scenario
-																														// 2:
-																														// index:
-																														// 0
-
-		// trigger LogEntry
-		demoEntries.add(
-				new LogEntry("2022-06-23T11:19:31.024951+00:00", "Lab TV", "playing", "media_player.lab_tv", null)); // 7
-																														// scenario
-																														// 2:
-																														// index:
-																														// 1
-
-		// rule LogEntry
-		other = new ArrayList<String>();
-		other.add("message\": \"triggered by state of media_player.lab_tv");
-		other.add("source\": \"state of media_player.lab_tv");
-		other.add("context_id\": \"01G684KSEJHD3DRWH9K36578E9");
-		other.add("domain\": \"automation");
-		other.add("context_state\": \"playing");
-		other.add("context_entity_id\": \"media_player.lab_tv");
-		other.add("context_entity_id_name\": \"Lab TV");
-		demoEntries.add(new LogEntry("2022-06-23T11:19:31.028089+00:00", "sc2: Multi-User-Conflict", "null",
-				"automation.sc2_multi_user_conflict", other)); // 8 scenario 2: index: 2
-
-		// action LogEntry
-		other = new ArrayList<String>();
-		other.add("icon\": \"mdi:television");
-		other.add("context_event_type\": \"automation_triggered");
-		other.add("context_domain\": \"automation");
-		other.add("context_name\": \"sc2: Multi-User-Conflict");
-		other.add("context_message\": \"triggered by state of media_player.lab_tv");
-		other.add("context_source\": \"state of media_player.lab_tv");
-		other.add("context_entity_id\": \"automation.sc2_multi_user_conflict");
-		other.add("context_entity_id_name\": \"sc2: Multi-User-Conflict");
-		demoEntries.add(new LogEntry("2022-06-23T11:19:31.037231+00:00", "tv_mute", null, "scene.tv_playing", other)); // 9
-																														// scenario
-																														// 2:
-																														// index:
-																														// 3
-		
-	}
 }

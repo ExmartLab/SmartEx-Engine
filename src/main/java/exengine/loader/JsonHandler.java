@@ -3,68 +3,62 @@ package exengine.loader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import exengine.datamodel.LogEntry;
 
 public class JsonHandler {
 	
-	public static String loadJsonFileAsString(String filePath) throws IOException {
+	public static String loadFile(String fileName) throws IOException {
+		String filePath = JsonHandler.class.getClassLoader().getResource(fileName).getFile();
         return Files.readString(Path.of(filePath));
     }
 	
-	public static ArrayList<LogEntry> parseJsonLog(String json) {
-		ArrayList<LogEntry> logsArrList = new ArrayList<LogEntry>();
-		// System.out.println(json);
-		// remove front and back brackets
-		json = json.substring(1, json.length() - 2);
+	public static ArrayList<LogEntry> loadFromFile(String json) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(json);
 
-		// Split String at curly brackets
-		// List<String> logs = Arrays.asList(json.split("\\{"));
-		List<String> logs = Arrays.asList(json.split("[{}]"));
+        ArrayList<LogEntry> logEntries = new ArrayList<>();
+        for (JsonNode node : rootNode) {
+            String time = null;
+            String name = null;
+            String state = null;
+            String entity_id = null;
+            ArrayList<String> other = null;;
 
-		List<List<String>> loglist = new ArrayList<List<String>>();
+            Iterator<String> fieldNames = node.fieldNames();
+            while (fieldNames.hasNext()) {
+                String fieldName = fieldNames.next();
+                JsonNode fieldValue = node.get(fieldName);
 
-		for (String s : logs) {
-			// System.out.println(s);
-			loglist.add(Arrays.asList(s.split("\\,")));
-		}
+                if (fieldName.equals("when")) {
+                    time = fieldValue.asText();
+                } else if (fieldName.equals("name")) {
+                    name = fieldValue.asText();
+                } else if (fieldName.equals("state")) {
+                    state = fieldValue.asText();
+                } else if (fieldName.equals("entity_id")) {
+                    entity_id = fieldValue.asText();
+                } else {
+                	if (other == null) {
+                		other = new ArrayList<String>();
+                	}
+                    other.add(fieldName + ": " + fieldValue.asText());
+                }
+            }
 
-		for (List<String> list : loglist) {
-			String time = null, name = null, state = null, entity_id = null;
-			ArrayList<String> other = new ArrayList<String>();
+            // Create a new object with the parsed properties and add it to the list
+            logEntries.add(new LogEntry(time, name, state, entity_id, other));
+        }
 
-			// cleaning front spaces
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).startsWith(" ")) {
-					list.set(i, list.get(i).substring(1));
-				}
-			}
-
-			// cases for LogEntry Attributes
-			for (String s : list) {
-				if (s.startsWith("\"when"))
-					time = s.substring(9, s.length() - 1);
-				else if (s.startsWith("\"name"))
-					name = s.substring(9, s.length() - 1);
-				else if (s.startsWith("\"state"))
-					state = s.substring(10, s.length() - 1);
-				else if (s.startsWith("\"entity_id"))
-					entity_id = s.substring(14, s.length() - 1);
-				else if (s.length() > 1)
-					other.add(s);
-			}
-			if (time != null)
-				logsArrList.add(new LogEntry(time, name, state, entity_id, other));
-		}
-
-		// System.out.println("\nlines: " + logs.size());
-		// System.out.println("Logs: " + logsArrList.size());
-		// System.out.println(loglist.size());
-		return logsArrList;
-	}
-
+        return logEntries;
+    }
+	
 }
