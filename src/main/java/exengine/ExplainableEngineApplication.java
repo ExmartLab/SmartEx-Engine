@@ -45,7 +45,13 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 			
 			try {
 				populateDemoEntries(FILE_NAME_DEMO_LOGS);
+				System.out.println("2: " + demoEntries.get(2));
 				System.out.println("3: " + demoEntries.get(3));
+				System.out.println("4: " + demoEntries.get(4));
+				System.out.println("5: " + demoEntries.get(5));
+				System.out.println("7: " + demoEntries.get(7));
+				System.out.println("8: " + demoEntries.get(8));
+				System.out.println("9: " + demoEntries.get(9));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

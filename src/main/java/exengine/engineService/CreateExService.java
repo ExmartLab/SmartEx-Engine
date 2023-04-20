@@ -118,7 +118,6 @@ public class CreateExService {
 		 * STEP 2: GET CONTEXT
 		 */
 		State state = user.getState();
-		System.out.println("State:");
 
 		// get final context from context service
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);
