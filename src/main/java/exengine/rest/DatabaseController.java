@@ -29,18 +29,21 @@ public class DatabaseController {
 		Optional<User> optionalUser = Optional.ofNullable(dataSer.findUserByUserId(userId));
         if (optionalUser.isPresent()) {
             
-            State state = State.BREAK;
+            State state;
     		if (userState.equals(State.WORKING.toString()))
     			state = State.WORKING;
     		else if (userState.equals(State.MEETING.toString()))
     			state = State.MEETING;
+    		else if (userState.equals(State.BREAK.toString()))
+    			state = State.BREAK;
+    		else return new ResponseEntity<>("State does not match any of the following: \"working\", \"break\", or \"meeting\".", HttpStatus.BAD_REQUEST);
     		
     		User user = optionalUser.get();
 			user.setState(state);
             dataSer.saveNewUser(user);
-            return new ResponseEntity<>(String.format("User %s (id: %s) changed state to \"%s\"", user.getName(), userId, userState), HttpStatus.OK);
+            return new ResponseEntity<>(String.format("User %s (id: %s) changed state to \"%s\"", user.getName(), userId, state), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
 	} 
 
