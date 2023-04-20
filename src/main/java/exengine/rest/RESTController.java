@@ -19,6 +19,7 @@ public class RESTController {
 
 	@Autowired
 	CreateExService createExSer;
+	
 
 	// returns a status if the explainable engine is running
 	@GetMapping("/status")
@@ -109,13 +110,6 @@ public class RESTController {
 		System.out.println("HTTP POST: Testing turned on");
 		ExplainableEngineApplication.testing = true;
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
-	}
-
-	@GetMapping("/greeting")
-	public ResponseEntity<String> greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-		if (ExplainableEngineApplication.debug)
-			System.out.println("HTTP GET: Greeting for " + name + " requested");
-		return new ResponseEntity<>("Hello " + name + "!", HttpStatus.OK);
 	}
 
 }
