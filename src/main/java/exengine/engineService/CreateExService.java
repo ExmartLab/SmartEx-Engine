@@ -41,7 +41,7 @@ public class CreateExService {
 	@Autowired
 	TransformationFunctionService transformFuncSer;
 
-	public String getExplanation(int min, String userId, String userState, String userLocation, String device) {
+	public String getExplanation(int min, String userId, String userLocation, String device) {
 
 		// test for valid userId by checking if user with userId is in db
 		User user = dataSer.findUserByUserId(userId);
@@ -117,14 +117,8 @@ public class CreateExService {
 		/*
 		 * STEP 2: GET CONTEXT
 		 */
-		// default state break
-		State state = State.BREAK;
-
-		// test for other cases
-		if (userState.equals(State.WORKING.toString()))
-			state = State.WORKING;
-		else if (userState.equals(State.MEETING.toString()))
-			state = State.MEETING;
+		State state = user.getState();
+		System.out.println("State:");
 
 		// get final context from context service
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);

@@ -36,7 +36,7 @@ public class DatabaseController {
     			state = State.MEETING;
     		else if (userState.equals(State.BREAK.toString()))
     			state = State.BREAK;
-    		else return new ResponseEntity<>("State does not match any of the following: \"working\", \"break\", or \"meeting\".", HttpStatus.BAD_REQUEST);
+    		else return new ResponseEntity<>("userState does not match any of the following: \"working\", \"break\", or \"meeting\".", HttpStatus.BAD_REQUEST);
     		
     		User user = optionalUser.get();
 			user.setState(state);
