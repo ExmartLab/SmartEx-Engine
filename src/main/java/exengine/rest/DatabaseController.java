@@ -38,7 +38,7 @@ public class DatabaseController {
     		User user = optionalUser.get();
 			user.setState(state);
             dataSer.saveNewUser(user);
-            return new ResponseEntity<>(String.format("User %s (id: %s) changed state to %s", user.getName(), userId, userState), HttpStatus.OK);
+            return new ResponseEntity<>(String.format("User %s (id: %s) changed state to \"%s\"", user.getName(), userId, userState), HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
