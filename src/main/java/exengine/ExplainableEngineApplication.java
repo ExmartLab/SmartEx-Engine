@@ -1,6 +1,7 @@
 package exengine;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +113,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		dataSer.deleteAllOccurrencies();
 	}
 	
-	public static void populateDemoEntries(String fileName) throws IOException {
+	public static void populateDemoEntries(String fileName) throws IOException, URISyntaxException {
 		String logJSON = JsonHandler.loadFile(fileName);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 	}

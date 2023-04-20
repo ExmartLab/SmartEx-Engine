@@ -1,6 +1,7 @@
 package exengine.engineService;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,13 +63,17 @@ public class CreateExService {
 			}
 		} else {
 			// getting demo logs
-			if (ExplainableEngineApplication.debug)
+			if (ExplainableEngineApplication.debug) {
 				try {
 					ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+			}
 			logEntries = ExplainableEngineApplication.demoEntries;
 		}
 		

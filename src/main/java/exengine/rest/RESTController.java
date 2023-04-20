@@ -1,6 +1,7 @@
 package exengine.rest;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -62,7 +63,12 @@ public class RESTController {
 		if (ExplainableEngineApplication.debug)
 			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
 		try {
-			ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+			try {
+				ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

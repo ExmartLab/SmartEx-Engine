@@ -1,6 +1,8 @@
 package exengine.loader;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,8 +18,10 @@ import exengine.datamodel.LogEntry;
 
 public class JsonHandler {
 	
-	public static String loadFile(String fileName) throws IOException {
-		String filePath = JsonHandler.class.getClassLoader().getResource(fileName).getFile();
+	public static String loadFile(String fileName) throws IOException, URISyntaxException {
+		URL resourceUrl = JsonHandler.class.getClassLoader().getResource(fileName);
+		Path resourcePath = Paths.get(resourceUrl.toURI());
+		String filePath = resourcePath.toAbsolutePath().toString();
         return Files.readString(Path.of(filePath));
     }
 	
