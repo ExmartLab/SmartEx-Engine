@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.List;
 import java.util.Map;
 
+import exengine.ExplainableEngineApplication;
 import exengine.database.DatabaseService;
 import exengine.datamodel.Role;
 import exengine.datamodel.Technicality;
@@ -34,7 +35,7 @@ public class DatabaseSeeder {
 	
 	@PostConstruct
 	public void seedUsers() throws Exception {
-        List<Map<String, Object>> dataList = loadDataMap("seeds/users.yaml");
+        List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
 		
 		for (Map<String, Object> dataMap: dataList) {
 			User user = new User();
@@ -59,7 +60,7 @@ public class DatabaseSeeder {
 	
 	@PostConstruct
 	public void seedEntities() throws Exception {
-        List<Map<String, Object>> dataList = loadDataMap("seeds/entities.yaml");
+        List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
 		
 		for (Map<String, Object> dataMap: dataList) {
 			Entity entity = new Entity();

@@ -18,6 +18,8 @@ import exengine.loader.JsonHandler;
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
 	
+	public final static String FILE_NAME_USERS = "seeds/users.yaml";
+	public final static String FILE_NAME_ENTITIES = "seeds/entities.yaml";
 	public final static String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
 	@Autowired
