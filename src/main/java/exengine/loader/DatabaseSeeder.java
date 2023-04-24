@@ -13,31 +13,35 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import exengine.ExplainableEngineApplication;
 import exengine.database.DatabaseService;
 import exengine.datamodel.Role;
 import exengine.datamodel.Technicality;
 import exengine.datamodel.User;
+import exengine.datamodel.Rule;
+import exengine.datamodel.Error;
 import exengine.datamodel.Entity;
+import exengine.datamodel.LogEntry;
 
 @Component
 public class DatabaseSeeder {
-	
+
 	private final DatabaseService dataSer;
 	private final ResourceLoader resourceLoader;
-	
+
 	@Autowired
 	public DatabaseSeeder(DatabaseService dataSer, ResourceLoader resourceLoader) {
 		this.dataSer = dataSer;
 		this.resourceLoader = resourceLoader;
 	}
-	
+
 	@PostConstruct
 	public void seedUsers() throws Exception {
-        List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
-		
-		for (Map<String, Object> dataMap: dataList) {
+		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
+
+		for (Map<String, Object> dataMap : dataList) {
 			User user = new User();
 			if (dataMap.containsKey("name")) {
 				user.setName(dataMap.get("name").toString());
@@ -57,12 +61,12 @@ public class DatabaseSeeder {
 		}
 		System.out.println("Users seeded");
 	}
-	
+
 	@PostConstruct
 	public void seedEntities() throws Exception {
-        List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
-		
-		for (Map<String, Object> dataMap: dataList) {
+		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
+
+		for (Map<String, Object> dataMap : dataList) {
 			Entity entity = new Entity();
 			if (dataMap.containsKey("entityId")) {
 				entity.setEntityId(dataMap.get("entityId").toString());
@@ -74,12 +78,130 @@ public class DatabaseSeeder {
 		}
 		System.out.println("Entities seeded");
 	}
-	
+
+	@PostConstruct
+	public void seedRules() throws Exception {
+		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
+
+		for (Map<String, Object> dataMap : dataList) {
+
+			Rule rule = new Rule();
+
+			// name (type: String)
+			if (dataMap.containsKey("name")) {
+				rule.setRuleName(dataMap.get("name").toString());
+			}
+
+			// ruleId (type: String)
+			if (dataMap.containsKey("ruleId")) {
+				rule.setRuleId(dataMap.get("ruleId").toString());
+			}
+
+			// ruleEntry (type: LogEntry)
+			if (dataMap.containsKey("ruleEntry")) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> ruleEntryMap = (Map<String, Object>) dataMap.get("ruleEntry");
+				LogEntry ruleEntry = new LogEntry();
+				
+				if (ruleEntryMap.containsKey("name")) {
+					ruleEntry.setName(ruleEntryMap.get("name").toString());
+				}
+
+				if (ruleEntryMap.containsKey("entity_id")) {
+					ruleEntry.setEntity_id(ruleEntryMap.get("entity_id").toString());
+				}
+
+				if (ruleEntryMap.containsKey("state")) {
+					ruleEntry.setState(ruleEntryMap.get("state").toString());
+				}
+
+				rule.setRuleEntry(ruleEntry);
+
+			}
+
+			// triggers (type: ArrayList<LogEntry>)
+			if (dataMap.containsKey("triggers")) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> triggersMap = (List<Map<String, Object>>) dataMap.get("triggers");
+				ArrayList<LogEntry> triggers = new ArrayList<LogEntry>();
+
+				for (Map<String, Object> dataMapLower : triggersMap) {
+					LogEntry trigger = new LogEntry();
+					
+					if (dataMapLower.containsKey("name")) {
+						trigger.setName(dataMapLower.get("name").toString());
+					}
+
+					if (dataMapLower.containsKey("entity_id")) {
+						trigger.setEntity_id(dataMapLower.get("entity_id").toString());
+					}
+
+					if (dataMapLower.containsKey("state")) {
+						trigger.setState(dataMapLower.get("state").toString());
+					}
+
+					triggers.add(trigger);
+				}
+
+				rule.setTrigger(triggers);
+
+			}
+			
+			// conditions (type: ArrayList<String>)
+			if (dataMap.containsKey("conditions")) {
+				@SuppressWarnings("unchecked")
+				ArrayList<String> conditions = (ArrayList<String>) dataMap.get("conditions");
+				rule.setConditions(conditions);
+			}
+			
+			// actions (type: ArrayList<LogEntry>)
+			if (dataMap.containsKey("actions")) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
+				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+
+				for (Map<String, Object> dataMapLower : actionsMap) {
+					LogEntry action = new LogEntry();
+					
+					if (dataMapLower.containsKey("name")) {
+						action.setName(dataMapLower.get("name").toString());
+					}
+
+					if (dataMapLower.containsKey("entity_id")) {
+						action.setEntity_id(dataMapLower.get("entity_id").toString());
+					}
+
+					if (dataMapLower.containsKey("state")) {
+						action.setState(dataMapLower.get("state").toString());
+					}
+
+					actions.add(action);
+				}
+
+				rule.setActions(actions);
+
+			}
+			
+			// ownerId (type: String)
+			if (dataMap.containsKey("ownerId")) {
+				rule.setOwnerId(dataMap.get("ownerId").toString());
+			}
+
+			// ruleDescription (type: String)
+			if (dataMap.containsKey("ruleDescription")) {
+				rule.setRuleDescription(dataMap.get("ruleDescription").toString());
+			}
+						
+			dataSer.saveNewRule(rule);
+		}
+		System.out.println("Rules seeded");
+	}
+
 	public List<Map<String, Object>> loadDataMap(String path) throws Exception {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
-		InputStream inputStream = resource.getInputStream();	
+		InputStream inputStream = resource.getInputStream();
 		Yaml yaml = new Yaml();
-        return yaml.load(inputStream);
+		return yaml.load(inputStream);
 	}
 
 }
