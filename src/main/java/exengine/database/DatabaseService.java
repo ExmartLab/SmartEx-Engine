@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import exengine.ExplainableEngineApplication;
 import exengine.datamodel.*;
 
 @Service
@@ -32,7 +33,9 @@ public class DatabaseService {
 		deleteAllErrors();
 		deleteAllUsers();
 		deleteAllEntities();
-		deleteAllOccurrencies();
+		if (ExplainableEngineApplication.testing) {			
+			deleteAllOccurrencies();
+		}
 	}
 
 	/*

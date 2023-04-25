@@ -65,7 +65,7 @@ public class CreateExService {
 			// getting demo logs
 			if (ExplainableEngineApplication.debug) {
 				try {
-					ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+					ExplainableEngineApplication.populateDemoEntries();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

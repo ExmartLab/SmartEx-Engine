@@ -42,34 +42,19 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		if (testing) {
-			deleteAllOccurrencies();
-			// initializeTestOccurrenceRepository();
-			
 			try {
-				populateDemoEntries(FILE_NAME_DEMO_LOGS);
+				populateDemoEntries();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
-			//initializeTestRuleRepository();
-			
 		}
 
 		// print out current API Status to see that HA is reachable
 		haService.printAPIStatus();
 	}
-
-	public void initializeTestOccurrenceRepository() {
-		// TODO
-	}
-
-	void deleteAllOccurrencies() {
-		dataSer.deleteAllOccurrencies();
-	}
 	
-	public static void populateDemoEntries(String fileName) throws IOException, URISyntaxException {
-		String logJSON = JsonHandler.loadFile(fileName);
+	public static void populateDemoEntries() throws IOException, URISyntaxException {
+		String logJSON = JsonHandler.loadFile(FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 	}
 

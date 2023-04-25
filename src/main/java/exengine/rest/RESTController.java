@@ -63,7 +63,7 @@ public class RESTController {
 			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
 		try {
 			try {
-				ExplainableEngineApplication.populateDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+				ExplainableEngineApplication.populateDemoEntries();
 			} catch (URISyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

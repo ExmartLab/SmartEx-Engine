@@ -51,7 +51,7 @@ public class DatabaseSeeder {
 		}
 	}
 
-	public void seedUsers() throws Exception {
+	private void seedUsers() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -75,7 +75,7 @@ public class DatabaseSeeder {
 		System.out.println("Users seeded");
 	}
 
-	public void seedEntities() throws Exception {
+	private void seedEntities() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -91,7 +91,7 @@ public class DatabaseSeeder {
 		System.out.println("Entities seeded");
 	}
 
-	public void seedRules() throws Exception {
+	private void seedRules() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -169,7 +169,7 @@ public class DatabaseSeeder {
 		System.out.println("Rules seeded");
 	}
 
-	public void seedErrors() throws Exception {
+	private void seedErrors() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
 
 		for (Map<String, Object> dataMap : dataList) {
