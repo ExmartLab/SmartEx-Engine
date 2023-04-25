@@ -1,9 +1,11 @@
-package XLab.ExplainableEngine;
+package XLab.ExplainableEngine.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +59,37 @@ public class DatabaseControllerTest {
         // verify data
         verify(dataSer).saveNewUser(user);
         assertThat(user.getState()).isEqualTo(State.WORKING);
+    }
+    
+    @Test
+    public void testUserNotThere() throws Exception {
+        // mock data
+    	User voidUser = null;
+        when(dataSer.findUserByUserId("123")).thenReturn(voidUser);
+
+        // send request
+        mockMvc.perform(post("/database/state")
+                .param("userid", "123")
+                .param("userState", "working")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        		.andExpect(content().string("User not found"))
+                .andExpect(status().isBadRequest());
+    }
+    
+    @Test
+    public void testWrongState() throws Exception {
+        // mock data
+        User user = new User();
+        user.setName("John");
+        user.setUserId("123");
+        when(dataSer.findUserByUserId("123")).thenReturn(user);
+
+        // send request
+        mockMvc.perform(post("/database/state")
+                .param("userid", "123")
+                .param("userState", "workingg")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        		.andExpect(content().string("userState does not match any of the following: \"working\", \"break\", or \"meeting\"."))
+                .andExpect(status().isBadRequest());
     }
 }
