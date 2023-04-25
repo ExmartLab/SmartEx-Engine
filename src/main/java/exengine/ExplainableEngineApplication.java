@@ -9,9 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import exengine.database.DatabaseService;
-import exengine.datamodel.*;
-import exengine.datamodel.Error;
+import exengine.datamodel.LogEntry;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
@@ -26,9 +24,6 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Autowired
 	private HomeAssistantConnectionService haService;
-
-	@Autowired
-	DatabaseService dataSer;
 
 	public static boolean debug = true;
 	public static boolean testing = true;

@@ -13,21 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import exengine.ExplainableEngineApplication;
 import exengine.engineService.CreateExService;
 
-//@RequestMapping("/ExEngine")
 @RestController
-public class RESTController {
+public class ExplanationController {
 
 	@Autowired
 	CreateExService createExSer;
-	
-
-	// returns a status if the explainable engine is running
-	@GetMapping("/status")
-	public ResponseEntity<String> getStatus() {
-		if (ExplainableEngineApplication.debug)
-			System.out.println("HTTP GET: Status returned");
-		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
-	}
 
 	// returns the explanation as a String by calling the createExplanationService
 	@GetMapping("/explain")
@@ -51,8 +41,7 @@ public class RESTController {
 	}
 
 	@GetMapping("/show")
-	public ResponseEntity<String> runShowCases(
-			@RequestParam(value = "userid", defaultValue = "0") String userId,
+	public ResponseEntity<String> runShowCases(@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation,
 			@RequestParam(value = "device", defaultValue = "unknown") String device) {
 
@@ -74,40 +63,10 @@ public class RESTController {
 		}
 		ExplainableEngineApplication.testing = true;
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
-		
+
 		// turn testing off again
 		ExplainableEngineApplication.testing = false;
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
-	}
-
-	@PostMapping("/debugoff")
-	public ResponseEntity<String> debugOff() {
-		if (ExplainableEngineApplication.debug)
-			System.out.println("HTTP POST: Debugging turned off");
-		ExplainableEngineApplication.debug = false;
-		return new ResponseEntity<>("Debugging turned off", HttpStatus.CREATED);
-	}
-
-	@PostMapping("/debugon")
-	public ResponseEntity<String> debugOn() {
-		System.out.println("HTTP POST: Debugging turned on");
-		ExplainableEngineApplication.debug = true;
-		return new ResponseEntity<>("Debugging turned on", HttpStatus.CREATED);
-	}
-
-	@PostMapping("/testingoff")
-	public ResponseEntity<String> testingOff() {
-		if (ExplainableEngineApplication.debug)
-			System.out.println("HTTP POST: Testing turned off");
-		ExplainableEngineApplication.testing = false;
-		return new ResponseEntity<>("Testing turned off", HttpStatus.CREATED);
-	}
-
-	@PostMapping("/testingon")
-	public ResponseEntity<String> testingOn() {
-		System.out.println("HTTP POST: Testing turned on");
-		ExplainableEngineApplication.testing = true;
-		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}
 
 }
