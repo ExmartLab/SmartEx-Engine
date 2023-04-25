@@ -26,6 +26,14 @@ public class DatabaseService {
 
 	@Autowired
 	EntityRepository entityRepo;
+	
+	public void resetDatabase() {
+		deleteAllRules();
+		deleteAllErrors();
+		deleteAllUsers();
+		deleteAllEntities();
+		deleteAllOccurrencies();
+	}
 
 	/*
 	 * RULE OPERATIONS
@@ -63,6 +71,10 @@ public class DatabaseService {
 
 	public void saveNewError (exengine.datamodel.Error error) {
 		errorRepo.save(error);
+	}
+	
+	public void deleteAllErrors() {
+		errorRepo.deleteAll();
 	}
 
 	/*

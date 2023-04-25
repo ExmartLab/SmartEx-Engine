@@ -36,8 +36,21 @@ public class DatabaseSeeder {
 		this.dataSer = dataSer;
 		this.resourceLoader = resourceLoader;
 	}
-
+	
 	@PostConstruct
+	public void seedDatabase() {
+		dataSer.resetDatabase();
+		
+		try {
+			seedUsers();
+			seedEntities();
+			seedRules();
+			seedErrors();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void seedUsers() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
 
@@ -62,7 +75,6 @@ public class DatabaseSeeder {
 		System.out.println("Users seeded");
 	}
 
-	@PostConstruct
 	public void seedEntities() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
 
@@ -79,7 +91,6 @@ public class DatabaseSeeder {
 		System.out.println("Entities seeded");
 	}
 
-	@PostConstruct
 	public void seedRules() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
 
@@ -120,14 +131,14 @@ public class DatabaseSeeder {
 				rule.setTrigger(triggers);
 
 			}
-			
+
 			// conditions (type: ArrayList<String>)
 			if (dataMap.containsKey("conditions")) {
 				@SuppressWarnings("unchecked")
 				ArrayList<String> conditions = (ArrayList<String>) dataMap.get("conditions");
 				rule.setConditions(conditions);
 			}
-			
+
 			// actions (type: ArrayList<LogEntry>)
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
@@ -142,7 +153,7 @@ public class DatabaseSeeder {
 				rule.setActions(actions);
 
 			}
-			
+
 			// ownerId (type: String)
 			if (dataMap.containsKey("ownerId")) {
 				rule.setOwnerId(dataMap.get("ownerId").toString());
@@ -152,13 +163,12 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("ruleDescription")) {
 				rule.setRuleDescription(dataMap.get("ruleDescription").toString());
 			}
-						
+
 			dataSer.saveNewRule(rule);
 		}
 		System.out.println("Rules seeded");
 	}
-	
-	@PostConstruct
+
 	public void seedErrors() throws Exception {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
 
@@ -175,7 +185,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("errorId")) {
 				error.setErrorId(dataMap.get("errorId").toString());
 			}
-			
+
 			// actions (type: ArrayList<LogEntry>)
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
@@ -190,7 +200,7 @@ public class DatabaseSeeder {
 				error.setActions(actions);
 
 			}
-			
+
 			// implication (type: String)
 			if (dataMap.containsKey("implication")) {
 				error.setImplication(dataMap.get("implication").toString());
@@ -200,15 +210,15 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("solution")) {
 				error.setSolution(dataMap.get("solution").toString());
 			}
-						
+
 			dataSer.saveNewError(error);
 		}
 		System.out.println("Errors seeded");
 	}
-	
+
 	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
 		LogEntry logEntry = new LogEntry();
-		
+
 		if (dataMapLower.containsKey("name")) {
 			logEntry.setName(dataMapLower.get("name").toString());
 		}
@@ -220,7 +230,7 @@ public class DatabaseSeeder {
 		if (dataMapLower.containsKey("state")) {
 			logEntry.setState(dataMapLower.get("state").toString());
 		}
-		
+
 		return logEntry;
 	}
 
