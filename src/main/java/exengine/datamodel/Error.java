@@ -12,6 +12,7 @@ public class Error {
 	public String errorName; 
 	public String errorId;
 	
+	public Error() {};
 
 	public Error(String errorName, String errorId, ArrayList<LogEntry> actions, String implication, String solution) {
 		this.errorName = errorName;
@@ -53,7 +54,9 @@ public class Error {
 		this.implication = implication;
 	}
 	
-	
+	public void setErrorName(String errorName) {
+		this.errorName = errorName;
+	}
 
 	
 }

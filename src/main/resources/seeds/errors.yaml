@@ -1,7 +1,8 @@
 - name: "Deebot error"
   errorId: "e1"
   actions:
-   - entity_id: "sensor.deebot_last_error"
+   - name: "Deebot last error"
+     entity_id: "sensor.deebot_last_error"
      state: "104"
   implication: "the robotic vacuum cleaner is stuck"
   solution: "remove barrier or set robot back on track"

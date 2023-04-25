@@ -196,6 +196,67 @@ public class DatabaseSeeder {
 		}
 		System.out.println("Rules seeded");
 	}
+	
+	@PostConstruct
+	public void seedErrors() throws Exception {
+		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
+
+		for (Map<String, Object> dataMap : dataList) {
+
+			Error error = new Error();
+
+			// name (type: String)
+			if (dataMap.containsKey("name")) {
+				error.setErrorName(dataMap.get("name").toString());
+			}
+
+			// errorId (type: String)
+			if (dataMap.containsKey("errorId")) {
+				error.setErrorId(dataMap.get("errorId").toString());
+			}
+			
+			// actions (type: ArrayList<LogEntry>)
+			if (dataMap.containsKey("actions")) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
+				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+
+				for (Map<String, Object> dataMapLower : actionsMap) {
+					LogEntry action = new LogEntry();
+					
+					if (dataMapLower.containsKey("name")) {
+						action.setName(dataMapLower.get("name").toString());
+					}
+
+					if (dataMapLower.containsKey("entity_id")) {
+						action.setEntity_id(dataMapLower.get("entity_id").toString());
+					}
+
+					if (dataMapLower.containsKey("state")) {
+						action.setState(dataMapLower.get("state").toString());
+					}
+
+					actions.add(action);
+				}
+
+				error.setActions(actions);
+
+			}
+			
+			// implication (type: String)
+			if (dataMap.containsKey("implication")) {
+				error.setImplication(dataMap.get("implication").toString());
+			}
+
+			// solution (type: String)
+			if (dataMap.containsKey("solution")) {
+				error.setSolution(dataMap.get("solution").toString());
+			}
+						
+			dataSer.saveNewError(error);
+		}
+		System.out.println("Errors seeded");
+	}
 
 	public List<Map<String, Object>> loadDataMap(String path) throws Exception {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
