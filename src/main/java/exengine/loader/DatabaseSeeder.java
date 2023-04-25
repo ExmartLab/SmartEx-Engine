@@ -101,20 +101,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("ruleEntry")) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> ruleEntryMap = (Map<String, Object>) dataMap.get("ruleEntry");
-				LogEntry ruleEntry = new LogEntry();
-				
-				if (ruleEntryMap.containsKey("name")) {
-					ruleEntry.setName(ruleEntryMap.get("name").toString());
-				}
-
-				if (ruleEntryMap.containsKey("entity_id")) {
-					ruleEntry.setEntity_id(ruleEntryMap.get("entity_id").toString());
-				}
-
-				if (ruleEntryMap.containsKey("state")) {
-					ruleEntry.setState(ruleEntryMap.get("state").toString());
-				}
-
+				LogEntry ruleEntry = generateLogEntry(ruleEntryMap);
 				rule.setRuleEntry(ruleEntry);
 
 			}
@@ -126,20 +113,7 @@ public class DatabaseSeeder {
 				ArrayList<LogEntry> triggers = new ArrayList<LogEntry>();
 
 				for (Map<String, Object> dataMapLower : triggersMap) {
-					LogEntry trigger = new LogEntry();
-					
-					if (dataMapLower.containsKey("name")) {
-						trigger.setName(dataMapLower.get("name").toString());
-					}
-
-					if (dataMapLower.containsKey("entity_id")) {
-						trigger.setEntity_id(dataMapLower.get("entity_id").toString());
-					}
-
-					if (dataMapLower.containsKey("state")) {
-						trigger.setState(dataMapLower.get("state").toString());
-					}
-
+					LogEntry trigger = generateLogEntry(dataMapLower);
 					triggers.add(trigger);
 				}
 
@@ -161,20 +135,7 @@ public class DatabaseSeeder {
 				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = new LogEntry();
-					
-					if (dataMapLower.containsKey("name")) {
-						action.setName(dataMapLower.get("name").toString());
-					}
-
-					if (dataMapLower.containsKey("entity_id")) {
-						action.setEntity_id(dataMapLower.get("entity_id").toString());
-					}
-
-					if (dataMapLower.containsKey("state")) {
-						action.setState(dataMapLower.get("state").toString());
-					}
-
+					LogEntry action = generateLogEntry(dataMapLower);
 					actions.add(action);
 				}
 
@@ -222,20 +183,7 @@ public class DatabaseSeeder {
 				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = new LogEntry();
-					
-					if (dataMapLower.containsKey("name")) {
-						action.setName(dataMapLower.get("name").toString());
-					}
-
-					if (dataMapLower.containsKey("entity_id")) {
-						action.setEntity_id(dataMapLower.get("entity_id").toString());
-					}
-
-					if (dataMapLower.containsKey("state")) {
-						action.setState(dataMapLower.get("state").toString());
-					}
-
+					LogEntry action = generateLogEntry(dataMapLower);
 					actions.add(action);
 				}
 
@@ -257,8 +205,26 @@ public class DatabaseSeeder {
 		}
 		System.out.println("Errors seeded");
 	}
+	
+	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
+		LogEntry logEntry = new LogEntry();
+		
+		if (dataMapLower.containsKey("name")) {
+			logEntry.setName(dataMapLower.get("name").toString());
+		}
 
-	public List<Map<String, Object>> loadDataMap(String path) throws Exception {
+		if (dataMapLower.containsKey("entity_id")) {
+			logEntry.setEntity_id(dataMapLower.get("entity_id").toString());
+		}
+
+		if (dataMapLower.containsKey("state")) {
+			logEntry.setState(dataMapLower.get("state").toString());
+		}
+		
+		return logEntry;
+	}
+
+	private List<Map<String, Object>> loadDataMap(String path) throws Exception {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
 		InputStream inputStream = resource.getInputStream();
 		Yaml yaml = new Yaml();
