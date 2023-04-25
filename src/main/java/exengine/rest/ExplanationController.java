@@ -34,7 +34,7 @@ public class ExplanationController {
 			minNumber = Integer.parseInt(min);
 		} catch (Exception e) {
 		}
-		if (ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.isDebug())
 			System.out.println("HTTP GET: Explanation requested (last " + minNumber + " min), userId: " + userId);
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
@@ -48,7 +48,7 @@ public class ExplanationController {
 		// initiating integer variables
 		int minNumber = 30;
 
-		if (ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.isDebug())
 			System.out.println("HTTP GET: Showcase: (last " + minNumber + " min), userId: " + userId);
 		try {
 			try {
@@ -61,11 +61,11 @@ public class ExplanationController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ExplainableEngineApplication.testing = true;
+		ExplainableEngineApplication.setTesting(true);
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
 
 		// turn testing off again
-		ExplainableEngineApplication.testing = false;
+		ExplainableEngineApplication.setTesting(false);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 

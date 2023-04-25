@@ -47,13 +47,13 @@ public class CreateExService {
 		User user = dataSer.findUserByUserId(userId);
 		if (user == null)
 			return "unvalid userId";
-		if (ExplainableEngineApplication.debug) {
+		if (ExplainableEngineApplication.isDebug()) {
 			System.out.println("found user: " + user.getName());
 			System.out.println("device provided: " + device);
 		}
 		
 		// getting the log Entries
-		if (!ExplainableEngineApplication.testing) {
+		if (!ExplainableEngineApplication.isTesting()) {
 			// getting logs from Home Assistant
 			try {
 				logEntries = haSer.parseLastLogs(min);
@@ -63,7 +63,7 @@ public class CreateExService {
 			}
 		} else {
 			// getting demo logs
-			if (ExplainableEngineApplication.debug) {
+			if (ExplainableEngineApplication.isDebug()) {
 				try {
 					ExplainableEngineApplication.populateDemoEntries();
 				} catch (IOException e) {
@@ -92,7 +92,7 @@ public class CreateExService {
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
 
-		if (ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.isDebug())
 			System.out.println("\n------ EXPLANATION ALGORITHM ------");
 
 		/*
@@ -126,7 +126,7 @@ public class CreateExService {
 		// Context context = new Context(Role.GUEST, Occurrence.SECOND,
 		// Technicality.MEDTECH, State.WORKING, null);
 
-		if (ExplainableEngineApplication.debug) {
+		if (ExplainableEngineApplication.isDebug()) {
 			System.out.println("\nContext:");
 			System.out.println("owner: " + context.getOwnerName());
 			System.out.println("explainee: " + context.getExplaineeName());
@@ -148,13 +148,13 @@ public class CreateExService {
 		if (type == null)
 			return "coudln't determine explanation type";
 
-		if (ExplainableEngineApplication.debug)
+		if (ExplainableEngineApplication.isDebug())
 			System.out.println("type: " + type.getValue());
 		
 		explanation = transformFuncSer.transformExplanation(type, cause, context);
 		
 
-		if (ExplainableEngineApplication.debug) {
+		if (ExplainableEngineApplication.isDebug()) {
 			System.out.println("\nFinalExplanation:");
 			System.out.println(explanation);
 			System.out.println("\n------ EXPLANATION CREATED ------\n");

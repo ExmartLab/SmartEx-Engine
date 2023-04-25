@@ -25,8 +25,8 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	@Autowired
 	private HomeAssistantConnectionService haService;
 
-	public static boolean debug = true;
-	public static boolean testing = true;
+	private static boolean debug = true;
+	private static boolean testing = true;
 
 	public static ArrayList<LogEntry> demoEntries;
 
@@ -51,6 +51,22 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static void populateDemoEntries() throws IOException, URISyntaxException {
 		String logJSON = JsonHandler.loadFile(FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
+	}
+
+	public static boolean isDebug() {
+		return debug;
+	}
+
+	public static void setDebug(boolean debug) {
+		ExplainableEngineApplication.debug = debug;
+	}
+	
+	public static boolean isTesting() {
+		return testing;
+	}
+
+	public static void setTesting(boolean testing) {
+		ExplainableEngineApplication.testing = testing;
 	}
 
 }

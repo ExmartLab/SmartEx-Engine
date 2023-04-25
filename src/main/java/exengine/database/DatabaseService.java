@@ -33,7 +33,7 @@ public class DatabaseService {
 		deleteAllErrors();
 		deleteAllUsers();
 		deleteAllEntities();
-		if (ExplainableEngineApplication.testing) {			
+		if (ExplainableEngineApplication.isTesting()) {			
 			deleteAllOccurrencies();
 		}
 	}

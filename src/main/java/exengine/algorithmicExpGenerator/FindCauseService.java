@@ -26,7 +26,7 @@ public class FindCauseService {
 			// shorten the log accordingly
 			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
 			while (!entityIds.contains(latestEntry.entity_id)) {
-				if (ExplainableEngineApplication.debug) {
+				if (ExplainableEngineApplication.isDebug()) {
 					System.out.println("Remove logEntry item");
 				}
 				logEntries.remove(latestEntry);
@@ -38,7 +38,7 @@ public class FindCauseService {
 		Cause cause = null;
 			
 		for (LogEntry l : logEntries)
-			if (ExplainableEngineApplication.debug)
+			if (ExplainableEngineApplication.isDebug())
 				System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
@@ -54,7 +54,7 @@ public class FindCauseService {
 
 			//
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
-			if (ExplainableEngineApplication.debug)
+			if (ExplainableEngineApplication.isDebug())
 				System.out.println(i + ":\n" + entryData);
 
 			// error-if case before?
@@ -66,7 +66,7 @@ public class FindCauseService {
 			}
 
 			if (isInRuleActions(entryData, dbRules)) { // if it is an action
-				if (ExplainableEngineApplication.debug)
+				if (ExplainableEngineApplication.isDebug())
 					System.out.println("found rule action: " + entryData);
 				foundRuleActions.add(entryData); // store in action list
 
@@ -76,7 +76,7 @@ public class FindCauseService {
 					continue;
 
 				} else { // case: we found an action before
-					if (ExplainableEngineApplication.debug)
+					if (ExplainableEngineApplication.isDebug())
 						System.out.println("found rule: " + entryData);
 					foundRuleNames.add(entryData);
 					boolean areFoundActionsSubsetOfRuleActions = true;
@@ -97,7 +97,7 @@ public class FindCauseService {
 
 					if (areFoundActionsSubsetOfRuleActions) {
 
-						if (ExplainableEngineApplication.debug)
+						if (ExplainableEngineApplication.isDebug())
 							System.out.println("found actoins are subset of rule actions");
 
 						if (foundRule != null)
