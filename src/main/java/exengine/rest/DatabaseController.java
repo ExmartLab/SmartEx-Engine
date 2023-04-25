@@ -15,7 +15,7 @@ import exengine.datamodel.State;
 import exengine.datamodel.User;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/database")
 public class DatabaseController {
 
 	@Autowired
