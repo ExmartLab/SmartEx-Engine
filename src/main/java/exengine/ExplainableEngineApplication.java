@@ -3,7 +3,6 @@ package exengine;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import exengine.datamodel.LogEntry;
 import exengine.haconnection.HomeAssistantConnectionService;
-import exengine.loader.DatabaseSeeder;
 import exengine.loader.JsonHandler;
 
 @SpringBootApplication
