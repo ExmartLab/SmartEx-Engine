@@ -58,7 +58,7 @@ public class HomeAssistantConnectionService {
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {
 			response = resp;
 		}).join();
-		logger.trace("Return of executeHttpClient for argument {} (String) is: {}", url, response);
+		logger.debug("Return of executeHttpClient for argument {} (String) is: {}", url, response);
 		return response;
 	}
 
@@ -67,7 +67,7 @@ public class HomeAssistantConnectionService {
 		String s = logsurl + formatter.format(new Date()) + "+03:00";
 		String[] arr = s.split(" ");
 		s = arr[0] + "T" + arr[1];
-		logger.trace("Return of get URLlastHour is: {}", s);
+		logger.debug("Return of get URLlastHour is: {}", s);
 		return s;
 	}
 
@@ -85,7 +85,7 @@ public class HomeAssistantConnectionService {
 		String s = logsurl + formatter.format(new Date()) + "+" + h + ":" + m;
 		String[] arr = s.split(" ");
 		s = arr[0] + "T" + arr[1];
-		logger.trace("Return from getURLlastXMin for argument {} (int): {}", min, s);
+		logger.debug("Return from getURLlastXMin for argument {} (int): {}", min, s);
 		return s;
 	}
 
