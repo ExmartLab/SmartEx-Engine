@@ -24,26 +24,6 @@ class ConfigurationControllerTest {
     }
 
     @Test
-    public void testDebugOff() throws Exception {
-        ExplainableEngineApplication.setDebug(true);
-        mockMvc.perform(MockMvcRequestBuilders.post("/debugoff")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().string("Debugging turned off"));
-        assertThat(ExplainableEngineApplication.isDebug()).isFalse();
-    }
-
-    @Test
-    public void testDebugOn() throws Exception {
-        ExplainableEngineApplication.setDebug(false);
-        mockMvc.perform(MockMvcRequestBuilders.post("/debugon")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().string("Debugging turned on"));
-        assertThat(ExplainableEngineApplication.isDebug()).isTrue();
-    }
-
-    @Test
     public void testTestingOff() throws Exception {
         ExplainableEngineApplication.setTesting(true);
         mockMvc.perform(MockMvcRequestBuilders.post("/testingoff")

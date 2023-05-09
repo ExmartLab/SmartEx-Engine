@@ -42,8 +42,8 @@ public class ExplanationContextMappingService {
 			ruleBookForRules.getResult()
 					.ifPresent(result -> System.out.println("Final allowed Expalnation Types are: " + result));
 
-			if (ExplainableEngineApplication.isDebug())
-				System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
+			
+			System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
 
 			// getting the resulting type from the rulebook
 			int type = c1.getTheExpType();
@@ -83,9 +83,7 @@ public class ExplanationContextMappingService {
 			ruleBook2.getResult()
 					.ifPresent(result -> System.out.println("Final allowed Expalnation Types are: " + result));
 
-			if (ExplainableEngineApplication.isDebug()) {
-				System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
-			}
+			System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
 				
 			// getting the resulting type from the rulebook
 			int type = c1.getTheExpType();

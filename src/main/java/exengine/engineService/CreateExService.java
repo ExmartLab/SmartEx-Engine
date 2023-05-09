@@ -47,10 +47,10 @@ public class CreateExService {
 		User user = dataSer.findUserByUserId(userId);
 		if (user == null)
 			return "unvalid userId";
-		if (ExplainableEngineApplication.isDebug()) {
-			System.out.println("found user: " + user.getName());
-			System.out.println("device provided: " + device);
-		}
+		
+		System.out.println("found user: " + user.getName());
+		System.out.println("device provided: " + device);
+		
 		
 		// getting the log Entries
 		if (!ExplainableEngineApplication.isTesting()) {
@@ -63,17 +63,16 @@ public class CreateExService {
 			}
 		} else {
 			// getting demo logs
-			if (ExplainableEngineApplication.isDebug()) {
-				try {
-					ExplainableEngineApplication.populateDemoEntries();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
-			}
+			try {
+				ExplainableEngineApplication.populateDemoEntries();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+			
 			logEntries = ExplainableEngineApplication.demoEntries;
 		}
 		
@@ -92,8 +91,8 @@ public class CreateExService {
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
 
-		if (ExplainableEngineApplication.isDebug())
-			System.out.println("\n------ EXPLANATION ALGORITHM ------");
+		
+		System.out.println("\n------ EXPLANATION ALGORITHM ------");
 
 		/*
 		 * STEP 1: FIND CAUSE
@@ -126,16 +125,16 @@ public class CreateExService {
 		// Context context = new Context(Role.GUEST, Occurrence.SECOND,
 		// Technicality.MEDTECH, State.WORKING, null);
 
-		if (ExplainableEngineApplication.isDebug()) {
-			System.out.println("\nContext:");
-			System.out.println("owner: " + context.getOwnerName());
-			System.out.println("explainee: " + context.getExplaineeName());
-			System.out.println("role: " + context.getExplaineeRole().toString());
-			System.out.println("state: " + context.getExplaineeState().toString());
-			System.out.println("technicality: " + context.getExplaineeTechnicality().toString());
-			System.out.println("occurrence: " + context.getOccurrence());
-			System.out.println("device: " + device);
-		}
+		
+		System.out.println("\nContext:");
+		System.out.println("owner: " + context.getOwnerName());
+		System.out.println("explainee: " + context.getExplaineeName());
+		System.out.println("role: " + context.getExplaineeRole().toString());
+		System.out.println("state: " + context.getExplaineeState().toString());
+		System.out.println("technicality: " + context.getExplaineeTechnicality().toString());
+		System.out.println("occurrence: " + context.getOccurrence());
+		System.out.println("device: " + device);
+	
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
@@ -148,17 +147,13 @@ public class CreateExService {
 		if (type == null)
 			return "coudln't determine explanation type";
 
-		if (ExplainableEngineApplication.isDebug())
-			System.out.println("type: " + type.getValue());
+		System.out.println("type: " + type.getValue());
 		
 		explanation = transformFuncSer.transformExplanation(type, cause, context);
 		
-
-		if (ExplainableEngineApplication.isDebug()) {
-			System.out.println("\nFinalExplanation:");
-			System.out.println(explanation);
-			System.out.println("\n------ EXPLANATION CREATED ------\n");
-		}
+		System.out.println("\nFinalExplanation:");
+		System.out.println(explanation);
+		System.out.println("\n------ EXPLANATION CREATED ------\n");
 		
 		//display explanation in home assistant
 //		haSer.postExplanation(explanation);

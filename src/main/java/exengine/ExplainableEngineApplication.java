@@ -29,7 +29,6 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	@Autowired
 	private HomeAssistantConnectionService haService;
 
-	private static boolean debug = true;
 	private static boolean testing = true;
 
 	public static ArrayList<LogEntry> demoEntries;
@@ -56,14 +55,6 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 		String logJSON = JsonHandler.loadFile(FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 		logger.info("demoEntries have been loaded from " + FILE_NAME_DEMO_LOGS);
-	}
-
-	public static boolean isDebug() {
-		return debug;
-	}
-
-	public static void setDebug(boolean debug) {
-		ExplainableEngineApplication.debug = debug;
 	}
 	
 	public static boolean isTesting() {

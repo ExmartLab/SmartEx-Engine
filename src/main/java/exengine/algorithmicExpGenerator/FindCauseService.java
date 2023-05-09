@@ -26,9 +26,8 @@ public class FindCauseService {
 			// shorten the log accordingly
 			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
 			while (!entityIds.contains(latestEntry.getEntity_id())) {
-				if (ExplainableEngineApplication.isDebug()) {
-					System.out.println("Remove logEntry item");
-				}
+				System.out.println("Remove logEntry item");
+				
 				logEntries.remove(latestEntry);
 				latestEntry = logEntries.get(logEntries.size() - 1);
 			}
@@ -38,8 +37,7 @@ public class FindCauseService {
 		Cause cause = null;
 			
 		for (LogEntry l : logEntries)
-			if (ExplainableEngineApplication.isDebug())
-				System.out.println(l.toString());
+			System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
 		ArrayList<String> foundRuleActions = new ArrayList<String>();
@@ -54,8 +52,8 @@ public class FindCauseService {
 
 			//
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
-			if (ExplainableEngineApplication.isDebug())
-				System.out.println(i + ":\n" + entryData);
+			
+			System.out.println(i + ":\n" + entryData);
 
 			// error-if case before?
 			if (isInErrorActions(entryData, dbErrors) && foundRuleActions.isEmpty()) {
@@ -66,8 +64,7 @@ public class FindCauseService {
 			}
 
 			if (isInRuleActions(entryData, dbRules)) { // if it is an action
-				if (ExplainableEngineApplication.isDebug())
-					System.out.println("found rule action: " + entryData);
+				System.out.println("found rule action: " + entryData);
 				foundRuleActions.add(entryData); // store in action list
 
 			} else if (isInRules(entryData, dbRules)) { // if it is a rule
@@ -76,8 +73,7 @@ public class FindCauseService {
 					continue;
 
 				} else { // case: we found an action before
-					if (ExplainableEngineApplication.isDebug())
-						System.out.println("found rule: " + entryData);
+					System.out.println("found rule: " + entryData);
 					foundRuleNames.add(entryData);
 					boolean areFoundActionsSubsetOfRuleActions = true;
 					Rule foundRule = null;
@@ -97,8 +93,7 @@ public class FindCauseService {
 
 					if (areFoundActionsSubsetOfRuleActions) {
 
-						if (ExplainableEngineApplication.isDebug())
-							System.out.println("found actoins are subset of rule actions");
+						System.out.println("found actoins are subset of rule actions");
 
 						if (foundRule != null)
 							oneORSatisfied = triggerConditionCheck(i, foundRule, logEntries);

@@ -21,20 +21,6 @@ public class ConfigurationController {
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
 
-	@PostMapping("/debugoff")
-	public ResponseEntity<String> debugOff() {
-		ExplainableEngineApplication.setDebug(false);
-		logger.info("HTTP POST: Debugging turned off");
-		return new ResponseEntity<>("Debugging turned off", HttpStatus.CREATED);
-	}
-
-	@PostMapping("/debugon")
-	public ResponseEntity<String> debugOn() {
-		ExplainableEngineApplication.setDebug(true);
-		logger.info("HTTP POST: Debugging turned on");
-		return new ResponseEntity<>("Debugging turned on", HttpStatus.CREATED);
-	}
-
 	@PostMapping("/testingoff")
 	public ResponseEntity<String> testingOff() {
 		ExplainableEngineApplication.setTesting(false);
