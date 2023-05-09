@@ -4,6 +4,8 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -28,6 +30,8 @@ import exengine.datamodel.LogEntry;
 @Component
 public class DatabaseSeeder {
 
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
+	
 	private final DatabaseService dataSer;
 	private final ResourceLoader resourceLoader;
 
@@ -72,7 +76,7 @@ public class DatabaseSeeder {
 			}
 			dataSer.saveNewUser(user);
 		}
-		System.out.println("Users seeded");
+		logger.info("Users seeded to database");
 	}
 
 	private void seedEntities() throws Exception {
@@ -88,7 +92,7 @@ public class DatabaseSeeder {
 			}
 			dataSer.saveNewEntity(entity);
 		}
-		System.out.println("Entities seeded");
+		logger.info("Entities seeded to database");
 	}
 
 	private void seedRules() throws Exception {
@@ -166,7 +170,7 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewRule(rule);
 		}
-		System.out.println("Rules seeded");
+		logger.info("Rules seeded to database");
 	}
 
 	private void seedErrors() throws Exception {
@@ -213,7 +217,7 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewError(error);
 		}
-		System.out.println("Errors seeded");
+		logger.info("Errors seeded to database");
 	}
 
 	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
