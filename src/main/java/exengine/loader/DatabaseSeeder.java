@@ -126,7 +126,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("triggers")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> triggersMap = (List<Map<String, Object>>) dataMap.get("triggers");
-				ArrayList<LogEntry> triggers = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> triggers = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : triggersMap) {
 					LogEntry trigger = generateLogEntry(dataMapLower);

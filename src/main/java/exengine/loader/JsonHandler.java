@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import exengine.datamodel.LogEntry;
 
 public class JsonHandler {
+	
+	private JsonHandler() {}
 	
 	public static String loadFile(String fileName) throws IOException, URISyntaxException {
 		URL resourceUrl = JsonHandler.class.getClassLoader().getResource(fileName);
@@ -32,7 +35,7 @@ public class JsonHandler {
             String time = null;
             String name = null;
             String state = null;
-            String entity_id = null;
+            String entityId = null;
             ArrayList<String> other = null;;
 
             Iterator<String> fieldNames = node.fieldNames();
@@ -47,17 +50,17 @@ public class JsonHandler {
                 } else if (fieldName.equals("state")) {
                     state = fieldValue.asText();
                 } else if (fieldName.equals("entity_id")) {
-                    entity_id = fieldValue.asText();
+                    entityId = fieldValue.asText();
                 } else {
                 	if (other == null) {
-                		other = new ArrayList<String>();
+                		other = new ArrayList<>();
                 	}
                     other.add(fieldName + ": " + fieldValue.asText());
                 }
             }
 
             // Create a new object with the parsed properties and add it to the list
-            logEntries.add(new LogEntry(time, name, state, entity_id, other));
+            logEntries.add(new LogEntry(time, name, state, entityId, other));
         }
 
         return logEntries;
