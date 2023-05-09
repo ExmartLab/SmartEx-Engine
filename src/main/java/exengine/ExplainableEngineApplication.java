@@ -16,11 +16,11 @@ import exengine.loader.JsonHandler;
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
 	
-	public final static String FILE_NAME_USERS = "seeds/users.yaml";
-	public final static String FILE_NAME_ENTITIES = "seeds/entities.yaml";
-	public final static String FILE_NAME_RULES = "seeds/rules.yaml";
-	public final static String FILE_NAME_ERRORS = "seeds/errors.yaml";
-	public final static String FILE_NAME_DEMO_LOGS = "demoLogs.json";
+	public static final String FILE_NAME_USERS = "seeds/users.yaml";
+	public static final String FILE_NAME_ENTITIES = "seeds/entities.yaml";
+	public static final String FILE_NAME_RULES = "seeds/rules.yaml";
+	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
+	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
 	@Autowired
 	private HomeAssistantConnectionService haService;
