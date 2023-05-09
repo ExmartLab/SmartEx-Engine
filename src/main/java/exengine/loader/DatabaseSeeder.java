@@ -1,5 +1,6 @@
 package exengine.loader;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
@@ -55,7 +56,7 @@ public class DatabaseSeeder {
 		}
 	}
 
-	private void seedUsers() throws Exception {
+	private void seedUsers() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -238,9 +239,14 @@ public class DatabaseSeeder {
 		return logEntry;
 	}
 
-	private List<Map<String, Object>> loadDataMap(String path) throws Exception {
+	private List<Map<String, Object>> loadDataMap(String path) {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
-		InputStream inputStream = resource.getInputStream();
+		InputStream inputStream = null;
+		try {
+			inputStream = resource.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Yaml yaml = new Yaml();
 		return yaml.load(inputStream);
 	}
