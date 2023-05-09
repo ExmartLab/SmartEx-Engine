@@ -7,7 +7,6 @@ public class Context {
 	private Technicality explaineeTechnicality;
 	private State explaineeState;
 	private Integer theExpType;
-
 	private String explaineeName;
 	private String ownerName;
 

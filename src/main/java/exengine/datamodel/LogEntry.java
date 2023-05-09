@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class LogEntry {
 
-	public String time, name, state, entity_id;
-	public ArrayList<String> other;
+	private String time, name, state, entity_id;
+	private ArrayList<String> other;
 	
 	public LogEntry() {};
 	

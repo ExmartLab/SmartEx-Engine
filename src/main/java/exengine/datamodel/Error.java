@@ -5,12 +5,11 @@ import java.util.ArrayList;
 public class Error {
 
 
-	public ArrayList<LogEntry> actions;
-	public String implication;
-	public String solution;
-	
-	public String errorName; 
-	public String errorId;
+	private ArrayList<LogEntry> actions;
+	private String implication;
+	private String solution;
+	private String errorName; 
+	private String errorId;
 	
 	public Error() {};
 
@@ -56,6 +55,10 @@ public class Error {
 	
 	public void setErrorName(String errorName) {
 		this.errorName = errorName;
+	}
+	
+	public String getErrorName() {
+		return errorName;
 	}
 
 	

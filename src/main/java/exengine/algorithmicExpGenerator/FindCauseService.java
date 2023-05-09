@@ -25,7 +25,7 @@ public class FindCauseService {
 		if (entityIds != null) {
 			// shorten the log accordingly
 			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
-			while (!entityIds.contains(latestEntry.entity_id)) {
+			while (!entityIds.contains(latestEntry.getEntity_id())) {
 				if (ExplainableEngineApplication.isDebug()) {
 					System.out.println("Remove logEntry item");
 				}
@@ -83,7 +83,7 @@ public class FindCauseService {
 					Rule foundRule = null;
 					for (Rule r : dbRules) { // query db for Rule
 
-						if ((r.getRuleEntry().name + " " + r.getRuleEntry().state).equals(entryData)) {
+						if ((r.getRuleEntry().getName() + " " + r.getRuleEntry().getState()).equals(entryData)) {
 
 							foundRule = r;
 							// r is the rule we want to get the actions of
@@ -125,9 +125,9 @@ public class FindCauseService {
 		LogEntry actionEntry = logEntries.get(line);
 		for(Error e : dbErrors)
 		{
-			for(LogEntry action : e.actions) {
-				if((action.name + " " + action.state).equals(actionEntry.name + " " + actionEntry.state)) {
-					return new ErrorCause(e.actions, e.implication, e.solution, e);
+			for(LogEntry action : e.getActions()) {
+				if((action.getName() + " " + action.getState()).equals(actionEntry.getName() + " " + actionEntry.getState())) {
+					return new ErrorCause(e.getActions(), e.getImplication(), e.getSolution(), e);
 				}
 			}
 		}
@@ -140,7 +140,7 @@ public class FindCauseService {
 		// check for rule actions
 		for (Rule r : dbRules) {
 			for (LogEntry action : r.getActions())
-				if ((action.name + " " + action.state).equals(toCheck)) {
+				if ((action.getName() + " " + action.getState()).equals(toCheck)) {
 					result = true;
 				}
 		}
@@ -153,7 +153,7 @@ public class FindCauseService {
 		// check for error actions
 		for (Error e : dbErrors) {
 			for (LogEntry action : e.getActions())
-				if ((action.name + " " + action.state).equals(toCheck)) {
+				if ((action.getName() + " " + action.getState()).equals(toCheck)) {
 					result = true;
 				}
 		}
@@ -163,7 +163,7 @@ public class FindCauseService {
 	public boolean isInRules(String toCheck, List<Rule> dbRules) {
 		boolean result = false;
 		for (Rule r : dbRules) {
-			if ((r.getRuleEntry().name + " " + r.getRuleEntry().state).equals(toCheck)) {
+			if ((r.getRuleEntry().getName() + " " + r.getRuleEntry().getState()).equals(toCheck)) {
 				result = true;
 			}
 		}
@@ -178,10 +178,10 @@ public class FindCauseService {
 			boolean isfoundActionPartOfRule = false;
 
 			// iterating through actions of Rule
-			for (LogEntry ruleAction : r.actions) {
+			for (LogEntry ruleAction : r.getActions()) {
 
 				// if we find a Rule-action that matches, set part-of-rule-flag to true
-				if ((ruleAction.name + " " + ruleAction.state).equals(foundAction)) {
+				if ((ruleAction.getName() + " " + ruleAction.getState()).equals(foundAction)) {
 					isfoundActionPartOfRule = true;
 				}
 
@@ -201,7 +201,7 @@ public class FindCauseService {
 			return true;
 		for (int i = line; i >= 0; i--) { // go back from line
 			for (LogEntry t : r.getTrigger()) // look for last trigger
-				if ((logEntries.get(i).name + " " + logEntries.get(i).getState()).equals(t.name + " " + t.state)) {
+				if ((logEntries.get(i).getName() + " " + logEntries.get(i).getState()).equals(t.getName() + " " + t.getState())) {
 					trigger = logEntries.get(i);
 					return true;
 				}
@@ -213,7 +213,7 @@ public class FindCauseService {
 	public boolean isEntryInList(LogEntry entry, ArrayList<String> entityIds) {
 		boolean result = false;		
 		for (String entityId: entityIds) {
-			if (entry.entity_id == entityId) {
+			if (entry.getEntity_id() == entityId) {
 				result = true;
 			}
 		}

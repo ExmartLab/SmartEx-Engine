@@ -25,7 +25,7 @@ public abstract class Cause {
 	public void setActionsString() {
 		actionsString = "[";
 		for(LogEntry a : actions) {
-			actionsString = getActionsString() + a.name + "|" + a.state +";";
+			actionsString = getActionsString() + a.getName() + "|" + a.getState() +";";
 		}
 		actionsString = getActionsString() + "]";
 	}
