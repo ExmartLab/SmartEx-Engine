@@ -3,6 +3,8 @@ package exengine.contextAwareExpGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.deliveredtechnologies.rulebook.Fact;
@@ -10,12 +12,13 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 
-import exengine.ExplainableEngineApplication;
 import exengine.datamodel.*;
 import exengine.expPresentation.ExplanationType;
 
 @Service
 public class ExplanationContextMappingService {
+
+	private static final Logger logger = LoggerFactory.getLogger(ExplanationContextMappingService.class);
 
 	public ExplanationType getExplanationType(Context c1, Cause cause) {
 
@@ -39,11 +42,8 @@ public class ExplanationContextMappingService {
 			ruleBookForRules.setDefaultResult(exTypes);
 
 			ruleBookForRules.run(exfacts);
-			ruleBookForRules.getResult()
-					.ifPresent(result -> System.out.println("Final allowed Expalnation Types are: " + result));
-
-			
-			System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
+			ruleBookForRules.getResult().ifPresent(result -> logger
+					.debug("The explanation type is: {} (from the allowed: {})", c1.getTheExpType(), result));
 
 			// getting the resulting type from the rulebook
 			int type = c1.getTheExpType();
@@ -57,8 +57,8 @@ public class ExplanationContextMappingService {
 				return ExplanationType.FACTEX;
 			if (type == ExplanationType.FULLEX.getValue())
 				return ExplanationType.FULLEX;
+			
 			return null;
-
 		}
 
 		else if (cause.getClass().equals(ErrorCause.class)) {
@@ -81,10 +81,9 @@ public class ExplanationContextMappingService {
 
 			ruleBook2.run(exfacts);
 			ruleBook2.getResult()
-					.ifPresent(result -> System.out.println("Final allowed Expalnation Types are: " + result));
+					.ifPresent(result -> logger
+							.debug("The explanation type is: {} (from the allowed: {})", c1.getTheExpType(), result));
 
-			System.out.println("So the explanation type to generate, would be: " + c1.getTheExpType());
-				
 			// getting the resulting type from the rulebook
 			int type = c1.getTheExpType();
 
@@ -98,7 +97,7 @@ public class ExplanationContextMappingService {
 			return null;
 
 		}
-		// non valid cause object as parameter
+		logger.debug("No valid explanation type found");
 		return null;
 	}
 

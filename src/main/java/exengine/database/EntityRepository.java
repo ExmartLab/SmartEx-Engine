@@ -10,13 +10,13 @@ import exengine.datamodel.Entity;
 
 @Repository
 public interface EntityRepository extends MongoRepository<Entity, String> {
-	@Query(value="{'entityId' : '?0'}")
-	Entity findByEntityId(String entityId);	
-	
-	@Query(value="{'deviceName' : '?0'}")
+	@Query(value = "{'entityId' : '?0'}")
+	Entity findByEntityId(String entityId);
+
+	@Query(value = "{'deviceName' : '?0'}")
 	Entity findByDeviceName(String deviceName);
-	
-	@Query(value="{'deviceName' : '?0'}")
+
+	@Query(value = "{'deviceName' : '?0'}")
 	ArrayList<Entity> findEntitiesByDeviceName(String deviceName);
 
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,8 @@ import exengine.datamodel.*;
 
 @Service
 public class DatabaseService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
 	@Autowired
 	UserRepository userRepo;
@@ -27,14 +31,18 @@ public class DatabaseService {
 
 	@Autowired
 	EntityRepository entityRepo;
-	
+
 	public void resetDatabase() {
 		deleteAllRules();
 		deleteAllErrors();
 		deleteAllUsers();
 		deleteAllEntities();
-		if (ExplainableEngineApplication.isTesting()) {			
+		if (ExplainableEngineApplication.isTesting()) {
 			deleteAllOccurrencies();
+			logger.info("Database was completely reset");
+		}
+		else {
+			logger.info("Database was reset, except for the Occurrencies table");
 		}
 	}
 
@@ -64,7 +72,7 @@ public class DatabaseService {
 	public String findRuleDescriptionByRuleName(String ruleName) {
 		return ruleRepo.findByName(ruleName).getRuleDescription();
 	}
-	
+
 	/*
 	 * ERROR OPERATIONS
 	 */
@@ -72,10 +80,10 @@ public class DatabaseService {
 		return errorRepo.findAll();
 	}
 
-	public void saveNewError (exengine.datamodel.Error error) {
+	public void saveNewError(exengine.datamodel.Error error) {
 		errorRepo.save(error);
 	}
-	
+
 	public void deleteAllErrors() {
 		errorRepo.deleteAll();
 	}
@@ -114,43 +122,43 @@ public class DatabaseService {
 		}
 		return user;
 	}
-	
+
 	/*
 	 * HA ENTITY OPERATIONS
 	 */
 	public void deleteAllEntities() {
 		entityRepo.deleteAll();
 	}
-	
+
 	public void saveNewEntity(Entity entity) {
 		entityRepo.save(entity);
 	}
-	
+
 	public Entity findEntityByEntityId(String entityId) {
 		return entityRepo.findByEntityId(entityId);
 	}
-	
+
 	public Entity findEntityByDeviceName(String deviceName) {
 		return entityRepo.findByDeviceName(deviceName);
 	}
-	
+
 	public ArrayList<Entity> findEntitiesByDeviceName(String deviceName) {
 		return entityRepo.findEntitiesByDeviceName(deviceName);
 	}
-	
+
 	public ArrayList<String> findEntityIdsByDeviceName(String deviceName) {
 		ArrayList<Entity> entities = entityRepo.findEntitiesByDeviceName(deviceName);
-		ArrayList<String> entityIds = new ArrayList<String>();
-		for (Entity entity: entities) {
+		ArrayList<String> entityIds = new ArrayList<>();
+		for (Entity entity : entities) {
 			entityIds.add(entity.getEntityId());
 		}
 		return entityIds;
 	}
-	
+
 	/*
 	 * OCCURENCE OPERATIONS
 	 */
-	
+
 	public void deleteAllOccurrencies() {
 		occEntrRepo.deleteAll();
 	}
@@ -163,20 +171,18 @@ public class DatabaseService {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 	}
 
-	//TODO commenting and debugging instead of printing
 	public Occurrence findOccurrence(String userId, String ruleId, int days) {
 		System.out.println("getting occurrence for user " + userId + " and rule " + ruleId);
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
-		long reference =  new Date().getTime() - ((long) (days) * 24l * 60l * 60l * 1000l);
-		for (OccurrenceEntry entry : entries)
-		{
-			System.out.println("looking at entry: " + new Date(entry.getTime()).toString());
+		long reference = new Date().getTime() - ((days) * 24l * 60l * 60l * 1000l);
+		for (OccurrenceEntry entry : entries) {
+			String lookAtDate = new Date(entry.getTime()).toString();
+			logger.trace("looking at entry: {}", lookAtDate);
 			if (entry.getTime() > reference) {
 				count++;
-				System.out.println("count: " + count);
 			}
-				
+
 		}
 		switch (count) {
 		case 0:

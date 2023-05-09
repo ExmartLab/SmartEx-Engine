@@ -9,24 +9,10 @@ import exengine.datamodel.Rule;
 @Repository
 public interface RuleRepository extends MongoRepository<Rule, String> {
 
-	
-//	@Query(value=“{‘viewName’ : ‘?0’}“)
-//	ViewEnt findByViewName(String viewName);
-//	
-//	@Query(value=“{‘userId’ : ‘?0’} && {‘viewName’ : ‘?0’}“)
-//	ViewEnt findByViewNameandUsrId(String userId, String viewName);
-//	
-//	@Query(value=“{‘userId’ : ‘?0’}“)
-//	Collection<ViewEnt> findViewByUserID(String userId);
-//	
-//	@Query(value=“{‘userId’ : ‘?0’} && {‘deviceType’ : ‘?0’}“)
-//	Collection<ViewEnt> findViewIdByUserIdperType(String userId, String deviceType);
-	
-	
-	@Query(value="{'ruleName' : '?0'}")
-	Rule findByName(String ruleName);	
-	
-	@Query(value="{'ruleId' : '?0'}")
+	@Query(value = "{'ruleName' : '?0'}")
+	Rule findByName(String ruleName);
+
+	@Query(value = "{'ruleId' : '?0'}")
 	Rule findByRuleId(String ruleId);
 
 }

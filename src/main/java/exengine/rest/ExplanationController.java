@@ -39,7 +39,7 @@ public class ExplanationController {
 		} catch (Exception e) {
 		}
 		
-		logger.info("HTTP GET: Explanation requested: last {} min, userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
+		logger.debug("HTTP GET: Explanation requested: last {} min, userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
 		
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class ExplanationController {
 		// initiating integer variables
 		int minNumber = 30;
 		
-		logger.info("HTTP GET: Showcase: (last {} min, per default), userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
+		logger.debug("HTTP GET: Showcase: (last {} min, per default), userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
 		
 		try {
 			ExplainableEngineApplication.populateDemoEntries();

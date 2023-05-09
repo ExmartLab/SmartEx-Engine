@@ -229,7 +229,7 @@ public class DatabaseSeeder {
 		}
 
 		if (dataMapLower.containsKey("entity_id")) {
-			logEntry.setEntity_id(dataMapLower.get("entity_id").toString());
+			logEntry.setEntityId(dataMapLower.get("entity_id").toString());
 		}
 
 		if (dataMapLower.containsKey("state")) {

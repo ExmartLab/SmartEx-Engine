@@ -1,7 +1,7 @@
 package exengine.datamodel;
 
 public enum Occurrence {
-		FIRST("first"), SECOND("second"), MORE("more");
+	FIRST("first"), SECOND("second"), MORE("more");
 
 	private String occurrence;
 

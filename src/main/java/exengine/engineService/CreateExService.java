@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import exengine.haconnection.HomeAssistantConnectionService;
 
 @Service
 public class CreateExService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
 
 	private ArrayList<LogEntry> logEntries;
 
@@ -48,9 +52,7 @@ public class CreateExService {
 		if (user == null)
 			return "unvalid userId";
 		
-		System.out.println("found user: " + user.getName());
-		System.out.println("device provided: " + device);
-		
+		logger.debug("getExplanation called with arguments min: {}, user name: {}, userLocation: {}, device: {}", min, user.getName(), userLocation, device);
 		
 		// getting the log Entries
 		if (!ExplainableEngineApplication.isTesting()) {
@@ -58,20 +60,15 @@ public class CreateExService {
 			try {
 				logEntries = haSer.parseLastLogs(min);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Unable to parse last logs: {}", e.getMessage(), e);
 			}
 		} else {
 			// getting demo logs
 			try {
 				ExplainableEngineApplication.populateDemoEntries();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+			} catch (IOException | URISyntaxException e) {
+				logger.error("Unable to populate the demo entries: {}", e.getMessage(), e);
+			} 		
 			
 			logEntries = ExplainableEngineApplication.demoEntries;
 		}
@@ -84,34 +81,22 @@ public class CreateExService {
 			entityIds = dataSer.findEntityIdsByDeviceName(device);
 		}
 
-		// default value for return string
-		String explanation = "no explanation found";
+		String explanation;
 
 		// query Rules & Errors from DB
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
-
 		
-		System.out.println("\n------ EXPLANATION ALGORITHM ------");
+		logger.debug("Explanation generation started");
 
 		/*
 		 * STEP 1: FIND CAUSE
 		 */
 		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, entityIds);
-		// RuleCause cause = findCauseSer.findCause(logEntries, dbRules);
 
 		// return in case no cause has been found
 		if (cause == null)
 			return "couldn't find cause to explain";
-
-		//TODO debugging
-//		if (ExplainableEngineApplication.debug) {
-//			System.out.println("\nCause:");
-//			System.out.println("ruleId: " + cause.getRule().ruleId);
-//			System.out.println("trigger: " + cause.getTriggerString());
-//			System.out.println("conditions: " + cause.getConditionsString());
-//			System.out.println("actions: " + cause.getActionsString());
-//		}
 
 		/*
 		 * STEP 2: GET CONTEXT
@@ -120,21 +105,6 @@ public class CreateExService {
 
 		// get final context from context service
 		Context context = conSer.getAllContext(cause, userId, state, userLocation);
-
-		// for testing
-		// Context context = new Context(Role.GUEST, Occurrence.SECOND,
-		// Technicality.MEDTECH, State.WORKING, null);
-
-		
-		System.out.println("\nContext:");
-		System.out.println("owner: " + context.getOwnerName());
-		System.out.println("explainee: " + context.getExplaineeName());
-		System.out.println("role: " + context.getExplaineeRole().toString());
-		System.out.println("state: " + context.getExplaineeState().toString());
-		System.out.println("technicality: " + context.getExplaineeTechnicality().toString());
-		System.out.println("occurrence: " + context.getOccurrence());
-		System.out.println("device: " + device);
-	
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
@@ -145,19 +115,11 @@ public class CreateExService {
 		 * STEP 4: generate the desired explanation
 		 */
 		if (type == null)
-			return "coudln't determine explanation type";
-
-		System.out.println("type: " + type.getValue());
+			return "Unable to determine explanation type";
 		
 		explanation = transformFuncSer.transformExplanation(type, cause, context);
 		
-		System.out.println("\nFinalExplanation:");
-		System.out.println(explanation);
-		System.out.println("\n------ EXPLANATION CREATED ------\n");
-		
-		//display explanation in home assistant
-//		haSer.postExplanation(explanation);
-//		haSer.postExplanation("test");
+		logger.info("Explanation generated");
 		
 		return explanation;
 	}
