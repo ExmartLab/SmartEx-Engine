@@ -1,5 +1,7 @@
 package exengine.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,41 +12,40 @@ import exengine.ExplainableEngineApplication;
 
 @RestController
 public class ConfigurationController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
 
 	@GetMapping("/status")
 	public ResponseEntity<String> getStatus() {
-		if (ExplainableEngineApplication.isDebug())
-			System.out.println("HTTP GET: Status returned");
+		logger.info("HTTP GET: Status returned");
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
 
 	@PostMapping("/debugoff")
 	public ResponseEntity<String> debugOff() {
-		if (ExplainableEngineApplication.isDebug())
-			System.out.println("HTTP POST: Debugging turned off");
 		ExplainableEngineApplication.setDebug(false);
+		logger.info("HTTP POST: Debugging turned off");
 		return new ResponseEntity<>("Debugging turned off", HttpStatus.CREATED);
 	}
 
 	@PostMapping("/debugon")
 	public ResponseEntity<String> debugOn() {
-		System.out.println("HTTP POST: Debugging turned on");
 		ExplainableEngineApplication.setDebug(true);
+		logger.info("HTTP POST: Debugging turned on");
 		return new ResponseEntity<>("Debugging turned on", HttpStatus.CREATED);
 	}
 
 	@PostMapping("/testingoff")
 	public ResponseEntity<String> testingOff() {
-		if (ExplainableEngineApplication.isDebug())
-			System.out.println("HTTP POST: Testing turned off");
 		ExplainableEngineApplication.setTesting(false);
+		logger.info("HTTP POST: Testing turned off");
 		return new ResponseEntity<>("Testing turned off", HttpStatus.CREATED);
 	}
 
 	@PostMapping("/testingon")
 	public ResponseEntity<String> testingOn() {
-		System.out.println("HTTP POST: Testing turned on");
 		ExplainableEngineApplication.setTesting(true);
+		logger.info("HTTP POST: Testing turned on");
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}
 
