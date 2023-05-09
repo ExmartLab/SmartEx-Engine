@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Error {
 
 
-	public ArrayList<LogEntry> actions;
-	public String implication;
-	public String solution;
+	private ArrayList<LogEntry> actions;
+	private String implication;
+	private String solution;
+	private String errorName; 
+	private String errorId;
 	
-	public String errorName; 
-	public String errorId;
-	
+	public Error() {};
 
 	public Error(String errorName, String errorId, ArrayList<LogEntry> actions, String implication, String solution) {
 		this.errorName = errorName;
@@ -53,7 +53,13 @@ public class Error {
 		this.implication = implication;
 	}
 	
+	public void setErrorName(String errorName) {
+		this.errorName = errorName;
+	}
 	
+	public String getErrorName() {
+		return errorName;
+	}
 
 	
 }

@@ -1,0 +1,37 @@
+- name: "rule 1 (coffee)"
+  ruleId: "1"
+  ruleEntry:
+    name: "Rule: Block High Coffee Consumption (sc1)"
+    entity_id: "automation.test_scenario_watching_tv_light_off"
+    state: "null"
+  triggers:
+  - name: "state change"
+    entity_id: "scene.state_change"
+    state: "null"
+  conditions: 
+  - "daily energy consumption is higher than the threshold"
+  actions:
+  - name: "Smart Plug Social Room Coffee"
+    entity_id: "switch.smart_plug_social_room_coffee"
+    state: "off"
+  ownerId: "1"
+  ruleDescription: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"
+  
+- name: "rule 2 (tv mute)"
+  ruleId: "2"
+  ruleEntry:
+    name: "Rule: Block TV Audio During Meeting (sc2)"
+    entity_id: "automation.sc2_multi_user_conflict"
+    state: "null"
+  triggers:
+  - name: "Lab TV"
+    entity_id: "media_player.lab_tv"
+    state: "playing"
+  conditions:
+  - "a meeting in room 1 is going on"
+  actions:
+  - name: "tv_mute"
+    entity_id: "scene.tv_playing"
+    state: "null"
+  ownerId: "2"
+  ruleDescription: "Rule_2: mutes the TV if TV is playing while a meeting is going on"

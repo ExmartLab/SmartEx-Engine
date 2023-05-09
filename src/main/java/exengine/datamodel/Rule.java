@@ -7,20 +7,19 @@ import org.springframework.data.annotation.Id;
 public class Rule {
 
 	@Id
-	public String id;
-
-	public String ruleName;
-	public LogEntry ruleEntry;
-	public ArrayList<LogEntry> trigger;
-	public ArrayList<String> conditions;
-	public ArrayList<LogEntry> actions;
-
-	public String triggerString;
-	public String conditionsString;
-	public String actionsString;
-	public String ownerId;
+	private String id;
+	private String ruleName;
+	private LogEntry ruleEntry;
+	private ArrayList<LogEntry> trigger;
+	private ArrayList<String> conditions;
+	private ArrayList<LogEntry> actions;
+	
+	private String triggerString;
+	private String conditionsString;
+	private String actionsString;
+	private String ownerId;
 	private String ruleDescription;
-	public String ruleId;
+	private String ruleId;
 
 	public Rule() {
 	}

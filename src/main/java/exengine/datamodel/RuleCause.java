@@ -59,7 +59,7 @@ public class RuleCause extends Cause {
 	}
 	
 	public void setTriggerString() {
-		triggerString = trigger == null ? "null" : trigger.name + " " + trigger.state;
+		triggerString = trigger == null ? "null" : trigger.getName() + " " + trigger.getState();
 	}
 	
 	public String getTriggerString() {

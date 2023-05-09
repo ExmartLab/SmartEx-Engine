@@ -17,12 +17,20 @@ public class User {
 	private String stateString = "null";
 	
 	private String userid;
+	
+	public User() {
+		// default state
+		this.setState(State.BREAK);
+	}
 
 	public User(String name, String userid, Role role, Technicality technicality) {
 		this.userid = userid;
 		this.name = name;
 		this.role = role;
 		this.technicality = technicality;
+		
+		// default state
+		this.setState(State.BREAK);
 	}
 
 	public User(String name, int age, Role role, Technicality technicality, State state, String location) {
@@ -33,9 +41,6 @@ public class User {
 		this.state = state;
 		stateString = state.toString();
 		this.location = location;
-	}
-
-	public User() {
 	}
 
 	@Override
