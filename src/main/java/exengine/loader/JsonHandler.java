@@ -9,12 +9,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import exengine.ExplainableEngineApplication;
 import exengine.datamodel.LogEntry;
 
 public class JsonHandler {
+	
+	private static final Logger logger = LoggerFactory.getLogger(JsonHandler.class);
 	
 	private JsonHandler() {}
 	
@@ -22,6 +28,7 @@ public class JsonHandler {
 		URL resourceUrl = JsonHandler.class.getClassLoader().getResource(fileName);
 		Path resourcePath = Paths.get(resourceUrl.toURI());
 		String filePath = resourcePath.toAbsolutePath().toString();
+		logger.debug("File loaded");
         return Files.readString(Path.of(filePath));
     }
 	
@@ -35,7 +42,7 @@ public class JsonHandler {
             String name = null;
             String state = null;
             String entityId = null;
-            ArrayList<String> other = null;;
+            ArrayList<String> other = null;
 
             Iterator<String> fieldNames = node.fieldNames();
             while (fieldNames.hasNext()) {
@@ -60,8 +67,10 @@ public class JsonHandler {
 
             // Create a new object with the parsed properties and add it to the list
             logEntries.add(new LogEntry(time, name, state, entityId, other));
+            logger.trace("New log entry was added to logEntries list, with parameters time: {}, name. {}, state: {}, entityId: {}, other: {}", time, name, state, entityId, other);
         }
 
+        logger.debug("logEntries loaded from JSON");
         return logEntries;
     }
 	
