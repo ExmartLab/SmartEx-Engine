@@ -17,16 +17,16 @@ class ConfigurationControllerTest {
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new ConfigurationController()).build();
 
     @Test
-    public void testGetStatus() throws Exception {
+    void testGetStatus() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/status"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("Explainable Engine running"));
     }
 
     @Test
-    public void testTestingOff() throws Exception {
+    void testTestingOff() throws Exception {
         ExplainableEngineApplication.setTesting(true);
-        mockMvc.perform(MockMvcRequestBuilders.post("/testingoff")
+        mockMvc.perform(MockMvcRequestBuilders.post("/testing/off")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string("Testing turned off"));
@@ -34,9 +34,9 @@ class ConfigurationControllerTest {
     }
 
     @Test
-    public void testTestingOn() throws Exception {
+    void testTestingOn() throws Exception {
         ExplainableEngineApplication.setTesting(false);
-        mockMvc.perform(MockMvcRequestBuilders.post("/testingon")
+        mockMvc.perform(MockMvcRequestBuilders.post("/testing/on")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string("Testing turned on"));
