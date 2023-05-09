@@ -42,7 +42,7 @@ public class ConfigurationController {
 		ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory
 				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		Level level = rootLogger.getLevel();
-		logger.info("Log level is {}", level);
+		logger.debug("HTTP GET: Log level was requested, which is {}", level);
 		return new ResponseEntity<>(String.format("The current log level is %s", level), HttpStatus.OK);
 	}
 
@@ -77,7 +77,9 @@ public class ConfigurationController {
 		ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory
 				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		rootLogger.setLevel(newLevel);
-
+		
+		logger.info("Log level changed to {}", rootLogger.getLevel());
+		
 		return new ResponseEntity<>(String.format("Log level changed to %s", newLevel), HttpStatus.OK);
 	}
 
