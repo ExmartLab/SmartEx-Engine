@@ -25,7 +25,7 @@
     },
     {
         "when": "2022-06-23T09:50:50.229746+00:00",
-        "name": "sc1: Goal-Order-Conflict",
+        "name": "Rule: Block High Coffee Consumption (sc1)",
         "entity_id": "automation.test_scenario_watching_tv_light_off",
         "message": "triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption",
         "source": "state of sensor.smart_plug_social_room_coffee_today_s_consumption",
@@ -39,11 +39,11 @@
         "entity_id": "switch.smart_plug_social_room_coffee",
         "context_event_type": "automation_triggered",
         "context_domain": "automation",
-        "context_name": "sc1: Goal-Order-Conflict",
+        "context_name": "Rule: Block High Coffee Consumption (sc1)",
         "context_message": "triggered by state of sensor.smart_plug_social_room_coffee_today_s_consumption",
         "context_source": "state of sensor.smart_plug_social_room_coffee_today_s_consumption",
         "context_entity_id": "automation.test_scenario_watching_tv_light_off",
-        "context_entity_id_name": "sc1: Goal-Order-Conflict"
+        "context_entity_id_name": "Rule: Block High Coffee Consumption (sc1)"
     },
     {
         "when": "2022-06-23T11:19:30.181206+00:00",
@@ -66,7 +66,7 @@
     },
     {
         "when": "2022-06-23T11:19:31.028089+00:00",
-        "name": "sc2: Multi-User-Conflict",
+        "name": "Rule: Block TV Audio During Meeting (sc2)",
         "entity_id": "automation.sc2_multi_user_conflict",
         "message": "triggered by state of media_player.lab_tv",
         "source": "state of media_player.lab_tv",
@@ -87,6 +87,6 @@
         "context_message": "triggered by state of media_player.lab_tv",
         "context_source": "state of media_player.lab_tv",
         "context_entity_id": "automation.sc2_multi_user_conflict",
-        "context_entity_id_name": "sc2: Multi-User-Conflict"
+        "context_entity_id_name": "Rule: Block TV Audio During Meeting (sc2)"
     }
 ]

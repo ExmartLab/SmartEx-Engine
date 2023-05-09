@@ -1,7 +1,7 @@
 - name: "rule 1 (coffee)"
   ruleId: "1"
   ruleEntry:
-    name: "sc1: Goal-Order-Conflict"
+    name: "Rule: Block High Coffee Consumption (sc1)"
     entity_id: "automation.test_scenario_watching_tv_light_off"
     state: "null"
   triggers:
@@ -20,7 +20,7 @@
 - name: "rule 2 (tv mute)"
   ruleId: "2"
   ruleEntry:
-    name: "sc2: Multi-User-Conflict"
+    name: "Rule: Block TV Audio During Meeting (sc2)"
     entity_id: "automation.sc2_multi_user_conflict"
     state: "null"
   triggers:
