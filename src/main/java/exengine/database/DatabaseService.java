@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import exengine.ExplainableEngineApplication;
 import exengine.datamodel.*;
 
 @Service
@@ -23,6 +24,19 @@ public class DatabaseService {
 
 	@Autowired
 	OccurrenceEntryRepository occEntrRepo;
+
+	@Autowired
+	EntityRepository entityRepo;
+	
+	public void resetDatabase() {
+		deleteAllRules();
+		deleteAllErrors();
+		deleteAllUsers();
+		deleteAllEntities();
+		if (ExplainableEngineApplication.isTesting()) {			
+			deleteAllOccurrencies();
+		}
+	}
 
 	/*
 	 * RULE OPERATIONS
@@ -61,6 +75,10 @@ public class DatabaseService {
 	public void saveNewError (exengine.datamodel.Error error) {
 		errorRepo.save(error);
 	}
+	
+	public void deleteAllErrors() {
+		errorRepo.deleteAll();
+	}
 
 	/*
 	 * USER OPERATIONS
@@ -96,7 +114,39 @@ public class DatabaseService {
 		}
 		return user;
 	}
-
+	
+	/*
+	 * HA ENTITY OPERATIONS
+	 */
+	public void deleteAllEntities() {
+		entityRepo.deleteAll();
+	}
+	
+	public void saveNewEntity(Entity entity) {
+		entityRepo.save(entity);
+	}
+	
+	public Entity findEntityByEntityId(String entityId) {
+		return entityRepo.findByEntityId(entityId);
+	}
+	
+	public Entity findEntityByDeviceName(String deviceName) {
+		return entityRepo.findByDeviceName(deviceName);
+	}
+	
+	public ArrayList<Entity> findEntitiesByDeviceName(String deviceName) {
+		return entityRepo.findEntitiesByDeviceName(deviceName);
+	}
+	
+	public ArrayList<String> findEntityIdsByDeviceName(String deviceName) {
+		ArrayList<Entity> entities = entityRepo.findEntitiesByDeviceName(deviceName);
+		ArrayList<String> entityIds = new ArrayList<String>();
+		for (Entity entity: entities) {
+			entityIds.add(entity.getEntityId());
+		}
+		return entityIds;
+	}
+	
 	/*
 	 * OCCURENCE OPERATIONS
 	 */
