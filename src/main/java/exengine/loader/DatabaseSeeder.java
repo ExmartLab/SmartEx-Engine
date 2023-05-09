@@ -80,7 +80,7 @@ public class DatabaseSeeder {
 		logger.info("Users seeded to database");
 	}
 
-	private void seedEntities() throws Exception {
+	private void seedEntities() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -96,7 +96,7 @@ public class DatabaseSeeder {
 		logger.info("Entities seeded to database");
 	}
 
-	private void seedRules() throws Exception {
+	private void seedRules() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -148,7 +148,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> actions = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
 					LogEntry action = generateLogEntry(dataMapLower);
@@ -174,7 +174,7 @@ public class DatabaseSeeder {
 		logger.info("Rules seeded to database");
 	}
 
-	private void seedErrors() throws Exception {
+	private void seedErrors() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -195,7 +195,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> actions = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
 					LogEntry action = generateLogEntry(dataMapLower);
