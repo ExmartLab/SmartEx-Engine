@@ -1,4 +1,4 @@
-- name: "No. 104: DEEBOT gets stuck while working and stops"
+- name: "No. 04: DEEBOT gets stuck while working and stops"
   errorId: "e1"
   actions:
    - name: "Deebot last error"
