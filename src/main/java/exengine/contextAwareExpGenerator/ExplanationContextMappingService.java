@@ -30,6 +30,8 @@ public class ExplanationContextMappingService {
 			NameValueReferableMap<Context> exfacts = new FactMap<>();
 
 			// as a default, all explanation types are possible
+			// IMPORTANT: The here assigned values are priorities which are in reverse order
+			// to the expressiveness of the respective explanations
 			List<Integer> exTypes = new ArrayList<Integer>();
 			exTypes.add(1);
 			exTypes.add(2);
@@ -57,7 +59,7 @@ public class ExplanationContextMappingService {
 				return ExplanationType.FACTEX;
 			if (type == ExplanationType.FULLEX.getValue())
 				return ExplanationType.FULLEX;
-			
+
 			return null;
 		}
 
@@ -80,9 +82,8 @@ public class ExplanationContextMappingService {
 			ruleBook2.setDefaultResult(exTypes);
 
 			ruleBook2.run(exfacts);
-			ruleBook2.getResult()
-					.ifPresent(result -> logger
-							.debug("The explanation type is: {} (from the allowed: {})", c1.getTheExpType(), result));
+			ruleBook2.getResult().ifPresent(result -> logger.debug("The explanation type is: {} (from the allowed: {})",
+					c1.getTheExpType(), result));
 
 			// getting the resulting type from the rulebook
 			int type = c1.getTheExpType();

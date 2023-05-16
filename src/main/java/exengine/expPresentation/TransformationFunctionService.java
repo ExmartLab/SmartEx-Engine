@@ -11,7 +11,7 @@ import exengine.datamodel.ErrorCause;
 
 @Service
 public class TransformationFunctionService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(TransformationFunctionService.class);
 
 	public String transformExplanation(ExplanationType type, Cause generalCause, Context context) {
@@ -45,11 +45,12 @@ public class TransformationFunctionService {
 			ErrorCause cause = (ErrorCause) generalCause;
 			switch (type) {
 			case ERRFULLEX:
-				explanation = String.format("Hi %s,\nbecause %s, %s. To resolve, %s.", context.getExplaineeName(),
-						getActionsString(cause), cause.getError().getImplication(), cause.getError().getSolution());
+				explanation = String.format("Hi %s, Error \"%s\" happened. So %s. %s.", context.getExplaineeName(),
+						cause.getError().getErrorName(), cause.getError().getImplication(),
+						cause.getError().getSolution());
 				break;
 			case ERRSOLEX:
-				explanation = String.format("Hi %s,\nto resolve, %s.", context.getExplaineeName(),
+				explanation = String.format("Hi %s, \n%s.", context.getExplaineeName(),
 						cause.getError().getSolution());
 				break;
 			case ERROREX:

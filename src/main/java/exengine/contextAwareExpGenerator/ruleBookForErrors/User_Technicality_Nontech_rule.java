@@ -22,6 +22,7 @@ public class User_Technicality_Nontech_rule {
 	{
 		{
 			nontech_AllowedTypes.add(1);
+			nontech_AllowedTypes.add(3);
 		}
 	}
 

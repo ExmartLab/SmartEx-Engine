@@ -23,7 +23,6 @@ public class User_Technicality_High_rule {
 		{
 			technical_AllowedTypes.add(1);
 			technical_AllowedTypes.add(2);
-			technical_AllowedTypes.add(3);
 		}
 	}
 

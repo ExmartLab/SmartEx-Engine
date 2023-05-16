@@ -22,6 +22,7 @@ public class User_Technicality_Medium_rule {
 	{
 		{
 			medtech_AllowedTypes.add(1);
+			medtech_AllowedTypes.add(2);
 			medtech_AllowedTypes.add(3);
 		}
 	}

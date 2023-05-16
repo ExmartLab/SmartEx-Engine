@@ -27,3 +27,8 @@
   userid: "6"
   role: "GUEST"
   technicality: "TECHNICAL"
+  
+- name: "Hanna"
+  userid: "7"
+  role: "COWORKER"
+  technicality: "NONTECH"
