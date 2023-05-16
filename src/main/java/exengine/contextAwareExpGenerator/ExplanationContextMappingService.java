@@ -13,14 +13,14 @@ import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 
 import exengine.datamodel.*;
-import exengine.expPresentation.ExplanationType;
+import exengine.expPresentation.View;
 
 @Service
 public class ExplanationContextMappingService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExplanationContextMappingService.class);
 
-	public ExplanationType getExplanationType(Context c1, Cause cause) {
+	public View getExplanationType(Context c1, Cause cause) {
 
 		if (cause.getClass().equals(RuleCause.class)) {
 
@@ -51,14 +51,14 @@ public class ExplanationContextMappingService {
 			int type = c1.getTheExpType();
 
 			// returning the resulting type as the respective enum constant
-			if (type == ExplanationType.SIMPLDEX.getValue())
-				return ExplanationType.SIMPLDEX;
-			if (type == ExplanationType.RULEEX.getValue())
-				return ExplanationType.RULEEX;
-			if (type == ExplanationType.FACTEX.getValue())
-				return ExplanationType.FACTEX;
-			if (type == ExplanationType.FULLEX.getValue())
-				return ExplanationType.FULLEX;
+			if (type == View.SIMPLDEX.getValue())
+				return View.SIMPLDEX;
+			if (type == View.RULEEX.getValue())
+				return View.RULEEX;
+			if (type == View.FACTEX.getValue())
+				return View.FACTEX;
+			if (type == View.FULLEX.getValue())
+				return View.FULLEX;
 
 			return null;
 		}
@@ -89,12 +89,12 @@ public class ExplanationContextMappingService {
 			int type = c1.getTheExpType();
 
 			// returning the resulting type as the respective enum constant
-			if (type == ExplanationType.ERRFULLEX.getValue())
-				return ExplanationType.ERRFULLEX;
-			if (type == ExplanationType.ERRSOLEX.getValue())
-				return ExplanationType.ERRSOLEX;
-			if (type == ExplanationType.ERROREX.getValue())
-				return ExplanationType.ERROREX;
+			if (type == View.ERRFULLEX.getValue())
+				return View.ERRFULLEX;
+			if (type == View.ERRSOLEX.getValue())
+				return View.ERRSOLEX;
+			if (type == View.ERROREX.getValue())
+				return View.ERROREX;
 			return null;
 
 		}

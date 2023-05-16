@@ -14,7 +14,7 @@ public class TransformationFunctionService {
 
 	private static final Logger logger = LoggerFactory.getLogger(TransformationFunctionService.class);
 
-	public String transformExplanation(ExplanationType type, Cause generalCause, Context context) {
+	public String transformExplanation(View type, Cause generalCause, Context context) {
 		String explanation = "could not transform explanation into natural language";
 		if (generalCause.getClass().equals(RuleCause.class)) {
 			RuleCause cause = (RuleCause) generalCause;
