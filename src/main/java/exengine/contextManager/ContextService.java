@@ -2,14 +2,19 @@ package exengine.contextManager;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.datamodel.*;
+import exengine.engineService.CreateExService;
 import exengine.database.*;
 
 @Service
 public class ContextService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ContextService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -56,6 +61,14 @@ public class ContextService {
 		dataSer.saveNewOccurrenceEntry(
 		new OccurrenceEntry(explaineeId, id, new Date().getTime()));
 
+		logger.debug("Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}, device: {}",
+				context.getOwnerName(),
+				context.getExplaineeName(),
+				context.getExplaineeRole().toString(),
+				context.getExplaineeState().toString(),
+				context.getExplaineeTechnicality().toString(),
+				context.getOccurrence());
+		
 		return context;
 	}
 

@@ -1,9 +1,12 @@
 package exengine.loader;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -28,6 +31,8 @@ import exengine.datamodel.LogEntry;
 @Component
 public class DatabaseSeeder {
 
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
+	
 	private final DatabaseService dataSer;
 	private final ResourceLoader resourceLoader;
 
@@ -51,7 +56,7 @@ public class DatabaseSeeder {
 		}
 	}
 
-	private void seedUsers() throws Exception {
+	private void seedUsers() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -72,10 +77,10 @@ public class DatabaseSeeder {
 			}
 			dataSer.saveNewUser(user);
 		}
-		System.out.println("Users seeded");
+		logger.info("Users seeded to database");
 	}
 
-	private void seedEntities() throws Exception {
+	private void seedEntities() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -88,10 +93,10 @@ public class DatabaseSeeder {
 			}
 			dataSer.saveNewEntity(entity);
 		}
-		System.out.println("Entities seeded");
+		logger.info("Entities seeded to database");
 	}
 
-	private void seedRules() throws Exception {
+	private void seedRules() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -121,7 +126,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("triggers")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> triggersMap = (List<Map<String, Object>>) dataMap.get("triggers");
-				ArrayList<LogEntry> triggers = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> triggers = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : triggersMap) {
 					LogEntry trigger = generateLogEntry(dataMapLower);
@@ -143,7 +148,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> actions = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
 					LogEntry action = generateLogEntry(dataMapLower);
@@ -166,10 +171,10 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewRule(rule);
 		}
-		System.out.println("Rules seeded");
+		logger.info("Rules seeded to database");
 	}
 
-	private void seedErrors() throws Exception {
+	private void seedErrors() {
 		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -190,7 +195,7 @@ public class DatabaseSeeder {
 			if (dataMap.containsKey("actions")) {
 				@SuppressWarnings("unchecked")
 				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<LogEntry>();
+				ArrayList<LogEntry> actions = new ArrayList<>();
 
 				for (Map<String, Object> dataMapLower : actionsMap) {
 					LogEntry action = generateLogEntry(dataMapLower);
@@ -213,7 +218,7 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewError(error);
 		}
-		System.out.println("Errors seeded");
+		logger.info("Errors seeded to database");
 	}
 
 	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
@@ -224,7 +229,7 @@ public class DatabaseSeeder {
 		}
 
 		if (dataMapLower.containsKey("entity_id")) {
-			logEntry.setEntity_id(dataMapLower.get("entity_id").toString());
+			logEntry.setEntityId(dataMapLower.get("entity_id").toString());
 		}
 
 		if (dataMapLower.containsKey("state")) {
@@ -234,9 +239,14 @@ public class DatabaseSeeder {
 		return logEntry;
 	}
 
-	private List<Map<String, Object>> loadDataMap(String path) throws Exception {
+	private List<Map<String, Object>> loadDataMap(String path) {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
-		InputStream inputStream = resource.getInputStream();
+		InputStream inputStream = null;
+		try {
+			inputStream = resource.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		Yaml yaml = new Yaml();
 		return yaml.load(inputStream);
 	}

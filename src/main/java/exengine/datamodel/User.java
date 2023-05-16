@@ -15,9 +15,9 @@ public class User {
 	private String location;
 
 	private String stateString = "null";
-	
+
 	private String userid;
-	
+
 	public User() {
 		// default state
 		this.setState(State.BREAK);
@@ -28,7 +28,7 @@ public class User {
 		this.name = name;
 		this.role = role;
 		this.technicality = technicality;
-		
+
 		// default state
 		this.setState(State.BREAK);
 	}
@@ -45,10 +45,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return String.format("User[id=%s, userId=%d, name=%s, role=%s, expertise=%s]", id, userid, name, role.toString(), technicality.toString());
-		// return String.format("User[id=%s, name=%s, age=%d, role=%s, expertise=%s,
-		// state=%s, location=%s]", id, name, age, role.toString(),
-		// technicality.toString(), stateString, location);
+		return String.format("User[id=%s, userId=%s, name=%s, role=%s, expertise=%s]", id, userid, name,
+				role.toString(), technicality.toString());
 	}
 
 	public String getId() {

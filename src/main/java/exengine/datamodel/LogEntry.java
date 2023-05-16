@@ -4,22 +4,25 @@ import java.util.ArrayList;
 
 public class LogEntry {
 
-	private String time, name, state, entity_id;
+	private String time;
+	private String name;
+	private String state;
+	private String entityId;
 	private ArrayList<String> other;
 	
 	public LogEntry() {};
 	
-	public LogEntry(String time, String name, String state, String entity_id, ArrayList<String> other) {
+	public LogEntry(String time, String name, String state, String entityId, ArrayList<String> other) {
 		this.time = time;
 		this.name = name;
 		this.state = state;
-		this.entity_id = entity_id;
+		this.entityId = entityId;
 		this.other = other;
 	}
 	
 	public String toString() {
 		String otherString = other == null ? "[]" : other.toString();
-		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entity_id + " other: " + otherString;  
+		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entityId + " other: " + otherString;  
 	}
 
 	public String getTime() {
@@ -46,12 +49,12 @@ public class LogEntry {
 		this.state = state;
 	}
 
-	public String getEntity_id() {
-		return entity_id;
+	public String getEntityId() {
+		return entityId;
 	}
 
-	public void setEntity_id(String entity_id) {
-		this.entity_id = entity_id;
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
 	}
 
 	public ArrayList<String> getOther() {

@@ -13,7 +13,7 @@ public class Rule {
 	private ArrayList<LogEntry> trigger;
 	private ArrayList<String> conditions;
 	private ArrayList<LogEntry> actions;
-	
+
 	private String triggerString;
 	private String conditionsString;
 	private String actionsString;
@@ -24,8 +24,8 @@ public class Rule {
 	public Rule() {
 	}
 
-	public Rule(String ruleName, String ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
-			ArrayList<LogEntry> actions, String ownerId, String ruleDescription) {
+	public Rule(String ruleName, String ruleId, LogEntry ruleEntry, ArrayList<LogEntry> trigger,
+			ArrayList<String> conditions, ArrayList<LogEntry> actions, String ownerId, String ruleDescription) {
 		this.ruleName = ruleName;
 		this.ruleId = ruleId;
 		this.ruleEntry = ruleEntry;
@@ -63,9 +63,9 @@ public class Rule {
 	}
 
 	public ArrayList<LogEntry> getTrigger() {
-		if(trigger != null) //TODO
+		if (trigger != null)
 			return trigger;
-		return null;
+		return new ArrayList<>();
 	}
 
 	public void setTrigger(ArrayList<LogEntry> trigger) {
@@ -112,7 +112,6 @@ public class Rule {
 
 	public void setActionsString(String actionsString) {
 		this.actionsString = actionsString;
-		actionsString = actions == null ? "[]" : actions.toString();
 	}
 
 	public String getOwnerId() {

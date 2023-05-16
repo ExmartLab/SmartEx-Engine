@@ -9,17 +9,26 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import exengine.ExplainableEngineApplication;
 import exengine.datamodel.LogEntry;
 
 public class JsonHandler {
+	
+	private static final Logger logger = LoggerFactory.getLogger(JsonHandler.class);
+	
+	private JsonHandler() {}
 	
 	public static String loadFile(String fileName) throws IOException, URISyntaxException {
 		URL resourceUrl = JsonHandler.class.getClassLoader().getResource(fileName);
 		Path resourcePath = Paths.get(resourceUrl.toURI());
 		String filePath = resourcePath.toAbsolutePath().toString();
+		logger.debug("File loaded");
         return Files.readString(Path.of(filePath));
     }
 	
@@ -32,8 +41,8 @@ public class JsonHandler {
             String time = null;
             String name = null;
             String state = null;
-            String entity_id = null;
-            ArrayList<String> other = null;;
+            String entityId = null;
+            ArrayList<String> other = null;
 
             Iterator<String> fieldNames = node.fieldNames();
             while (fieldNames.hasNext()) {
@@ -47,19 +56,21 @@ public class JsonHandler {
                 } else if (fieldName.equals("state")) {
                     state = fieldValue.asText();
                 } else if (fieldName.equals("entity_id")) {
-                    entity_id = fieldValue.asText();
+                    entityId = fieldValue.asText();
                 } else {
                 	if (other == null) {
-                		other = new ArrayList<String>();
+                		other = new ArrayList<>();
                 	}
                     other.add(fieldName + ": " + fieldValue.asText());
                 }
             }
 
             // Create a new object with the parsed properties and add it to the list
-            logEntries.add(new LogEntry(time, name, state, entity_id, other));
+            logEntries.add(new LogEntry(time, name, state, entityId, other));
+            logger.trace("New log entry was added to logEntries list, with parameters time: {}, name. {}, state: {}, entityId: {}, other: {}", time, name, state, entityId, other);
         }
 
+        logger.debug("logEntries loaded from JSON");
         return logEntries;
     }
 	

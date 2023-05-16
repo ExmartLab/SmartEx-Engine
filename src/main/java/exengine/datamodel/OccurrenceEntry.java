@@ -5,10 +5,10 @@ public class OccurrenceEntry {
 	private String userId;
 	private String causeId;
 	private long time;
-	
+
 	public OccurrenceEntry() {
 	}
-	
+
 	public OccurrenceEntry(String userId, String causeId, long time) {
 		setUserId(userId);
 		setCauseId(causeId);

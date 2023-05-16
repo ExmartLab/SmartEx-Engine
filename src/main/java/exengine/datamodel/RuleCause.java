@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class RuleCause extends Cause {
 
 	private Rule rule;
-	
+
 	private LogEntry trigger;
 	private ArrayList<String> conditions;
 
 	private String conditionsString;
 	private String triggerString;
-	
+
 	public RuleCause(LogEntry trigger, ArrayList<String> conditions, ArrayList<LogEntry> actions, Rule rule) {
 		super(actions);
 		this.trigger = trigger;
@@ -45,11 +45,11 @@ public class RuleCause extends Cause {
 	public void setRule(Rule rule) {
 		this.rule = rule;
 	}
-	
+
 	public void setConditionsString() {
 		conditionsString = "[";
-		for(String c : conditions) {
-			conditionsString = getConditionsString() + c +";";
+		for (String c : conditions) {
+			conditionsString = getConditionsString() + c + ";";
 		}
 		conditionsString = getConditionsString() + "]";
 	}
@@ -57,11 +57,11 @@ public class RuleCause extends Cause {
 	public String getConditionsString() {
 		return conditionsString;
 	}
-	
+
 	public void setTriggerString() {
 		triggerString = trigger == null ? "null" : trigger.getName() + " " + trigger.getState();
 	}
-	
+
 	public String getTriggerString() {
 		return triggerString;
 	}

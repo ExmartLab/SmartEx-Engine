@@ -1,5 +1,7 @@
 package exengine.expPresentation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import exengine.datamodel.RuleCause;
@@ -9,52 +11,17 @@ import exengine.datamodel.ErrorCause;
 
 @Service
 public class TransformationFunctionService {
-
-//	// compose resulting explanation string for full explanation
-//	public String getFullExplanation(RuleCause cause, Context context) {
-//		return cause.getRule().isError()
-//				? String.format("Hi %s,\nbecause %s, %s. To resolve, %s.", context.getExplaineeName(),
-//						getActionsString(cause), context.getRuleDescription(), cause.getRule().getErrorSolution())
-//				: String.format(
-//						"Hi %s,\n" + "%s because %s set up a rule: \"%s\"\n"
-//								+ "and currently %s and %s, so the rule has been fired.",
-//						context.getExplaineeName(), getActionsString(cause), getOwnerString(context),
-//						context.getRuleDescription(), getConditionsString(cause), getTriggerString(cause));
-//	}
-//
-//	// compose resulting explanation string for Rule Explanation / error explanation
-//	public String getRuleExplanation(RuleCause cause, Context context) {
-//		return cause.getRule().isError()
-//				? String.format("Hi %s,\n%s.", context.getExplaineeName(), context.getRuleDescription())
-//				: String.format("Hi %s,\nthe rule: \"%s\"\nhas been fired.", context.getExplaineeName(),
-//						context.getRuleDescription());
-//	}
-//
-//	// compose resulting explanation string for fact explanation / solution explanation
-//	public String getFactExplanation(RuleCause cause, Context context) {
-//		return cause.getRule().isError()
-//				? String.format("Hi %s,\n%s.", context.getExplaineeName(), cause.getRule().getErrorSolution())
-//				: String.format("Hi %s,\n" + "%s because currently %s and %s.", context.getExplaineeName(),
-//						getActionsString(cause), getConditionsString(cause), getTriggerString(cause));
-//	}
-//
-//	// compose resulting explanation string for simplified explanation / solution explanation
-//	public String getSimplifiedExplanation(RuleCause cause, Context context) {
-//		return cause.getRule().isError()
-//				? String.format("Hi %s,\n%s.", context.getExplaineeName(), getActionsString(cause))
-//				: String.format("Hi %s,\n%s set up a rule and at this moment the rule has been fired.",
-//						context.getExplaineeName(), getOwnerString(context));
-//	}
+	
+	private static final Logger logger = LoggerFactory.getLogger(TransformationFunctionService.class);
 
 	public String transformExplanation(ExplanationType type, Cause generalCause, Context context) {
-		String explanation = "couldn't transform explanation into natural language";
+		String explanation = "could not transform explanation into natural language";
 		if (generalCause.getClass().equals(RuleCause.class)) {
 			RuleCause cause = (RuleCause) generalCause;
 			switch (type) {
 			case FULLEX:
 				explanation = String.format(
-						"Hi %s,\n" + "%s because %s set up a rule: \"%s\"\n"
-								+ "and currently %s and %s, so the rule has been fired.",
+						"Hi %s,\n %s because %s set up a rule: \"%s\"\n and currently %s and %s, so the rule has been fired.",
 						context.getExplaineeName(), getActionsString(cause), getOwnerString(context),
 						cause.getRule().getRuleDescription(), getConditionsString(cause), getTriggerString(cause));
 				break;
@@ -93,6 +60,7 @@ public class TransformationFunctionService {
 				break;
 			}
 		}
+		logger.debug("Found explanation is: {}", explanation);
 		return explanation;
 	}
 

@@ -3,9 +3,10 @@ package exengine.algorithmicExpGenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import exengine.ExplainableEngineApplication;
 import exengine.datamodel.RuleCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
@@ -16,34 +17,29 @@ import exengine.datamodel.ErrorCause;
 @Service
 public class FindCauseService {
 
+	private static final Logger logger = LoggerFactory.getLogger(FindCauseService.class);
+
 	private boolean oneORSatisfied;
 	private LogEntry trigger;
 
-	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors, ArrayList<String> entityIds) {
-		
+	public Cause findCause(ArrayList<LogEntry> logEntries, List<Rule> dbRules, List<Error> dbErrors,
+			ArrayList<String> entityIds) {
+
 		// check if explanation shall be given for particular device
 		if (entityIds != null) {
 			// shorten the log accordingly
 			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
-			while (!entityIds.contains(latestEntry.getEntity_id())) {
-				if (ExplainableEngineApplication.isDebug()) {
-					System.out.println("Remove logEntry item");
-				}
+			while (!entityIds.contains(latestEntry.getEntityId())) {
 				logEntries.remove(latestEntry);
 				latestEntry = logEntries.get(logEntries.size() - 1);
 			}
 		}
-		
-		
+
 		Cause cause = null;
-			
-		for (LogEntry l : logEntries)
-			if (ExplainableEngineApplication.isDebug())
-				System.out.println(l.toString());
 
 		// initialize lists for actions and rules from Logs
-		ArrayList<String> foundRuleActions = new ArrayList<String>();
-		ArrayList<String> foundRuleNames = new ArrayList<String>();
+		ArrayList<String> foundRuleActions = new ArrayList<>();
+		ArrayList<String> foundRuleNames = new ArrayList<>();
 
 		/*
 		 * START OF THE ALGORITHM
@@ -54,30 +50,28 @@ public class FindCauseService {
 
 			//
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
-			if (ExplainableEngineApplication.isDebug())
-				System.out.println(i + ":\n" + entryData);
+
+			logger.trace("EntryData number {}: {}", i, entryData);
 
 			// error-if case before?
 			if (isInErrorActions(entryData, dbErrors) && foundRuleActions.isEmpty()) {
 				// need to check for empty rule action list to be sure the error is the event to
 				// be explained (because no rule was triggered after the error occurred)
-				System.out.println("returning error Cause");
+				logger.debug("Return error Cause");
 				return getErrorCause(logEntries, i, dbErrors);
 			}
 
 			if (isInRuleActions(entryData, dbRules)) { // if it is an action
-				if (ExplainableEngineApplication.isDebug())
-					System.out.println("found rule action: " + entryData);
+				logger.debug("found rule action: {}", entryData);
 				foundRuleActions.add(entryData); // store in action list
 
 			} else if (isInRules(entryData, dbRules)) { // if it is a rule
 
 				if (foundRuleActions.isEmpty()) {
-					continue;
+					
 
 				} else { // case: we found an action before
-					if (ExplainableEngineApplication.isDebug())
-						System.out.println("found rule: " + entryData);
+					logger.debug("found rule: {}", entryData);
 					foundRuleNames.add(entryData);
 					boolean areFoundActionsSubsetOfRuleActions = true;
 					Rule foundRule = null;
@@ -97,23 +91,18 @@ public class FindCauseService {
 
 					if (areFoundActionsSubsetOfRuleActions) {
 
-						if (ExplainableEngineApplication.isDebug())
-							System.out.println("found actoins are subset of rule actions");
+						logger.debug("Found actions are subset of rule actions");
 
 						if (foundRule != null)
 							oneORSatisfied = triggerConditionCheck(i, foundRule, logEntries);
-						if (oneORSatisfied) {
-							if (foundRule != null) {
-								cause = new RuleCause(trigger, foundRule.getConditions(), foundRule.getActions(),
-										foundRule);
-							}
+						if (oneORSatisfied && (foundRule != null)) {
+							cause = new RuleCause(trigger, foundRule.getConditions(), foundRule.getActions(),
+									foundRule);
+
 						}
 					}
 
 				} // closing case: we found an action before
-
-			} else {
-				continue;
 			}
 		}
 
@@ -123,10 +112,10 @@ public class FindCauseService {
 	public ErrorCause getErrorCause(ArrayList<LogEntry> logEntries, int line, List<Error> dbErrors) {
 		ErrorCause errorCause = null;
 		LogEntry actionEntry = logEntries.get(line);
-		for(Error e : dbErrors)
-		{
-			for(LogEntry action : e.getActions()) {
-				if((action.getName() + " " + action.getState()).equals(actionEntry.getName() + " " + actionEntry.getState())) {
+		for (Error e : dbErrors) {
+			for (LogEntry action : e.getActions()) {
+				if ((action.getName() + " " + action.getState())
+						.equals(actionEntry.getName() + " " + actionEntry.getState())) {
 					return new ErrorCause(e.getActions(), e.getImplication(), e.getSolution(), e);
 				}
 			}
@@ -201,7 +190,8 @@ public class FindCauseService {
 			return true;
 		for (int i = line; i >= 0; i--) { // go back from line
 			for (LogEntry t : r.getTrigger()) // look for last trigger
-				if ((logEntries.get(i).getName() + " " + logEntries.get(i).getState()).equals(t.getName() + " " + t.getState())) {
+				if ((logEntries.get(i).getName() + " " + logEntries.get(i).getState())
+						.equals(t.getName() + " " + t.getState())) {
 					trigger = logEntries.get(i);
 					return true;
 				}
@@ -209,11 +199,11 @@ public class FindCauseService {
 		}
 		return false;
 	}
-	
+
 	public boolean isEntryInList(LogEntry entry, ArrayList<String> entityIds) {
-		boolean result = false;		
-		for (String entityId: entityIds) {
-			if (entry.getEntity_id() == entityId) {
+		boolean result = false;
+		for (String entityId : entityIds) {
+			if (entry.getEntityId() == entityId) {
 				result = true;
 			}
 		}

@@ -7,7 +7,7 @@ public class ErrorCause extends Cause {
 	private String implication;
 	private String solution;
 	private Error error;
-	
+
 	public ErrorCause(ArrayList<LogEntry> actions, String implication, String solution, Error error) {
 		super(actions);
 		setImplication(implication);
@@ -30,7 +30,7 @@ public class ErrorCause extends Cause {
 	public void setSolution(String solution) {
 		this.solution = solution;
 	}
-	
+
 	public Error getError() {
 		return error;
 	}
@@ -38,5 +38,5 @@ public class ErrorCause extends Cause {
 	public void setError(Error error) {
 		this.error = error;
 	}
-	
+
 }

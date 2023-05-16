@@ -2,6 +2,8 @@ package exengine.rest;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import exengine.datamodel.User;
 @RestController
 @RequestMapping("/database")
 public class DatabaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DatabaseController.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -39,8 +43,11 @@ public class DatabaseController {
     		else return new ResponseEntity<>("userState does not match any of the following: \"working\", \"break\", or \"meeting\".", HttpStatus.BAD_REQUEST);
     		
     		User user = optionalUser.get();
-			user.setState(state);
+    		String oldState = user.getStateString();
+    		user.setState(state);
             dataSer.saveNewUser(user);
+            
+            logger.info("HTTP Post: User {} changed state from {} to {}", user.getName(), oldState, state);
             return new ResponseEntity<>(String.format("User %s (id: %s) changed state to \"%s\"", user.getName(), userId, state), HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);

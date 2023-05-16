@@ -4,14 +4,14 @@ import java.util.ArrayList;
 
 public class Error {
 
-
 	private ArrayList<LogEntry> actions;
 	private String implication;
 	private String solution;
-	private String errorName; 
+	private String errorName;
 	private String errorId;
-	
-	public Error() {};
+
+	public Error() {
+	}
 
 	public Error(String errorName, String errorId, ArrayList<LogEntry> actions, String implication, String solution) {
 		this.errorName = errorName;
@@ -20,7 +20,7 @@ public class Error {
 		this.implication = implication;
 		this.solution = solution;
 	}
-	
+
 	public ArrayList<LogEntry> getActions() {
 		return actions;
 	}
@@ -52,14 +52,13 @@ public class Error {
 	public void setImplication(String implication) {
 		this.implication = implication;
 	}
-	
+
 	public void setErrorName(String errorName) {
 		this.errorName = errorName;
 	}
-	
+
 	public String getErrorName() {
 		return errorName;
 	}
 
-	
 }
