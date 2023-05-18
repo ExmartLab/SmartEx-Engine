@@ -19,6 +19,7 @@ import exengine.datamodel.*;
 import exengine.datamodel.Error;
 import exengine.expPresentation.*;
 import exengine.haconnection.HomeAssistantConnectionService;
+import exengine.loader.JsonHandler;
 
 @Service
 public class CreateExService {
@@ -63,14 +64,12 @@ public class CreateExService {
 				logger.error("Unable to parse last logs: {}", e.getMessage(), e);
 			}
 		} else {
-			// getting demo logs
+			// getting demo logs	
 			try {
-				ExplainableEngineApplication.populateDemoEntries();
+				logEntries = populateDemoEntries();
 			} catch (IOException | URISyntaxException e) {
-				logger.error("Unable to populate the demo entries: {}", e.getMessage(), e);
-			} 		
-			
-			logEntries = ExplainableEngineApplication.demoEntries;
+				e.printStackTrace();
+			}
 		}
 		
 		ArrayList<String> entityIds = null;
@@ -122,6 +121,16 @@ public class CreateExService {
 		logger.info("Explanation generated");
 		
 		return explanation;
+	}
+	
+	private ArrayList<LogEntry> populateDemoEntries() throws IOException, URISyntaxException {
+		ArrayList<LogEntry> demoEntries;
+		String fileName = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS;
+		String logJSON = JsonHandler.loadFile(fileName);
+		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
+		
+		logger.info("demoEntries have been loaded from {}", fileName);
+		return demoEntries;
 	}
 
 }

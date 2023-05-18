@@ -1,8 +1,5 @@
 package exengine.rest;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +51,7 @@ public class ExplanationController {
 		int minNumber = 30;
 		
 		logger.debug("HTTP GET: Showcase: (last {} min, per default), userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
-		
-		try {
-			ExplainableEngineApplication.populateDemoEntries();
-			 
-		} catch (URISyntaxException | IOException e) {
-			e.printStackTrace();
-		} 
+
 		ExplainableEngineApplication.setTesting(true);
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
 
