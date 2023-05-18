@@ -52,11 +52,11 @@ public class ExplanationController {
 		
 		logger.debug("HTTP GET: Showcase: (last {} min, per default), userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
 
-		ExplainableEngineApplication.setTesting(true);
+		ExplainableEngineApplication.setDemo(true);
 		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
 
 		// turn testing off again
-		ExplainableEngineApplication.setTesting(false);
+		ExplainableEngineApplication.setDemo(false);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 

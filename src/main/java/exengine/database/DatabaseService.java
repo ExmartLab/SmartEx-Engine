@@ -37,7 +37,7 @@ public class DatabaseService {
 		deleteAllErrors();
 		deleteAllUsers();
 		deleteAllEntities();
-		if (ExplainableEngineApplication.isTesting()) {
+		if (ExplainableEngineApplication.isDemo()) {
 			deleteAllOccurrencies();
 			logger.info("Database was completely reset");
 		}

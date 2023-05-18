@@ -56,7 +56,7 @@ public class CreateExService {
 		logger.debug("getExplanation called with arguments min: {}, user name: {}, userLocation: {}, device: {}", min, user.getName(), userLocation, device);
 		
 		// getting the log Entries
-		if (!ExplainableEngineApplication.isTesting()) {
+		if (!ExplainableEngineApplication.isDemo()) {
 			// getting logs from Home Assistant
 			try {
 				logEntries = haSer.parseLastLogs(min);

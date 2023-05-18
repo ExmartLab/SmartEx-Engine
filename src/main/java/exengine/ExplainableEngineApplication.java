@@ -17,22 +17,24 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
 	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
-	private static boolean testing = true;
+	private static boolean demo = true;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ExplainableEngineApplication.class, args);
 	}
 
 	@Override
-	public void run(String... args) throws Exception { }
+	public void run(String... args) throws Exception {
+		logger.info("ExplainableEngineApplication running");
+	}
 	
-	public static boolean isTesting() {
-		return testing;
+	public static boolean isDemo() {
+		return demo;
 	}
 
-	public static void setTesting(boolean testing) {
-		ExplainableEngineApplication.testing = testing;
-		logger.debug("Testing set to {}", testing);
+	public static void setDemo(boolean demo) {
+		ExplainableEngineApplication.demo = demo;
+		logger.debug("Demo mode set to {}", demo);
 	}
 
 }

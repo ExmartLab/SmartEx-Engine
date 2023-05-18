@@ -23,16 +23,16 @@ public class ConfigurationController {
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
 
-	@PostMapping("/testing/off")
-	public ResponseEntity<String> testingOff() {
-		ExplainableEngineApplication.setTesting(false);
+	@PostMapping("/demo/off")
+	public ResponseEntity<String> demoOff() {
+		ExplainableEngineApplication.setDemo(false);
 		logger.info("HTTP POST: Testing turned off");
 		return new ResponseEntity<>("Testing turned off", HttpStatus.CREATED);
 	}
 
-	@PostMapping("/testing/on")
-	public ResponseEntity<String> testingOn() {
-		ExplainableEngineApplication.setTesting(true);
+	@PostMapping("/demo/on")
+	public ResponseEntity<String> demoOn() {
+		ExplainableEngineApplication.setDemo(true);
 		logger.info("HTTP POST: Testing turned on");
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}

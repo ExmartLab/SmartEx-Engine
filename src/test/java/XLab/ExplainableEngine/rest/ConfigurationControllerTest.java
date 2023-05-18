@@ -25,22 +25,22 @@ class ConfigurationControllerTest {
 
     @Test
     void testTestingOff() throws Exception {
-        ExplainableEngineApplication.setTesting(true);
+        ExplainableEngineApplication.setDemo(true);
         mockMvc.perform(MockMvcRequestBuilders.post("/testing/off")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string("Testing turned off"));
-        assertThat(ExplainableEngineApplication.isTesting()).isFalse();
+        assertThat(ExplainableEngineApplication.isDemo()).isFalse();
     }
 
     @Test
     void testTestingOn() throws Exception {
-        ExplainableEngineApplication.setTesting(false);
+        ExplainableEngineApplication.setDemo(false);
         mockMvc.perform(MockMvcRequestBuilders.post("/testing/on")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string("Testing turned on"));
-        assertThat(ExplainableEngineApplication.isTesting()).isTrue();
+        assertThat(ExplainableEngineApplication.isDemo()).isTrue();
     }
 }
 
