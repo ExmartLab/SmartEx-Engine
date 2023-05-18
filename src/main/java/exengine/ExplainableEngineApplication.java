@@ -2,12 +2,9 @@ package exengine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import exengine.haconnection.HomeAssistantConnectionService;
 
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
@@ -20,9 +17,6 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
 	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
-	@Autowired
-	private HomeAssistantConnectionService haService;
-
 	private static boolean testing = true;
 
 	public static void main(String[] args) {
@@ -30,10 +24,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
-		// print out current API Status to see that HA is reachable
-		haService.printAPIStatus();
-	}
+	public void run(String... args) throws Exception { }
 	
 	public static boolean isTesting() {
 		return testing;
