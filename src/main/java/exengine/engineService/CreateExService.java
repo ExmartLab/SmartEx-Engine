@@ -108,7 +108,7 @@ public class CreateExService {
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		View type = contextMappingSer.getExplanationType(context, cause);
+		View type = contextMappingSer.getExplanationView(context, cause);
 		
 		/*
 		 * STEP 4: generate the desired explanation

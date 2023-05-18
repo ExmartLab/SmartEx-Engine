@@ -58,7 +58,7 @@ class ExplanationContextMappingServiceTest {
 		}
 
 		// When
-		View viewType = underTest.getExplanationType(context, cause);
+		View viewType = underTest.getExplanationView(context, cause);
 
 		// Then
 		Assertions.assertEquals(View.valueOf(expected_view), viewType);

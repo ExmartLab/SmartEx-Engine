@@ -14,6 +14,9 @@ import exengine.datamodel.Cause;
 import exengine.datamodel.Error;
 import exengine.datamodel.ErrorCause;
 
+/**
+ * Component used to find causality paths.
+ */
 @Service
 public class FindCauseService {
 
@@ -36,8 +39,6 @@ public class FindCauseService {
 		}
 
 		Cause cause = null;
-
-		// initialize lists for actions and rules from Logs
 		ArrayList<String> foundRuleActions = new ArrayList<>();
 		ArrayList<String> foundRuleNames = new ArrayList<>();
 
@@ -45,10 +46,9 @@ public class FindCauseService {
 		 * START OF THE ALGORITHM
 		 */
 
-		// iterate through Log Entries in reversed order
-		for (int i = logEntries.size() - 1; i >= 0; i--) { // read each line
+		// iterate through Log entries in reversed order
+		for (int i = logEntries.size() - 1; i >= 0; i--) {
 
-			//
 			String entryData = logEntries.get(i).getName() + " " + logEntries.get(i).getState();
 
 			logger.trace("EntryData number {}: {}", i, entryData);
