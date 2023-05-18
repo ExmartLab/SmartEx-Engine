@@ -6,17 +6,34 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Entry point for the application.
+ * 
+ * Also defines the global {@link #demo demo} variable, as well as constants
+ * defining all file-names that are within the application.
+ */
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ExplainableEngineApplication.class);
-	
+
 	public static final String FILE_NAME_USERS = "seeds/users.yaml";
 	public static final String FILE_NAME_ENTITIES = "seeds/entities.yaml";
 	public static final String FILE_NAME_RULES = "seeds/rules.yaml";
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
 	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
+	/**
+	 * Configuration property of the application.
+	 * 
+	 * If <code>demo=true</code>, explanations will be generated based on a
+	 * predefined and fixed set of logs (i.e., historical and constructed events in
+	 * Home Assistant). Else, the explanations will be generated based on an
+	 * up-to-date fetch of logs (i.e., most recent/live events in Home Assistant).
+	 * 
+	 * @Note If <code>demo=false</code>, the application needs to have a connection
+	 *       to Home Assistant.
+	 */
 	private static boolean demo = true;
 
 	public static void main(String[] args) {
@@ -25,13 +42,26 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		logger.info("ExplainableEngineApplication running");
+		logger.info("Explainable Engine running");
 	}
-	
+
+	/**
+	 * Gets the demo mode configuration.
+	 * 
+	 * @return boolean {@link #demo demo}
+	 */
 	public static boolean isDemo() {
 		return demo;
 	}
 
+	/**
+	 * Sets the demo mode configuration.
+	 * 
+	 * @param demo A boolean value indicating whether the application should run in
+	 *             demo mode. Set to 'true' for enabling demo mode, 'false'
+	 *             otherwise.
+	 * @see {@link #demo demo mode} for implications.
+	 */
 	public static void setDemo(boolean demo) {
 		ExplainableEngineApplication.demo = demo;
 		logger.debug("Demo mode set to {}", demo);
