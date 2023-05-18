@@ -58,7 +58,6 @@ public class FindCauseService {
 				// need to check for empty rule action list to be sure the error is the event to
 				// be explained (because no rule was triggered after the error occurred)
 				logger.debug("Return error Cause");
-				System.out.println("error cause:" + getErrorCause(logEntries, i, dbErrors).getActionsString());
 				return getErrorCause(logEntries, i, dbErrors);
 			}
 
