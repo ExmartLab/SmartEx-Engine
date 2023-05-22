@@ -32,8 +32,6 @@ public class ContextService {
 
 		String explaineeId = explainee.getUserId();
 		State state = explainee.getState();
-
-		// Initialize return value with null as default
 		Context context = null;
 		Occurrence occurrence = null;
 		String id = null;
