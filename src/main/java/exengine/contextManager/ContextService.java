@@ -59,12 +59,14 @@ public class ContextService {
 		// Adding the current occurrence
 		dataSer.saveNewOccurrenceEntry(new OccurrenceEntry(explaineeId, id, new Date().getTime()));
 
-		logger.debug(
-				"Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}, device: {}",
-				context.getOwnerName(), context.getExplaineeName(), context.getExplaineeRole().toString(),
-				context.getExplaineeState().toString(), context.getExplaineeTechnicality().toString(),
-				context.getOccurrence());
-
+		if (context != null) { 
+			logger.debug(
+					"Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}, device: {}",
+					context.getOwnerName(), context.getExplaineeName(), context.getExplaineeRole(),
+					context.getExplaineeState(), context.getExplaineeTechnicality(),
+					context.getOccurrence());
+		}
+		
 		return context;
 	}
 
