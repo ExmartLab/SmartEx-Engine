@@ -24,7 +24,6 @@ public class ExplanationController {
 	@GetMapping("/explain")
 	public ResponseEntity<String> getExplanation(@RequestParam(value = "min", defaultValue = "30") String min,
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
-			@RequestParam(value = "userLocation", defaultValue = "unknown") String userLocation,
 			@RequestParam(value = "device", defaultValue = "unknown") String device) {
 
 		// initiating integer variables
@@ -36,9 +35,9 @@ public class ExplanationController {
 		} catch (Exception e) {
 		}
 		
-		logger.debug("HTTP GET: Explanation requested: last {} min, userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
+		logger.debug("HTTP GET: Explanation requested: last {} min, userId: {}, device: {}", minNumber, userId, device);
 		
-		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
+		String explanation = createExSer.getExplanation(minNumber, userId, device);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);
 	}
 
@@ -53,7 +52,7 @@ public class ExplanationController {
 		logger.debug("HTTP GET: Showcase: (last {} min, per default), userId: {}, userLocation: {}, device: {}", minNumber, userId, userLocation, device);
 
 		ExplainableEngineApplication.setDemo(true);
-		String explanation = createExSer.getExplanation(minNumber, userId, userLocation, device);
+		String explanation = createExSer.getExplanation(minNumber, userId, device);
 
 		// turn testing off again
 		ExplainableEngineApplication.setDemo(false);

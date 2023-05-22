@@ -46,14 +46,14 @@ public class CreateExService {
 	@Autowired
 	TransformationFunctionService transformFuncSer;
 
-	public String getExplanation(int min, String userId, String userLocation, String device) {
+	public String getExplanation(int min, String userId, String device) {
 
 		// test for valid userId by checking if user with userId is in db
 		User user = dataSer.findUserByUserId(userId);
 		if (user == null)
 			return "unvalid userId";
 		
-		logger.debug("getExplanation called with arguments min: {}, user name: {}, userLocation: {}, device: {}", min, user.getName(), userLocation, device);
+		logger.debug("getExplanation called with arguments min: {}, user name: {}, device: {}", min, user.getName(), device);
 		
 		// getting the log Entries
 		if (!ExplainableEngineApplication.isDemo()) {
@@ -100,10 +100,9 @@ public class CreateExService {
 		/*
 		 * STEP 2: GET CONTEXT
 		 */
-		State state = user.getState();
 
 		// get final context from context service
-		Context context = conSer.getAllContext(cause, user, state, userLocation);
+		Context context = conSer.getAllContext(cause, user);
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import exengine.datamodel.*;
 import exengine.database.*;
 
+/**
+ * Component to collect all contextual variables for enriching explanations.
+ */
 @Service
 public class ContextService {
 
@@ -18,9 +21,17 @@ public class ContextService {
 	@Autowired
 	DatabaseService dataSer;
 
-	public Context getAllContext(Cause cause, User explainee, State userState, String userLocation) {
+	/**
+	 * Bundles contextual variables into a Context object.
+	 * 
+	 * @param cause        causal path as determined by e.g., the FindCauseService
+	 * @param explainee    User that requests an explanation
+	 * @return Context (bundle of all contextual variables)
+	 */
+	public Context getAllContext(Cause cause, User explainee) {
 
 		String explaineeId = explainee.getUserId();
+		State state = explainee.getState();
 
 		// Initialize return value with null as default
 		Context context = null;
@@ -43,7 +54,7 @@ public class ContextService {
 			if (explainee.getId().equals(ruleOwner.getId()))
 				explainee.setRole(Role.OWNER);
 
-			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), userState,
+			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), state,
 					explainee.getName(), ruleOwner.getName());
 		}
 		// Error case
@@ -52,21 +63,20 @@ public class ContextService {
 			id = ((ErrorCause) cause).getError().getErrorId();
 
 			occurrence = dataSer.findOccurrence(explaineeId, id, 90);
-			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), userState,
+			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), state,
 					explainee.getName(), null);
 		}
 
 		// Adding the current occurrence
 		dataSer.saveNewOccurrenceEntry(new OccurrenceEntry(explaineeId, id, new Date().getTime()));
 
-		if (context != null) { 
+		if (context != null) {
 			logger.debug(
 					"Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}, device: {}",
 					context.getOwnerName(), context.getExplaineeName(), context.getExplaineeRole(),
-					context.getExplaineeState(), context.getExplaineeTechnicality(),
-					context.getOccurrence());
+					context.getExplaineeState(), context.getExplaineeTechnicality(), context.getOccurrence());
 		}
-		
+
 		return context;
 	}
 
