@@ -103,7 +103,7 @@ public class CreateExService {
 		State state = user.getState();
 
 		// get final context from context service
-		Context context = conSer.getAllContext(cause, userId, state, userLocation);
+		Context context = conSer.getAllContext(cause, user, state, userLocation);
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate

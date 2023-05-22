@@ -16,8 +16,10 @@ import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import exengine.datamodel.*;
 import exengine.expPresentation.View;
 
-/*
- * Component to perform the mapping of context to most appropriate view type, according to mapping policies described in the paper and defined in the packages .ruleBookForRules and .ruleBookForErrors.
+/**
+ * Component to perform the mapping of context to most appropriate view type,
+ * according to mapping policies described in the paper and defined in the
+ * packages .ruleBookForRules and .ruleBookForErrors.
  */
 @Service
 public class ExplanationContextMappingService {
