@@ -84,7 +84,7 @@ class ContextServiceTest {
 		Assertions.assertEquals(ruleOwner.getName(), context.getOwnerName());
 	}
 	
-	@DisplayName("Test context for cause, where explainee is the rule owner or not")
+	@DisplayName("Test context for error case")
 	@Test
 	void testGetAllContextError() {
 		
