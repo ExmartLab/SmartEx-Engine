@@ -80,8 +80,6 @@ public class CreateExService {
 			entityIds = dataSer.findEntityIdsByDeviceName(device);
 		}
 
-		String explanation;
-
 		// query Rules & Errors from DB
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
@@ -93,29 +91,26 @@ public class CreateExService {
 		 */
 		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, entityIds);
 
-		// return in case no cause has been found
 		if (cause == null)
 			return "couldn't find cause to explain";
 
 		/*
-		 * STEP 2: GET CONTEXT
+		 * STEP 2: get final context from context service
 		 */
-
-		// get final context from context service
 		Context context = conSer.getAllContext(cause, user);
 
 		/*
 		 * STEP 3: ask rule engine what explanation type to generate
 		 */
-		View type = contextMappingSer.getExplanationView(context, cause);
+		View view = contextMappingSer.getExplanationView(context, cause);
+		
+		if (view == null)
+			return "Unable to determine explanation type";
 		
 		/*
 		 * STEP 4: generate the desired explanation
 		 */
-		if (type == null)
-			return "Unable to determine explanation type";
-		
-		explanation = transformFuncSer.transformExplanation(type, cause, context);
+		String explanation = transformFuncSer.transformExplanation(view, cause, context);
 		
 		logger.info("Explanation generated");
 		
