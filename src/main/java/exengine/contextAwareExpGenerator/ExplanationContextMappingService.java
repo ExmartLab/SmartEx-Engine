@@ -55,7 +55,7 @@ public class ExplanationContextMappingService {
 			return getView(context, ruleBookErrors, allowedViews);
 
 		}
-		logger.debug("No valid explanation type found");
+		logger.debug("No valid explanation type found, therefore returning view type: ");
 		return null;
 	}
 
