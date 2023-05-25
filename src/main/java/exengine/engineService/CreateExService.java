@@ -23,10 +23,8 @@ import exengine.loader.JsonHandler;
 
 @Service
 public class CreateExService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
 
-	private ArrayList<LogEntry> logEntries;
+	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -47,14 +45,69 @@ public class CreateExService {
 	TransformationFunctionService transformFuncSer;
 
 	public String getExplanation(int min, String userId, String device) {
+		logger.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
 
-		// test for valid userId by checking if user with userId is in db
+		List<Rule> dbRules = dataSer.findAllRules();
+		List<Error> dbErrors = dataSer.findAllErrors();
+		ArrayList<LogEntry> logEntries = getLogEntries(min);
+		ArrayList<String> explanandumsEntityIds = getExplanandumsEntityIds(device);
 		User user = dataSer.findUserByUserId(userId);
-		if (user == null)
-			return "unvalid userId";
 		
-		logger.debug("getExplanation called with arguments min: {}, user name: {}, device: {}", min, user.getName(), device);
+		if (user == null) {
+			return "unvalid userId: this user does not exist";
+		}
+
+		/*
+		 * STEP 1: FIND CAUSE
+		 */
+		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, explanandumsEntityIds);
 		
+		if (cause == null) {
+			return "Could not find cause to explain";
+		}
+
+		/*
+		 * STEP 2: get final context from context service
+		 */
+		Context context = conSer.getAllContext(cause, user);
+		
+		if (context == null) {
+			return "Could not collect context";
+		}
+
+		/*
+		 * STEP 3: ask rule engine what explanation type to generate
+		 */
+		View view = contextMappingSer.getExplanationView(context, cause);
+
+		if (view == null) {
+			return "Could not determine explanation type";
+		}
+
+		/*
+		 * STEP 4: generate the desired explanation
+		 */
+		String explanation = transformFuncSer.transformExplanation(view, cause, context);
+		
+		if (explanation == null) {
+			return "Could not transform explanation into natural language";
+		}
+
+		logger.info("Explanation generated");
+		return explanation;
+	}
+	
+	public ArrayList<String> getExplanandumsEntityIds(String device) {
+		if (device.equals("unknown")) {
+			return null;
+		} else {
+			return dataSer.findEntityIdsByDeviceName(device);			
+		}
+	}
+
+	public ArrayList<LogEntry> getLogEntries(int min) {
+		ArrayList<LogEntry> logEntries = null;
+
 		// getting the log Entries
 		if (!ExplainableEngineApplication.isDemo()) {
 			// getting logs from Home Assistant
@@ -64,65 +117,23 @@ public class CreateExService {
 				logger.error("Unable to parse last logs: {}", e.getMessage(), e);
 			}
 		} else {
-			// getting demo logs	
+			// getting demo logs
 			try {
 				logEntries = populateDemoEntries();
 			} catch (IOException | URISyntaxException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		ArrayList<String> entityIds = null;
-		
-		// check if explanation for particular device requested
-		if (!device.equals("unknown")) {
-			// get all associated entityIds
-			entityIds = dataSer.findEntityIdsByDeviceName(device);
-		}
 
-		// query Rules & Errors from DB
-		List<Rule> dbRules = dataSer.findAllRules();
-		List<Error> dbErrors = dataSer.findAllErrors();
-		
-		logger.debug("Explanation generation started");
-
-		/*
-		 * STEP 1: FIND CAUSE
-		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, entityIds);
-
-		if (cause == null)
-			return "couldn't find cause to explain";
-
-		/*
-		 * STEP 2: get final context from context service
-		 */
-		Context context = conSer.getAllContext(cause, user);
-
-		/*
-		 * STEP 3: ask rule engine what explanation type to generate
-		 */
-		View view = contextMappingSer.getExplanationView(context, cause);
-		
-		if (view == null)
-			return "Unable to determine explanation type";
-		
-		/*
-		 * STEP 4: generate the desired explanation
-		 */
-		String explanation = transformFuncSer.transformExplanation(view, cause, context);
-		
-		logger.info("Explanation generated");
-		
-		return explanation;
+		return logEntries;
 	}
-	
+
 	private ArrayList<LogEntry> populateDemoEntries() throws IOException, URISyntaxException {
 		ArrayList<LogEntry> demoEntries;
 		String fileName = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS;
 		String logJSON = JsonHandler.loadFile(fileName);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
-		
+
 		logger.info("demoEntries have been loaded from {}", fileName);
 		return demoEntries;
 	}

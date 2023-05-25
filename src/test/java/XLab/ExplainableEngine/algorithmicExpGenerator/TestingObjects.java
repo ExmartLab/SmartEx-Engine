@@ -19,7 +19,7 @@ import exengine.loader.JsonHandler;
  * to be uncoupled from the database. Thereby, testing with this data does not require to have 
  * the database always in a state that contains the test data.
  */
-class TestingObjects {
+public class TestingObjects {
 
 	private ArrayList<LogEntry> demoEntries;
 	private ArrayList<Rule> dbRules;
