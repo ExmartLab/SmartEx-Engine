@@ -62,7 +62,7 @@ class DatabaseControllerTest {
         assertThat(user.getState()).isEqualTo(State.WORKING);
     }
     
-    @DisplayName("Test Setting User State Where User does not Exist")
+    @DisplayName("Test Setting User State Where User Does Not Exist")
     @Test
     void testUserNotThere() throws Exception {
         // mock data
