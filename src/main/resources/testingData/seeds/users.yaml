@@ -1,0 +1,39 @@
+- name: "Alice"
+  userid: "1"
+  role: "COWORKER"
+  technicality: "MEDTECH"
+  
+- name: "Bob"
+  userid: "2"
+  role: "COWORKER"
+  technicality: "NONTECH"
+  
+- name: "Chuck"
+  userid: "3"
+  role: "COWORKER"
+  technicality: "TECHNICAL"
+  
+- name: "Dana"
+  userid: "4"
+  role: "GUEST"
+  technicality: "TECHNICAL"
+  
+- name: "Freyja"
+  userid: "5"
+  role: "GUEST"
+  technicality: "MEDTECH"
+  
+- name: "Grace"
+  userid: "6"
+  role: "GUEST"
+  technicality: "TECHNICAL"
+  
+- name: "Hanna"
+  userid: "7"
+  role: "COWORKER"
+  technicality: "NONTECH"
+  
+- name: "Max"
+  userid: "8"
+  role: "COWORKER"
+  technicality: "NONTECH"

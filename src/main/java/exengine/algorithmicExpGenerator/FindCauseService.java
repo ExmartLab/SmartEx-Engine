@@ -29,12 +29,12 @@ public class FindCauseService {
 			ArrayList<String> entityIds) {
 
 		// check if explanation shall be given for particular device
-		if (entityIds != null) {
+		if (!entityIds.isEmpty()) {
 			// shorten the log accordingly
 			LogEntry latestEntry = logEntries.get(logEntries.size() - 1);
 			while (!entityIds.contains(latestEntry.getEntityId())) {
 				logEntries.remove(latestEntry);
-				latestEntry = logEntries.get(logEntries.size() - 1);
+				latestEntry = logEntries.get(logEntries.size() - 1); // what about index exception
 			}
 		}
 

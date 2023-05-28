@@ -21,20 +21,20 @@ public class TransformationFunctionService {
 			switch (type) {
 			case FULLEX:
 				explanation = String.format(
-						"Hi %s,\n %s because %s set up a rule: \"%s\"\n and currently %s and %s, so the rule has been fired.",
+						"Hi %s, %s because %s set up a rule: \"%s\" and currently %s and %s, so the rule has been fired.",
 						context.getExplaineeName(), getActionsString(cause), getOwnerString(context),
 						cause.getRule().getRuleDescription(), getConditionsString(cause), getTriggerString(cause));
 				break;
 			case RULEEX:
-				explanation = String.format("Hi %s,\nthe rule: \"%s\"\nhas been fired.", context.getExplaineeName(),
+				explanation = String.format("Hi %s, the rule: \"%s\"has been fired.", context.getExplaineeName(),
 						cause.getRule().getRuleDescription());
 				break;
 			case FACTEX:
-				explanation = String.format("Hi %s,\n" + "%s because currently %s and %s.", context.getExplaineeName(),
+				explanation = String.format("Hi %s," + " %s because currently %s and %s.", context.getExplaineeName(),
 						getActionsString(cause), getConditionsString(cause), getTriggerString(cause));
 				break;
 			case SIMPLDEX:
-				explanation = String.format("Hi %s,\n%s set up a rule and at this moment the rule has been fired.",
+				explanation = String.format("Hi %s, %s set up a rule and at this moment the rule has been fired.",
 						context.getExplaineeName(), getOwnerString(context));
 				break;
 			default:
@@ -50,11 +50,11 @@ public class TransformationFunctionService {
 						cause.getError().getSolution());
 				break;
 			case ERRSOLEX:
-				explanation = String.format("Hi %s, \n%s.", context.getExplaineeName(),
+				explanation = String.format("Hi %s, %s.", context.getExplaineeName(),
 						cause.getError().getSolution());
 				break;
 			case ERROREX:
-				explanation = String.format("Hi %s,\n%s.", context.getExplaineeName(),
+				explanation = String.format("Hi %s, %s.", context.getExplaineeName(),
 						cause.getError().getImplication());
 				break;
 			default:
