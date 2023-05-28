@@ -2,6 +2,7 @@ package XLab.ExplainableEngine.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -12,10 +13,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import exengine.ExplainableEngineApplication;
 import exengine.rest.ConfigurationController;
 
+@DisplayName("Unit Test ConfigurationController's REST functionality")
 class ConfigurationControllerTest {
 
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new ConfigurationController()).build();
 
+    @DisplayName("Test Getting the Application's Status")
     @Test
     void testGetStatus() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/status"))
@@ -23,6 +26,7 @@ class ConfigurationControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("Explainable Engine running"));
     }
 
+    @DisplayName("Test Turning the Demo Mode Off")
     @Test
     void testDemoOff() throws Exception {
         ExplainableEngineApplication.setDemo(true);
@@ -33,6 +37,7 @@ class ConfigurationControllerTest {
         assertThat(ExplainableEngineApplication.isDemo()).isFalse();
     }
 
+    @DisplayName("Test Turning the Demo Mode On")
     @Test
     void testDemoOn() throws Exception {
         ExplainableEngineApplication.setDemo(false);

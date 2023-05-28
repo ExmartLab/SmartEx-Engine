@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,6 +17,7 @@ import exengine.datamodel.Error;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
 
+@DisplayName("Unit Test Find Causal Path")
 class FindCauseServiceTest {
 
 	private FindCauseService findCauseSer;
@@ -28,6 +30,7 @@ class FindCauseServiceTest {
 		testObjects = new TestingObjects();
 	}
 
+	@DisplayName("Test findRuleCause For Rule Case")
 	@ParameterizedTest
 	@CsvSource({ "switch.smart_plug_social_room_coffee, [Smart Plug Social Room Coffee|off;]",
 			"scene.tv_playing, [tv_mute|null;]"})
@@ -47,6 +50,7 @@ class FindCauseServiceTest {
 		Assertions.assertEquals(expectedOutput, cause.getActionsString());
 	}
 	
+	@DisplayName("Test findRuleCause For Error Case")
 	@Test
 	void testFindErrorCause() {
 		// Given

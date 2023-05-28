@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,9 +21,10 @@ import exengine.datamodel.State;
 import exengine.datamodel.User;
 import exengine.rest.DatabaseController;
 
+@DisplayName("Unit Test DatabaseController's REST functionality")
 @Import(DatabaseController.class)
 @WebMvcTest(DatabaseController.class)
-public class DatabaseControllerTest {
+class DatabaseControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,8 +40,9 @@ public class DatabaseControllerTest {
         }
     }
 
+    @DisplayName("Test Setting User State Where User Exists")
     @Test
-    public void testSetUserState() throws Exception {
+    void testSetUserState() throws Exception {
         // mock data
         User user = new User();
         user.setName("John");
@@ -59,8 +62,9 @@ public class DatabaseControllerTest {
         assertThat(user.getState()).isEqualTo(State.WORKING);
     }
     
+    @DisplayName("Test Setting User State Where User does not Exist")
     @Test
-    public void testUserNotThere() throws Exception {
+    void testUserNotThere() throws Exception {
         // mock data
     	User voidUser = null;
         when(dataSer.findUserByUserId("123")).thenReturn(voidUser);
@@ -74,8 +78,9 @@ public class DatabaseControllerTest {
                 .andExpect(status().isBadRequest());
     }
     
+    @DisplayName("Test Setting User State Where To-Be State is Incorrect")
     @Test
-    public void testWrongState() throws Exception {
+    void testWrongState() throws Exception {
         // mock data
         User user = new User();
         user.setName("John");

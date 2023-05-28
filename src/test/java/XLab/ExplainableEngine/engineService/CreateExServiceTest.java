@@ -18,6 +18,7 @@ import exengine.database.DatabaseService;
 import exengine.datamodel.LogEntry;
 import exengine.engineService.CreateExService;
 
+@DisplayName("Unit Test CreateExService Preparation Functions")
 @ExtendWith(MockitoExtension.class)
 class CreateExServiceTest {
 
@@ -27,7 +28,7 @@ class CreateExServiceTest {
 	@Mock
 	private DatabaseService dataSer;
 
-	@DisplayName("Test getExplanandumsEntityIds for the case where the provided device exists with two corresponding entityIds")
+	@DisplayName("Test getExplanandumsEntityIds Where Device Exists in Database")
 	@Test
 	void testGetExplanandumsEntityIds() {
 		// Given
@@ -42,7 +43,7 @@ class CreateExServiceTest {
 		Assertions.assertEquals(entityIds, logEntries);
 	}
 
-	@DisplayName("Test getExplanandumsEntityIds for the case where the provided device does not exist")
+	@DisplayName("Test getExplanandumsEntityIds Where Device Does Not Exist in Database")
 	@Test
 	void testGetExplanandumsEntityIdsDeviceNotExisting() {
 		// Given
@@ -55,7 +56,7 @@ class CreateExServiceTest {
 		Assertions.assertEquals(new ArrayList<String>(), logEntries);
 	}
 
-	@DisplayName("Test getExplanandumsEntityIds for the case where there was no device provided")
+	@DisplayName("Test getExplanandumsEntityIds Where Device Not Provided")
 	@Test
 	void testGetExplanandumsEntityIdsDeviceNotProvided() {
 		// Given
@@ -68,7 +69,7 @@ class CreateExServiceTest {
 		Assertions.assertEquals(new ArrayList<String>(), logEntries);
 	}
 
-	@DisplayName("Test populateDemoEntries to load a json in expected format")
+	@DisplayName("Test populateDemoEntries To Load Properly Formatted JSON")
 	@Test
 	void testPopulateDemoEntries() throws IOException, URISyntaxException {
 		// Given

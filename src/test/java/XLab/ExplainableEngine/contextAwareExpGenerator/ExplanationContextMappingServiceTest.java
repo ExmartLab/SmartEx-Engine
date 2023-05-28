@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
@@ -19,6 +20,7 @@ import exengine.datamodel.ErrorCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.RuleCause;
 
+@DisplayName("Unit Test Rule Book Engine")
 class ExplanationContextMappingServiceTest {
 
 	private ExplanationContextMappingService underTest;
@@ -43,14 +45,14 @@ class ExplanationContextMappingServiceTest {
 	 */
 	@ParameterizedTest
 	@CsvFileSource(resources = "view_test_cases.csv", numLinesToSkip = 1)
-	void testGetExplanationTypeRule(String causeType, String state, String occurrence, String technicality, String role,
+	void testGetExplanationView(String causeType, String state, String occurrence, String technicality, String role,
 			String expected_view) {
 
 		// Given
 		Context context = new Context(Role.valueOf(role), Occurrence.valueOf(occurrence),
 				Technicality.valueOf(technicality), State.valueOf(state), null, null);
-		Cause cause;
 
+		Cause cause;
 		if (causeType.equals("rule")) {
 			cause = new RuleCause(null, new ArrayList<String>(), new ArrayList<LogEntry>(), null);
 		} else {

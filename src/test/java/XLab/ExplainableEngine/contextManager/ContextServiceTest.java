@@ -25,6 +25,7 @@ import exengine.datamodel.Technicality;
 import exengine.contextManager.ContextService;
 import exengine.database.DatabaseService;
 
+@DisplayName("Unit Test ContextService")
 @ExtendWith(MockitoExtension.class)
 class ContextServiceTest {
 
@@ -49,7 +50,13 @@ class ContextServiceTest {
 		name = "Sarah";
 	}
 
-	@DisplayName("Test context for cause, where explainee is the rule owner or not")
+	/*
+	 * This tests two cases:
+	 * 
+	 * 1. The explainee is the same person as the rule owner
+	 * 2. The explaine is not the same person as the rule owner
+	 */
+	@DisplayName("Test Context For Cause Case")
 	@ParameterizedTest
 	@CsvSource({"true", "false"})
 	void testGetAllContextCause(boolean ruleOwnerIsExplainee) {
@@ -84,7 +91,7 @@ class ContextServiceTest {
 		Assertions.assertEquals(ruleOwner.getName(), context.getOwnerName());
 	}
 	
-	@DisplayName("Test context for error case")
+	@DisplayName("Test Context For Error Case")
 	@Test
 	void testGetAllContextError() {
 		
