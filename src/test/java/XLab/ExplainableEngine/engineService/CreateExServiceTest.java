@@ -75,7 +75,7 @@ class CreateExServiceTest {
 		String fileName = "testingData/demoLogs.json";
 
 		// When
-		ArrayList<LogEntry> logEntries = underTest.populateDemoEntries(fileName);
+		ArrayList<LogEntry> logEntries = underTest.loadDemoEntries(fileName);
 
 		// Then
 		Assertions.assertEquals(10, logEntries.size());
