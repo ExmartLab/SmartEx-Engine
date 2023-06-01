@@ -53,21 +53,22 @@ public class FindCauseServiceAlternative {
 		}
 
 		if (firedRule != null) { // Line 15
-			path = new RuleCause(null, null, null, null); // Line 16 TODO
+			path = new RuleCause(firedRule.getTrigger().get(0), firedRule.getConditions(), firedRule.getActions(),
+					firedRule); // Line 16
 			return path;
 		}
 
 		// Error-Handling Plug In:
-		
+
 		Error error = getError(explanandum, dbErrors);
 
 		if (error != null) {
-			path = new ErrorCause(null, null, null, null); // TODO
+			path = new ErrorCause(error.getActions(), error.getImplication(), error.getSolution(), error);
 			return path;
 		}
 
 		// No Path Found:
-		return null;
+		return path;
 
 	}
 
