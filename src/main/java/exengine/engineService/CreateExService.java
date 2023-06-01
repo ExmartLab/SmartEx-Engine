@@ -133,6 +133,10 @@ public class CreateExService {
 			return dataSer.findEntityIdsByDeviceName(device);
 		}
 	}
+	
+	public LogEntry getExplanandum(String device) {
+		
+	}
 
 	/**
 	 * Fetches (or when in demo, retrieves) a list of most recent log entries from

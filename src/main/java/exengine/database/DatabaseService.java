@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
 import exengine.datamodel.*;
+import exengine.datamodel.Error;
 
 @Service
 public class DatabaseService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
 	@Autowired
@@ -40,8 +41,7 @@ public class DatabaseService {
 		if (ExplainableEngineApplication.isDemo()) {
 			deleteAllOccurrencies();
 			logger.info("Database was completely reset");
-		}
-		else {
+		} else {
 			logger.info("Database was reset, except for the Occurrencies table");
 		}
 	}
@@ -192,6 +192,41 @@ public class DatabaseService {
 		default:
 			return Occurrence.MORE;
 		}
+	}
+
+	/**
+	 * Returns a list of unique actions combining the actions of all rules and
+	 * errors stores in the database.
+	 * 
+	 * @Note Unique in the sence, that entityId and state are unique
+	 * @See compareTo method in LogEntry
+	 * 
+	 * @return A list of unique actions
+	 */
+	public ArrayList<LogEntry> getAllActions() {
+		ArrayList<LogEntry> actions = new ArrayList<>();
+
+		List<Rule> rules = ruleRepo.findAll();
+
+		for (Rule rule : rules) {
+			for (LogEntry action : rule.getActions()) {
+				if (!actions.contains(action)) {
+					actions.add(action);
+				}
+			}
+		}
+
+		List<Error> errors = errorRepo.findAll();
+
+		for (Error error : errors) {
+			for (LogEntry action : error.getActions()) {
+				if (!actions.contains(action)) {
+					actions.add(action);
+				}
+			}
+		}
+
+		return actions;
 	}
 
 	/*

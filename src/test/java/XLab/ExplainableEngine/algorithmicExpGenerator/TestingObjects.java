@@ -25,7 +25,7 @@ public class TestingObjects {
 	private ArrayList<Rule> dbRules;
 	private ArrayList<Error> dbErrors;
 
-	TestingObjects() throws IOException, URISyntaxException {
+	public TestingObjects() throws IOException, URISyntaxException {
 		// populate demoEntries
 		String logJSON = JsonHandler.loadFile("testingData/" + ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
@@ -123,15 +123,15 @@ public class TestingObjects {
 				"If DEEBOT can not free itself, manually remove the obstacles and restart"));
 	}
 
-	ArrayList<LogEntry> getDemoEntries() {
+	public ArrayList<LogEntry> getDemoEntries() {
 		return demoEntries;
 	}
 
-	ArrayList<Rule> getDBRules() {
+	public ArrayList<Rule> getDBRules() {
 		return dbRules;
 	}
 
-	ArrayList<Error> getDBErrors() {
+	public ArrayList<Error> getDBErrors() {
 		return dbErrors;
 	}
 
