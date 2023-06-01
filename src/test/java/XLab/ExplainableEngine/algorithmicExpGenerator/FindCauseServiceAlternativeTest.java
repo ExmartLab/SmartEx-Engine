@@ -260,4 +260,24 @@ class FindCauseServiceAlternativeTest {
 		// Then
 		Assertions.assertEquals("[Deebot last error|104;]", cause.getActionsString());
 	}
+	
+	@DisplayName("Test findRuleCause For Null Case")
+	@ParameterizedTest
+	@CsvSource({ "scene.tv_brightness, null, 2022-06-23T11:19:31.126754+00:00"})
+	void testFindErrorCause(String entityId, String state, String time) {
+		// Given
+		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
+		ArrayList<Rule> dbRules = testingObjects.getDBRules();
+		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
+		LogEntry explanandum = new LogEntry();
+		explanandum.setEntityId(entityId);
+		explanandum.setState(state);
+		explanandum.setTime(time);
+
+		// When
+		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+
+		// Then
+		Assertions.assertNull(cause);
+	}
 }

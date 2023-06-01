@@ -94,31 +94,6 @@ public class FindCauseServiceAlternative {
 	}
 
 	/**
-	 * Returns a list of log entries that originated within the specified time
-	 * frame.
-	 * 
-	 * @param logEntries list of LogEntries to be filtered
-	 * @param startTime  lower bound in time
-	 * @param endTime    upper bound in time
-	 * @return a list of log entries whose LogEntry are no younger than startTime
-	 *         and no older than endTime
-	 */
-	public ArrayList<LogEntry> filterLogEntriesByTime(ArrayList<LogEntry> logEntries, LocalDateTime startTime,
-			LocalDateTime endTime) {
-
-		ArrayList<LogEntry> filteredLogEntries = new ArrayList<>();
-
-		for (LogEntry logEntry : logEntries) {
-			LocalDateTime logEntryDate = logEntry.getLocalDateTime();
-			if (logEntryDate.isAfter(startTime) && logEntryDate.isBefore(endTime)) {
-				filteredLogEntries.add(logEntry);
-			}
-		}
-
-		return filteredLogEntries;
-	}
-
-	/**
 	 * Checks if all the actions of a rule have been fired simultaneously to the
 	 * explanandum.
 	 * 
@@ -212,6 +187,31 @@ public class FindCauseServiceAlternative {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Returns a list of log entries that originated within the specified time
+	 * frame.
+	 * 
+	 * @param logEntries list of LogEntries to be filtered
+	 * @param startTime  lower bound in time
+	 * @param endTime    upper bound in time
+	 * @return a list of log entries whose LogEntry are no younger than startTime
+	 *         and no older than endTime
+	 */
+	public ArrayList<LogEntry> filterLogEntriesByTime(ArrayList<LogEntry> logEntries, LocalDateTime startTime,
+			LocalDateTime endTime) {
+
+		ArrayList<LogEntry> filteredLogEntries = new ArrayList<>();
+
+		for (LogEntry logEntry : logEntries) {
+			LocalDateTime logEntryDate = logEntry.getLocalDateTime();
+			if (logEntryDate.isAfter(startTime) && logEntryDate.isBefore(endTime)) {
+				filteredLogEntries.add(logEntry);
+			}
+		}
+
+		return filteredLogEntries;
 	}
 
 }
