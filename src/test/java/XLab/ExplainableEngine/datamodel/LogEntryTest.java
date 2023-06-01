@@ -10,12 +10,14 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import exengine.datamodel.LogEntry;
 
 class LogEntryTest {
 
-	@DisplayName("Test reverse sorting LogEntries")
+	@DisplayName("Test Reverse Sorting LogEntries")
 	@Test
 	void testSortLogEntry()
 			throws IOException, URISyntaxException {
@@ -36,6 +38,56 @@ class LogEntryTest {
 		// Then
 		Assertions.assertEquals(logEntries.get(0), secondEntry);
 		
+	}
+	
+	@DisplayName("Test If Two LogEntries Equal (They Should)")
+	@ParameterizedTest
+	@CsvSource({"off, off", "on, on", "null, null"})
+	void testEqualCheckLogEntry(String stateFirst, String stateSecond) {
+		
+		// Given
+		LogEntry firstEntry = new LogEntry();
+		firstEntry.setName("TV");
+		firstEntry.setEntityId("media.tv");
+		firstEntry.setState(stateFirst);
+		firstEntry.setTime("2022-06-23T09:07:26.920189+00:00");
+
+		LogEntry secondEntry = new LogEntry();
+		secondEntry.setName("Other name for TV");
+		secondEntry.setEntityId("media.tv");
+		secondEntry.setState(stateSecond);
+		secondEntry.setTime("2020-05-21T10:05:06.920189+00:00");
+		
+		// When
+		boolean equality = firstEntry.equals(secondEntry);
+		
+		// Then
+		Assertions.assertTrue(equality);
+	}
+	
+	@DisplayName("Test If Two LogEntries Equal (They Should Not)")
+	@ParameterizedTest
+	@CsvSource({"off, null", "off, on", "null, off"})
+	void testUnEqualCheckLogEntry(String stateFirst, String stateSecond) {
+		
+		// Given
+		LogEntry firstEntry = new LogEntry();
+		firstEntry.setName("TV");
+		firstEntry.setEntityId("media.tv");
+		firstEntry.setState(stateFirst);
+		firstEntry.setTime("2022-06-23T09:07:26.920189+00:00");
+
+		LogEntry secondEntry = new LogEntry();
+		secondEntry.setName("Other name for TV");
+		secondEntry.setEntityId("media.tv");
+		secondEntry.setState(stateSecond);
+		secondEntry.setTime("2020-05-21T10:05:06.920189+00:00");
+		
+		// When
+		boolean equality = firstEntry.equals(secondEntry);
+		
+		// Then
+		Assertions.assertFalse(equality);
 	}
 
 }

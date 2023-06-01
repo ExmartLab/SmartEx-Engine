@@ -11,20 +11,28 @@ public class LogEntry implements Comparable<LogEntry> {
 	private String state;
 	private String entityId;
 	private ArrayList<String> other;
-	
-	public LogEntry() {}
-	
+
+	public LogEntry() {
+	}
+
 	public LogEntry(String time, String name, String state, String entityId, ArrayList<String> other) {
 		this.time = time;
 		this.name = name;
-		this.state = state;
+
+		if (state == null) {
+			this.state = "null";
+		} else {
+			this.state = state;
+		}
+
 		this.entityId = entityId;
 		this.other = other;
 	}
-	
+
 	public String toString() {
 		String otherString = other == null ? "[]" : other.toString();
-		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entityId + " other: " + otherString;  
+		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entityId + " other: "
+				+ otherString;
 	}
 
 	public String getTime() {
@@ -48,7 +56,11 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 
 	public void setState(String state) {
-		this.state = state;
+		if (state == null) {
+			this.state = "null";
+		} else {
+			this.state = state;
+		}
 	}
 
 	public String getEntityId() {
@@ -70,11 +82,26 @@ public class LogEntry implements Comparable<LogEntry> {
 	@Override
 	public int compareTo(LogEntry o) {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-		
+
 		OffsetDateTime thisDate = OffsetDateTime.parse(this.time, formatter);
 		OffsetDateTime otherDate = OffsetDateTime.parse(o.getTime(), formatter);
-		
+
 		return thisDate.compareTo(otherDate);
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		LogEntry otherLogEntry = (LogEntry) o;
+
+		return (this.entityId.equals(otherLogEntry.getEntityId()) && this.state.equals(otherLogEntry.getState()));
+	}
+
 }

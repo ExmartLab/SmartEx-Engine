@@ -64,8 +64,15 @@ public class FindCauseServiceAlternative {
 
 	}
 
-	ArrayList<Rule> findCandidateRules(LogEntry explanandum, List<Rule> dbRules) { // TODO
-		ArrayList<Rule> candidateRules = null;
+	ArrayList<Rule> findCandidateRules(LogEntry explanandum, List<Rule> dbRules) {
+		ArrayList<Rule> candidateRules = new ArrayList<>();
+		
+		for (Rule rule : dbRules) {
+			for (LogEntry action : rule.getActions()) {
+				if ()
+			}
+		}
+		
 		return candidateRules;
 	}
 
