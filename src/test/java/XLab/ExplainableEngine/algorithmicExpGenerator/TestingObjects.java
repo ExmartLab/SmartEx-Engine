@@ -27,7 +27,7 @@ public class TestingObjects {
 
 	TestingObjects() throws IOException, URISyntaxException {
 		// populate demoEntries
-		String logJSON = JsonHandler.loadFile(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+		String logJSON = JsonHandler.loadFile("testingData/" + ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 		
 		populateRules();
@@ -59,6 +59,17 @@ public class TestingObjects {
 
 		dbRules.add(new Rule("rule 2 (tv mute)", "2", demoEntries.get(8), triggers, conditions, actions, "2",
 				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
+		
+		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers:
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(3));
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		conditions = new ArrayList<String>();
+		conditions.add("a made up condition");
+
+		dbRules.add(new Rule("rule 3 (constructed rule)", "3", demoEntries.get(8), triggers, conditions, actions, "2",
+				"Rule_3: a constructed rule for testing purposes"));
 	}
 
 	private void populateErrors() {

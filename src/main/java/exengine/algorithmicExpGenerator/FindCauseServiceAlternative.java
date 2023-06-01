@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import exengine.datamodel.Cause;
 import exengine.datamodel.ErrorCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
 import exengine.datamodel.RuleCause;
 
+@Service
 public class FindCauseServiceAlternative {
 
 	/*
@@ -64,12 +67,12 @@ public class FindCauseServiceAlternative {
 
 	}
 
-	ArrayList<Rule> findCandidateRules(LogEntry explanandum, List<Rule> dbRules) {
+	public ArrayList<Rule> findCandidateRules(LogEntry explanandum, List<Rule> dbRules) {
 		ArrayList<Rule> candidateRules = new ArrayList<>();
 		
 		for (Rule rule : dbRules) {
-			for (LogEntry action : rule.getActions()) {
-				if ()
+			if (rule.getActions().contains(explanandum)) {
+				candidateRules.add(rule);
 			}
 		}
 		
