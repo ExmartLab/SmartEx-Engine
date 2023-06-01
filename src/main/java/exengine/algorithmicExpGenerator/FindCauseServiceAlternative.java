@@ -52,7 +52,7 @@ public class FindCauseServiceAlternative {
 			return path;
 		}
 
-		// Debugging Plug In:
+		// Error-Handling Plug In:
 
 		if (isError(explanandum, dbErrors)) {
 			path = new ErrorCause(null, null, null, null); // TODO

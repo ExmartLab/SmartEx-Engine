@@ -1,8 +1,10 @@
 package exengine.datamodel;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class LogEntry {
+public class LogEntry implements Comparable<LogEntry> {
 
 	private String time;
 	private String name;
@@ -63,6 +65,16 @@ public class LogEntry {
 
 	public void setOther(ArrayList<String> other) {
 		this.other = other;
+	}
+
+	@Override
+	public int compareTo(LogEntry o) {
+		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+		
+		OffsetDateTime thisDate = OffsetDateTime.parse(this.time, formatter);
+		OffsetDateTime otherDate = OffsetDateTime.parse(o.getTime(), formatter);
+		
+		return thisDate.compareTo(otherDate);
 	}
 	
 }
