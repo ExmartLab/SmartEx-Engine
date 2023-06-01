@@ -1,9 +1,9 @@
 package exengine.datamodel;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class LogEntry implements Comparable<LogEntry> {
 
@@ -80,10 +80,11 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.other = other;
 	}
 	
-	public Date getDate() {
+	public LocalDateTime getLocalDateTime() {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 		OffsetDateTime offsetDate = OffsetDateTime.parse(this.time, formatter);
-		return Date.from(offsetDate.toInstant());
+		
+		return offsetDate.toLocalDateTime();
 	}
 
 	@Override

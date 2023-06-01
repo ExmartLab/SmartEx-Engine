@@ -29,7 +29,7 @@ public class TestingObjects {
 		// populate demoEntries
 		String logJSON = JsonHandler.loadFile("testingData/" + ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
-		
+
 		populateRules();
 		populateErrors();
 	}
@@ -59,7 +59,7 @@ public class TestingObjects {
 
 		dbRules.add(new Rule("rule 2 (tv mute)", "2", demoEntries.get(8), triggers, conditions, actions, "2",
 				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
-		
+
 		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers:
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
@@ -70,6 +70,26 @@ public class TestingObjects {
 
 		dbRules.add(new Rule("rule 3 (constructed rule)", "3", demoEntries.get(8), triggers, conditions, actions, "2",
 				"Rule_3: a constructed rule for testing purposes"));
+
+		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers, one
+		// of which is never satisfied in the demo log (to test that the actions of this
+		// rule do not apply):
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(3));
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		
+		LogEntry neverSatisfied = new LogEntry();
+		neverSatisfied.setName("Never used strobo light");
+		neverSatisfied.setEntityId("light_strobo");
+		neverSatisfied.setState("on");
+		
+		actions.add(neverSatisfied);
+		conditions = new ArrayList<String>();
+		conditions.add("a made up condition");
+
+		dbRules.add(new Rule("rule 4 (constructed rule)", "4", demoEntries.get(8), triggers, conditions, actions, "4",
+				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed"));
 	}
 
 	private void populateErrors() {

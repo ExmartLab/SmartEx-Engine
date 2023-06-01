@@ -88,5 +88,10 @@
         "context_source": "state of media_player.lab_tv",
         "context_entity_id": "automation.sc2_multi_user_conflict",
         "context_entity_id_name": "Rule: Block TV Audio During Meeting (sc2)"
+    },
+    {
+        "when": "2022-06-23T11:19:31.126754+00:00",
+        "name": "tv_bright (constructed)",
+        "entity_id": "scene.tv_brightness"
     }
 ]

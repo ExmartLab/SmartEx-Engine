@@ -1,6 +1,6 @@
 package exengine.algorithmicExpGenerator;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,7 @@ public class FindCauseServiceAlternative {
 		ArrayList<Rule> candidateRules = findCandidateRules(explanandum, dbRules); // Line 9
 
 		for (Rule rule : candidateRules) { // Line 10
-			if (actionsApply(rule, logEntries) // Line 11
+			if (actionsApply(explanandum, rule, logEntries, 1000) // Line 11
 					&& preconditionsApply(explanandum, rule)) { // Line 12 - 14
 				firedRule = rule;
 			}
@@ -87,14 +87,38 @@ public class FindCauseServiceAlternative {
 		return candidateRules;
 	}
 
-	ArrayList<LogEntry> filterLogEntriesByTime(ArrayList<LogEntry> logEntries, OffsetDateTime startTime,
-			OffsetDateTime endTime) {
+	/**
+	 * Returns a list of log entries that originated within the specified time
+	 * frame.
+	 * 
+	 * @param logEntries list of LogEntries to be filtered
+	 * @param startTime  lower bound in time
+	 * @param endTime    upper bound in time
+	 * @return a list of log entries whose LogEntry are no younger than startTime
+	 *         and no older than endTime
+	 */
+	public ArrayList<LogEntry> filterLogEntriesByTime(ArrayList<LogEntry> logEntries, LocalDateTime startTime,
+			LocalDateTime endTime) {
 
-		return null; // TODO
+		ArrayList<LogEntry> filteredLogEntries = new ArrayList<>();
+
+		for (LogEntry logEntry : logEntries) {
+			LocalDateTime logEntryDate = logEntry.getLocalDateTime();
+			if (logEntryDate.isAfter(startTime) && logEntryDate.isBefore(endTime)) {
+				filteredLogEntries.add(logEntry);
+			}
+		}
+
+		return filteredLogEntries;
 	}
 
-	boolean actionsApply(Rule rule, ArrayList<LogEntry> logEntries) { // TODO
-		return false;
+	public boolean actionsApply(LogEntry explanandum, Rule rule, ArrayList<LogEntry> logEntries, int tolerance) {
+		LocalDateTime explanandumTime = explanandum.getLocalDateTime();
+		LocalDateTime startTime = explanandumTime.minusSeconds(tolerance);
+		LocalDateTime endTime = explanandumTime.plusSeconds(tolerance);
+		ArrayList<LogEntry> filteredLogEntries = filterLogEntriesByTime(logEntries, startTime, endTime);
+		
+		return filteredLogEntries.containsAll(rule.getActions());
 	}
 
 	boolean preconditionsApply(LogEntry explanandum, Rule rule) { // TODO

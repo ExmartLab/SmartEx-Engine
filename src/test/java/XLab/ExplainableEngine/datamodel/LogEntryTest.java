@@ -2,11 +2,11 @@ package XLab.ExplainableEngine.datamodel;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Date;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -91,19 +91,18 @@ class LogEntryTest {
 		Assertions.assertFalse(equality);
 	}
 	
+	@DisplayName("Test Get Date")
 	@Test
 	void testGetDate() {
-		
 		// Given
 		LogEntry logEntry = new LogEntry();
 		logEntry.setTime("2022-06-23T09:07:26.920189+00:00");
 		
 		// When
-		Date date = logEntry.getDate();
+		LocalDateTime date = logEntry.getLocalDateTime();
 		
 		// Then
 		Assertions.assertNotNull(date, "Date should not be null");
-		System.out.println(date);
 	}
 
 }
