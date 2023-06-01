@@ -12,7 +12,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	private String entityId;
 	private ArrayList<String> other;
 	
-	public LogEntry() {};
+	public LogEntry() {}
 	
 	public LogEntry(String time, String name, String state, String entityId, ArrayList<String> other) {
 		this.time = time;

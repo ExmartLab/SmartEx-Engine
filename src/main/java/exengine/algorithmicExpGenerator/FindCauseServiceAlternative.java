@@ -1,10 +1,10 @@
 package exengine.algorithmicExpGenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import exengine.datamodel.Cause;
-import exengine.datamodel.Error;
 import exengine.datamodel.ErrorCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
@@ -36,7 +36,7 @@ public class FindCauseServiceAlternative {
 		Cause path = null; // Line 4
 		Rule firedRule = null; // Line 5
 
-		logEntries.sort(null); // Line 8, TODO implement sortable interface to LogEntry class
+		Collections.sort(logEntries, Collections.reverseOrder()); // Line 8
 
 		ArrayList<Rule> candidateRules = findCandidateRules(explanandum, dbRules); // Line 9
 
