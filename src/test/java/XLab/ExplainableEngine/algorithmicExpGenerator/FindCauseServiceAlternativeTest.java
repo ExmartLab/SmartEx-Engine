@@ -79,4 +79,10 @@ class FindCauseServiceAlternativeTest {
 		Assertions.assertEquals(0, candidateRules.size());
 	}
 
+	@Test
+	void testFilterLogEntriesByTime() {
+		
+		// Given
+		ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
+	}
 }
