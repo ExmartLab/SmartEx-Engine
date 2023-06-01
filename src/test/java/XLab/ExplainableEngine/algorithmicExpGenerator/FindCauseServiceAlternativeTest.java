@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import exengine.datamodel.Rule;
+import exengine.datamodel.Cause;
 import exengine.datamodel.Error;
 import exengine.algorithmicExpGenerator.FindCauseServiceAlternative;
 import exengine.datamodel.LogEntry;
@@ -215,5 +216,48 @@ class FindCauseServiceAlternativeTest {
 		
 		// Then
 		Assertions.assertNull(isError);
+	}
+	
+	
+	@DisplayName("Test findRuleCause For Rule Case")
+	@ParameterizedTest
+	@CsvSource({ "switch.smart_plug_social_room_coffee, off, 2022-06-23T09:50:50.848452+00:00, [Smart Plug Social Room Coffee|off;]",
+			"scene.tv_playing, null, 2022-06-23T11:19:31.037231+00:00, [tv_mute|null;]"})
+	void testFindRuleCause(String entityId, String state, String time, String expectedOutput) {
+
+		// Given
+		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
+		ArrayList<Rule> dbRules = testingObjects.getDBRules();
+		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
+		LogEntry explanandum = new LogEntry();
+		explanandum.setEntityId(entityId);
+		explanandum.setState(state);
+		explanandum.setTime(time);
+		
+		// When
+		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+
+		// Then
+		Assertions.assertEquals(expectedOutput, cause.getActionsString());
+	}
+	
+	@DisplayName("Test findRuleCause For Error Case")
+	@ParameterizedTest
+	@CsvSource({ "sensor.deebot_last_error, 104, 2022-06-23T09:07:26.933444+00:00, [Deebot last error|104;]"})
+	void testFindErrorCause(String entityId, String state, String time, String expectedOutput) {
+		// Given
+		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
+		ArrayList<Rule> dbRules = testingObjects.getDBRules();
+		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
+		LogEntry explanandum = new LogEntry();
+		explanandum.setEntityId(entityId);
+		explanandum.setState(state);
+		explanandum.setTime(time);
+
+		// When
+		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+
+		// Then
+		Assertions.assertEquals("[Deebot last error|104;]", cause.getActionsString());
 	}
 }
