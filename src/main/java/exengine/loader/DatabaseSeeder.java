@@ -103,7 +103,7 @@ public class DatabaseSeeder {
 				entity.setEntityId(dataMap.get("entityId").toString());
 			}
 			if (dataMap.containsKey("deviceName")) {
-				entity.setDevice(dataMap.get("deviceName").toString());
+				entity.setDeviceName(dataMap.get("deviceName").toString());
 			}
 			dataSer.saveNewEntity(entity);
 		}

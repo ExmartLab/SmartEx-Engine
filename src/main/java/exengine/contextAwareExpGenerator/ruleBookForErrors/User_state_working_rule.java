@@ -48,6 +48,6 @@ public class User_state_working_rule {
 		currentAllowedTypes = exType;
 
 		exType = currentAllowedTypes.stream().filter(workingAllowedTypes::contains).collect(toList());
-		con.get(0).setTheExpType(Collections.max(exType));
+		con.get(0).setExplanationType(Collections.max(exType));
 	}
 }

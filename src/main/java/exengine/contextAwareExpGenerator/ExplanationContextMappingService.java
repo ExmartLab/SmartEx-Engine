@@ -90,10 +90,10 @@ public class ExplanationContextMappingService {
 		ruleBook.setDefaultResult(allowedViewValues);
 		ruleBook.run(explanationFacts);
 		ruleBook.getResult().ifPresent(result -> logger.debug("The explanation type is: {} (from the allowed: {})",
-				context.getTheExpType(), result));
+				context.getExplanationType(), result));
 
 		// Getting the resulting type from the rulebook
-		int type = context.getTheExpType();
+		int type = context.getExplanationType();
 
 		// Returning the resulting type as the respective enum constant
 		for (View view : allowedViews) {

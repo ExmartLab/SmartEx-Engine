@@ -54,7 +54,7 @@ class DatabaseControllerTest {
                 .param("userid", "123")
                 .param("userState", "working")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
-        		.andExpect(content().string("User John (id: 123) changed state to \"working\""))
+        		.andExpect(content().string("User John (id: 123) changed state to \"WORKING\""))
                 .andExpect(status().isOk());
 
         // verify data

@@ -52,7 +52,7 @@ public class Occurrence_First_rule {
 			exType = currentAllowedTypes;
 		}
 
-		con.get(0).setTheExpType(Collections.max(exType));
+		con.get(0).setExplanationType(Collections.max(exType));
 
 	}
 

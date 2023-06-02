@@ -9,8 +9,8 @@ public class Entity {
 	}
 
 	public Entity(String entityId, String deviceName) {
-		this.entityId = entityId;
-		this.deviceName = deviceName;
+		setEntityId(entityId);
+		setDeviceName(deviceName);
 	}
 
 	public String getEntityId() {
@@ -21,11 +21,11 @@ public class Entity {
 		this.entityId = entityId;
 	}
 
-	public String getDevice() {
+	public String getDeviceName() {
 		return deviceName;
 	}
 
-	public void setDevice(String deviceName) {
+	public void setDeviceName(String deviceName) {
 		this.deviceName = deviceName;
 	}
 

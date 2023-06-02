@@ -48,6 +48,6 @@ public class User_state_break_rule {
 		currentAllowedTypes = exType;
 
 		exType = currentAllowedTypes.stream().filter(breakAllowedTypes::contains).collect(toList());
-		con.get(0).setTheExpType(Collections.max(exType));
+		con.get(0).setExplanationType(Collections.max(exType));
 	}
 }
