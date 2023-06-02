@@ -3,6 +3,7 @@ package exengine.engineService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -133,9 +134,34 @@ public class CreateExService {
 			return dataSer.findEntityIdsByDeviceName(device);
 		}
 	}
-	
-	public LogEntry getExplanandum(String device) {
+
+	public LogEntry getExplanandum(String device, ArrayList<LogEntry> logEntries) {
 		
+		ArrayList<LogEntry> actions = dataSer.getAllActions();
+		
+		ArrayList<String> entityIds = new ArrayList<>();
+		if (!device.equals("unknown")) {
+			entityIds = dataSer.findEntityIdsByDeviceName(device);
+		}
+
+		Collections.sort(logEntries, Collections.reverseOrder());
+
+		for (LogEntry logEntry : logEntries) {
+
+			if (actions.contains(logEntry)) {
+				System.out.println("should return here " + entityIds.size());
+
+				if (entityIds.isEmpty()) {
+					return logEntry;
+				}
+
+				if (entityIds.contains(logEntry.getEntityId())) {
+					return logEntry;
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	/**
