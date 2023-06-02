@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.algorithmicExpGenerator.FindCauseService;
+import exengine.algorithmicExpGenerator.FindCauseServiceAlternative;
 import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
 import exengine.contextManager.ContextService;
 import exengine.database.*;
@@ -37,7 +37,7 @@ public class CreateExService {
 	HomeAssistantConnectionService haSer;
 
 	@Autowired
-	FindCauseService findCauseSer;
+	FindCauseServiceAlternative findCauseSer;
 
 	@Autowired
 	ContextService conSer;
@@ -68,19 +68,25 @@ public class CreateExService {
 
 		logger.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
 
-		// STEP 0: retrieve user from database (preparation)
+		ArrayList<LogEntry> logEntries = getLogEntries(min);
+
 		User user = dataSer.findUserByUserId(userId);
 
 		if (user == null) {
 			return "unvalid userId: this user does not exist";
 		}
 
+		// STEP 0: identify explanandum's LogEntry
+		LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
+
+		if (explanandum == null) {
+			return "Could not find explanandum in the logs";
+		}
+
 		// STEP 1: find causal path
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
-		ArrayList<LogEntry> logEntries = getLogEntries(min);
-		ArrayList<String> explanandumsEntityIds = getExplanandumsEntityIds(device);
-		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, explanandumsEntityIds);
+		Cause cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
 
 		if (cause == null) {
 			return "Could not find cause to explain";
@@ -112,33 +118,29 @@ public class CreateExService {
 	}
 
 	/**
-	 * Maps a device to it's associated entityIds.
+	 * Transform the explanandum's device name to the exact LogEntry describing the
+	 * explanandum. The output is the latest entry of the Home Assistant logs that
+	 * is a known action, and is associated to the provided device. In the context
+	 * of this application, this is necessary for two reasons:
 	 * 
-	 * Rationale: In Home Assistant, a single physical device may be associated to
-	 * various Home Assistant entities which have their own ids (e.g., a device
-	 * "lab_fan" may have the entities "sensor.lab_fan_current_consumption", and
-	 * "switch.lab_fan"). Further, the logs of Home Assistant, which are loaded into
-	 * the getExplanation algorithm, are always referring to the entityIds, not the
-	 * devices ids. However, explainees are interested in having a device explained,
-	 * and be bothered by various entityIds.
+	 * 1. In Home Assistant, a single physical device may be associated to various
+	 * Home Assistant entities which have their own id's (e.g., a device "lab_fan"
+	 * may have the entities "sensor.lab_fan_current_consumption", and
+	 * "switch.lab_fan").
 	 * 
-	 * @param device name of a device, or "unkown", if no particular device is
-	 *               provided
-	 * @return If the device was provided and exists in the database, a list of
-	 *         associated entityIds of that device, else, an empty list
+	 * 2. The determination of the causal path of an explanandum relies on it's
+	 * representation as an entry of the Home Assistant logs.
+	 * 
+	 * @param device     name of a device, or "unkown", if no particular device is
+	 *                   provided
+	 * @param logEntries the list of Home Assistant logs
+	 * @return the latest entry of the Home Assistant logs, representing both, the
+	 *         provided device as well as an action known to the system
 	 */
-	public ArrayList<String> getExplanandumsEntityIds(String device) {
-		if (device.equals("unknown")) {
-			return new ArrayList<>();
-		} else {
-			return dataSer.findEntityIdsByDeviceName(device);
-		}
-	}
+	public LogEntry getExplanandumsLogEntry(String device, ArrayList<LogEntry> logEntries) {
 
-	public LogEntry getExplanandum(String device, ArrayList<LogEntry> logEntries) {
-		
 		ArrayList<LogEntry> actions = dataSer.getAllActions();
-		
+
 		ArrayList<String> entityIds = new ArrayList<>();
 		if (!device.equals("unknown")) {
 			entityIds = dataSer.findEntityIdsByDeviceName(device);
@@ -147,26 +149,22 @@ public class CreateExService {
 		Collections.sort(logEntries, Collections.reverseOrder());
 
 		for (LogEntry logEntry : logEntries) {
-
 			if (actions.contains(logEntry)) {
-				System.out.println("should return here " + entityIds.size());
-
 				if (entityIds.isEmpty()) {
 					return logEntry;
 				}
-
 				if (entityIds.contains(logEntry.getEntityId())) {
 					return logEntry;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
 	/**
 	 * Fetches (or when in demo, retrieves) a list of most recent log entries from
-	 * home assistant
+	 * Home Assistant.
 	 * 
 	 * @param min number of minutes, denoting the maximum age of the fetches log
 	 *            entries (ignored when in demo mode)

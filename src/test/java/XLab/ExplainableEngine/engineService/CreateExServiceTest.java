@@ -32,47 +32,6 @@ class CreateExServiceTest {
 	@Mock
 	private DatabaseService dataSer;
 
-	@DisplayName("Test getExplanandumsEntityIds Where Device Exists in Database")
-	@Test
-	void testGetExplanandumsEntityIds() {
-		// Given
-		String device = "microwave";
-		ArrayList<String> entityIds = new ArrayList<String>(Arrays.asList("microwave.heat", "microwave.time"));
-
-		// When
-		Mockito.when(dataSer.findEntityIdsByDeviceName("microwave")).thenReturn(entityIds);
-		ArrayList<String> logEntries = underTest.getExplanandumsEntityIds(device);
-
-		// Then
-		Assertions.assertEquals(entityIds, logEntries);
-	}
-
-	@DisplayName("Test getExplanandumsEntityIds Where Device Does Not Exist in Database")
-	@Test
-	void testGetExplanandumsEntityIdsDeviceNotExisting() {
-		// Given
-		String device = "doorbell";
-
-		// When
-		ArrayList<String> logEntries = underTest.getExplanandumsEntityIds(device);
-
-		// Then
-		Assertions.assertEquals(new ArrayList<String>(), logEntries);
-	}
-
-	@DisplayName("Test getExplanandumsEntityIds Where Device Not Provided")
-	@Test
-	void testGetExplanandumsEntityIdsDeviceNotProvided() {
-		// Given
-		String device = "unkown";
-
-		// When
-		ArrayList<String> logEntries = underTest.getExplanandumsEntityIds(device);
-
-		// Then
-		Assertions.assertEquals(new ArrayList<String>(), logEntries);
-	}
-
 	@DisplayName("Test populateDemoEntries To Load Properly Formatted JSON")
 	@Test
 	void testPopulateDemoEntries() throws IOException, URISyntaxException {
@@ -103,7 +62,7 @@ class CreateExServiceTest {
 				.thenReturn(new ArrayList<String>(Arrays.asList("scene.tv_playing")));
 		Mockito.when(dataSer.getAllActions()).thenReturn(actions);
 
-		LogEntry explanandum = underTest.getExplanandum("tv", demoEntries);
+		LogEntry explanandum = underTest.getExplanandumsLogEntry("tv", demoEntries);
 
 		// Then
 		Assertions.assertNotNull(explanandum.getTime());
@@ -125,7 +84,7 @@ class CreateExServiceTest {
 				.thenReturn(new ArrayList<String>(Arrays.asList("switch.smart_plug_social_room_coffee")));
 		Mockito.when(dataSer.getAllActions()).thenReturn(actions);
 
-		LogEntry explanandum = underTest.getExplanandum("coffee_machine", demoEntries);
+		LogEntry explanandum = underTest.getExplanandumsLogEntry("coffee_machine", demoEntries);
 
 		// Then
 		Assertions.assertNotNull(explanandum.getTime());
@@ -147,7 +106,7 @@ class CreateExServiceTest {
 				.thenReturn(new ArrayList<String>(Arrays.asList("sensor.deebot_last_error", "vacuum.deebot")));
 		Mockito.when(dataSer.getAllActions()).thenReturn(actions);
 
-		LogEntry explanandum = underTest.getExplanandum("robo_cleaner", demoEntries);
+		LogEntry explanandum = underTest.getExplanandumsLogEntry("robo_cleaner", demoEntries);
 
 		// Then
 		Assertions.assertNotNull(explanandum.getTime());
@@ -166,7 +125,7 @@ class CreateExServiceTest {
 
 		// When
 		Mockito.when(dataSer.getAllActions()).thenReturn(actions);
-		LogEntry explanandum = underTest.getExplanandum("unknown", demoEntries);
+		LogEntry explanandum = underTest.getExplanandumsLogEntry("unknown", demoEntries);
 
 		// Then
 		Assertions.assertNotNull(explanandum.getTime());
