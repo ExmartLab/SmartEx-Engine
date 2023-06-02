@@ -134,8 +134,7 @@ public class CreateExService {
 	 * @param device     name of a device, or "unkown", if no particular device is
 	 *                   provided
 	 * @param logEntries the list of Home Assistant logs
-	 * @return the latest entry of the Home Assistant logs, representing both, the
-	 *         provided device as well as an action known to the system
+	 * @return the action that is to be explained
 	 */
 	public LogEntry getExplanandumsLogEntry(String device, ArrayList<LogEntry> logEntries) {
 

@@ -16,27 +16,47 @@ import exengine.datamodel.Rule;
 import exengine.datamodel.Error;
 import exengine.datamodel.RuleCause;
 
+/**
+ * Component bundling the functionalities required to determine causes.
+ */
 @Service
 public class FindCauseService {
 
-	/*
-	 * Differences to Algorithm 1 from the paper:
+	/**
+	 * Determines the causal path (i.e., the rule or error) that lead to the
+	 * occurrence of an explanandum.
 	 * 
-	 * 1. The rules and log entries are naturally disjoint in this application, so
-	 * no need to extract them from the explanation constructs as in the paper (Line
-	 * 6 and 7).
+	 * @See Algorithm 1, "Find the Cause Path" in the paper "SmartEx: A Framework
+	 *      for Generating User-Centric Explanations in Smart Environments"
 	 * 
-	 * 2. This method also finds errors (the differences appear only at the end,
-	 * after every part of Algorithm 1 has already happened.
+	 * @Note There are three aspects in which this implementation deviates from the
+	 *       algorithm description in the paper (see reference above), which are:
 	 * 
-	 * 3. Some naming, precisely:
+	 *       (1.) The rules and log entries are naturally disjoint in this
+	 *       application, so no need to extract them from the explanation constructs
+	 *       as in the paper (Line 6 and 7 of the algorithm description).
 	 * 
-	 * - logEntries = X (after Line 7 was executed) - dbRules = R - path = P
+	 *       (2.) This method also finds errors (the differences appear only at the
+	 *       end, after every part of Algorithm 1 has already happened), the
+	 *       so-called Error-Handling Plugin.
+	 * 
+	 *       (3.) Some naming, precisely: X = logEntries (after line 7 of the
+	 *       algorithm was executed), R = dbRules, P = path.
+	 * 
+	 * @Note You find inline comments in the method that reference the lines of the
+	 *       description of Algorithm 1.
+	 * 
+	 * @param explanandum the action that is to be explained
+	 * @param logEntries  the list of Home Assistant logs
+	 * @param dbRules     the set of rules that exist in system
+	 * @param dbErrors    the set of errors that are known about the system
+	 * @return the exact rule or error that lead to the occurrence of the specified
+	 *         explanandum
 	 */
 	public Cause findCause(LogEntry explanandum, ArrayList<LogEntry> logEntries, List<Rule> dbRules,
 			List<Error> dbErrors) {
 
-		// Algorithm 1:
+		// Find Cause Path Algorithm (Algorithm 1 in the Paper):
 
 		Cause path = null; // Line 4
 		Rule firedRule = null; // Line 5
@@ -47,14 +67,14 @@ public class FindCauseService {
 
 		for (Rule rule : candidateRules) { // Line 10
 			if (actionsApply(explanandum, rule, logEntries, 1000) // Line 11
-					&& preconditionsApply(explanandum, rule, logEntries)) { // Line 12 - 14
+					&& preconditionsApply(explanandum, rule, logEntries)) { // Line 12 - 13
 				firedRule = rule;
 			}
 		}
 
-		if (firedRule != null) { // Line 15
+		if (firedRule != null) { // Line 14
 			path = new RuleCause(firedRule.getTrigger().get(0), firedRule.getConditions(), firedRule.getActions(),
-					firedRule); // Line 16
+					firedRule); // Line 15
 			return path;
 		}
 
@@ -188,7 +208,7 @@ public class FindCauseService {
 
 		return null;
 	}
-	
+
 	/**
 	 * Returns a list of log entries that originated within the specified time
 	 * frame.

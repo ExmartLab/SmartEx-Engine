@@ -19,6 +19,7 @@ import exengine.datamodel.Error;
 import exengine.algorithmicExpGenerator.FindCauseService;
 import exengine.datamodel.LogEntry;
 
+@DisplayName("Unit Test Find Cause Functionalities")
 class FindCauseServiceTest {
 
 	TestingObjects testingObjects;

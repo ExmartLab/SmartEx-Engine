@@ -20,6 +20,7 @@ import exengine.database.ErrorRepository;
 import exengine.database.RuleRepository;
 import exengine.datamodel.LogEntry;
 
+@DisplayName("Unit Test Database Service")
 @ExtendWith(MockitoExtension.class)
 class DatabaseServiceTest {
 	

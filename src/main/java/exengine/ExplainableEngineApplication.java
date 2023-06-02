@@ -7,6 +7,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
+ * ExplainableEngineApplication: A prototype of the SmartEx reference
+ * architecture for generating user-centric explanations in smart environments
+ * (Here: the smart home managing system "Home Assistant").
+ * 
  * Entry point for the application.
  * 
  * Also defines the global {@link #demo demo} variable, as well as constants

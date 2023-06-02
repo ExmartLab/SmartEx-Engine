@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import exengine.datamodel.LogEntry;
 
+@DisplayName("Unit Test LogEntry Behavior")
 class LogEntryTest {
 
 	@DisplayName("Test Reverse Sorting LogEntries")
