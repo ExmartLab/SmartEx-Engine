@@ -1,37 +1,44 @@
 package exengine;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import exengine.datamodel.LogEntry;
-import exengine.haconnection.HomeAssistantConnectionService;
-import exengine.loader.JsonHandler;
-
+/**
+ * ExplainableEngineApplication: A prototype of the SmartEx reference
+ * architecture for generating user-centric explanations in smart environments
+ * (Here: the smart home managing system "Home Assistant").
+ * 
+ * Entry point for the application.
+ * 
+ * Also defines the global {@link #demo demo} variable, as well as constants
+ * defining all file-names that are within the application.
+ */
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ExplainableEngineApplication.class);
-	
+
 	public static final String FILE_NAME_USERS = "seeds/users.yaml";
 	public static final String FILE_NAME_ENTITIES = "seeds/entities.yaml";
 	public static final String FILE_NAME_RULES = "seeds/rules.yaml";
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
 	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
 
-	@Autowired
-	private HomeAssistantConnectionService haService;
-
-	private static boolean testing = true;
-
-	public static ArrayList<LogEntry> demoEntries;
+	/**
+	 * Configuration property of the application.
+	 * 
+	 * If <code>demo=true</code>, explanations will be generated based on a
+	 * predefined and fixed set of logs (i.e., historical and constructed events in
+	 * Home Assistant). Else, the explanations will be generated based on an
+	 * up-to-date fetch of logs (i.e., most recent/live events in Home Assistant).
+	 * 
+	 * @Note If <code>demo=false</code>, the application needs to have a connection
+	 *       to Home Assistant.
+	 */
+	private static boolean demo = true;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ExplainableEngineApplication.class, args);
@@ -39,30 +46,29 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (testing) {
-			try {
-				populateDemoEntries();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// print out current API Status to see that HA is reachable
-		haService.printAPIStatus();
-	}
-	
-	public static void populateDemoEntries() throws IOException, URISyntaxException {
-		String logJSON = JsonHandler.loadFile(FILE_NAME_DEMO_LOGS);
-		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
-		logger.info("demoEntries have been loaded from " + FILE_NAME_DEMO_LOGS);
-	}
-	
-	public static boolean isTesting() {
-		return testing;
+		logger.info("Explainable Engine running");
 	}
 
-	public static void setTesting(boolean testing) {
-		ExplainableEngineApplication.testing = testing;
+	/**
+	 * Gets the demo mode configuration.
+	 * 
+	 * @return boolean {@link #demo demo}
+	 */
+	public static boolean isDemo() {
+		return demo;
+	}
+
+	/**
+	 * Sets the demo mode configuration.
+	 * 
+	 * @param demo A boolean value indicating whether the application should run in
+	 *             demo mode. Set to 'true' for enabling demo mode, 'false'
+	 *             otherwise.
+	 * @see {@link #demo demo mode} for implications.
+	 */
+	public static void setDemo(boolean demo) {
+		ExplainableEngineApplication.demo = demo;
+		logger.debug("Demo mode set to {}", demo);
 	}
 
 }

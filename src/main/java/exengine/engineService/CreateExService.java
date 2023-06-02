@@ -3,6 +3,7 @@ package exengine.engineService;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,13 +20,15 @@ import exengine.datamodel.*;
 import exengine.datamodel.Error;
 import exengine.expPresentation.*;
 import exengine.haconnection.HomeAssistantConnectionService;
+import exengine.loader.JsonHandler;
 
+/**
+ * Service hub responsible for building and delivering explanations.
+ */
 @Service
 public class CreateExService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
 
-	private ArrayList<LogEntry> logEntries;
+	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -45,83 +48,171 @@ public class CreateExService {
 	@Autowired
 	TransformationFunctionService transformFuncSer;
 
-	public String getExplanation(int min, String userId, String userLocation, String device) {
+	/**
+	 * Builds context-specific explanations for home assistant.
+	 * 
+	 * This function determines the causal path behind an explanandum and presents
+	 * an appropriate, context-dependent explanation. Refer to the paper for
+	 * details.
+	 * 
+	 * @param min    Representing the number of minutes taken into account for
+	 *               analyzing past events, starting from the call of the method
+	 * @param userId The user identifier for the explainee that asked for the
+	 *               explanation @Note not to confuse with the id property of the
+	 *               user class
+	 * @param device The device whose last action is to be explained
+	 * @return Either the built explanation, or an error description in case the
+	 *         explanation could not be built.
+	 */
+	public String getExplanation(int min, String userId, String device) {
 
-		// test for valid userId by checking if user with userId is in db
+		logger.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
+
+		ArrayList<LogEntry> logEntries = getLogEntries(min);
+
 		User user = dataSer.findUserByUserId(userId);
-		if (user == null)
-			return "unvalid userId";
-		
-		logger.debug("getExplanation called with arguments min: {}, user name: {}, userLocation: {}, device: {}", min, user.getName(), userLocation, device);
-		
-		// getting the log Entries
-		if (!ExplainableEngineApplication.isTesting()) {
-			// getting logs from Home Assistant
+
+		if (user == null) {
+			return "unvalid userId: this user does not exist";
+		}
+
+		// STEP 0: identify explanandum's LogEntry
+		LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
+
+		if (explanandum == null) {
+			return "Could not find explanandum in the logs";
+		}
+
+		// STEP 1: find causal path
+		List<Rule> dbRules = dataSer.findAllRules();
+		List<Error> dbErrors = dataSer.findAllErrors();
+		Cause cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
+
+		if (cause == null) {
+			return "Could not find cause to explain";
+		}
+
+		// STEP 2: get final context from context service
+		Context context = conSer.getAllContext(cause, user);
+
+		if (context == null) {
+			return "Could not collect context";
+		}
+
+		// STEP 3: ask rule engine what explanation type to generate
+		View view = contextMappingSer.getExplanationView(context, cause);
+
+		if (view == null) {
+			return "Could not determine explanation type";
+		}
+
+		// STEP 4: generate the desired explanation
+		String explanation = transformFuncSer.transformExplanation(view, cause, context);
+
+		if (explanation == null) {
+			return "Could not transform explanation into natural language";
+		}
+
+		logger.info("Explanation generated");
+		return explanation;
+	}
+
+	/**
+	 * Transform the explanandum's device name to the exact LogEntry describing the
+	 * explanandum. The output is the latest entry of the Home Assistant logs that
+	 * is a known action, and is associated to the provided device. In the context
+	 * of this application, this is necessary for two reasons:
+	 * 
+	 * 1. In Home Assistant, a single physical device may be associated to various
+	 * Home Assistant entities which have their own id's (e.g., a device "lab_fan"
+	 * may have the entities "sensor.lab_fan_current_consumption", and
+	 * "switch.lab_fan").
+	 * 
+	 * 2. The determination of the causal path of an explanandum relies on it's
+	 * representation as an entry of the Home Assistant logs.
+	 * 
+	 * @param device     name of a device, or "unkown", if no particular device is
+	 *                   provided
+	 * @param logEntries the list of Home Assistant logs
+	 * @return the action that is to be explained
+	 */
+	public LogEntry getExplanandumsLogEntry(String device, ArrayList<LogEntry> logEntries) {
+
+		ArrayList<LogEntry> actions = dataSer.getAllActions();
+
+		ArrayList<String> entityIds = new ArrayList<>();
+		if (!device.equals("unknown")) {
+			entityIds = dataSer.findEntityIdsByDeviceName(device);
+		}
+
+		Collections.sort(logEntries, Collections.reverseOrder());
+
+		for (LogEntry logEntry : logEntries) {
+			if (actions.contains(logEntry)) {
+				if (entityIds.isEmpty()) {
+					return logEntry;
+				}
+				if (entityIds.contains(logEntry.getEntityId())) {
+					return logEntry;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Fetches (or when in demo, retrieves) a list of most recent log entries from
+	 * Home Assistant.
+	 * 
+	 * @param min number of minutes, denoting the maximum age of the fetches log
+	 *            entries (ignored when in demo mode)
+	 * @return a list of log entries that are no older than min, starting from when
+	 *         this function is called.
+	 * 
+	 * @Note If the ExplainableEngineApplication is running in mode mode, the
+	 *       returned list of log entries will be loaded statically from a json file
+	 *       stored in the resources foulder of this project.
+	 */
+	public ArrayList<LogEntry> getLogEntries(int min) {
+		ArrayList<LogEntry> logEntries = null;
+
+		if (ExplainableEngineApplication.isDemo()) {
 			try {
+				// getting demo logs (stored in a json file, stored in the resources folder)
+				logEntries = loadDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+			} catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			try {
+				// getting logs directly from Home Assistant
 				logEntries = haSer.parseLastLogs(min);
 			} catch (IOException e) {
 				logger.error("Unable to parse last logs: {}", e.getMessage(), e);
 			}
-		} else {
-			// getting demo logs
-			try {
-				ExplainableEngineApplication.populateDemoEntries();
-			} catch (IOException | URISyntaxException e) {
-				logger.error("Unable to populate the demo entries: {}", e.getMessage(), e);
-			} 		
-			
-			logEntries = ExplainableEngineApplication.demoEntries;
-		}
-		
-		ArrayList<String> entityIds = null;
-		
-		// check if explanation for particular device requested
-		if (!device.equals("unknown")) {
-			// get all associated entityIds
-			entityIds = dataSer.findEntityIdsByDeviceName(device);
 		}
 
-		String explanation;
+		return logEntries;
+	}
 
-		// query Rules & Errors from DB
-		List<Rule> dbRules = dataSer.findAllRules();
-		List<Error> dbErrors = dataSer.findAllErrors();
-		
-		logger.debug("Explanation generation started");
+	/**
+	 * Loads demo entries from a json file and stores them in a list of LogEntry
+	 * objects, ready for usage.
+	 * 
+	 * @param fileName name of json file
+	 * @return
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public ArrayList<LogEntry> loadDemoEntries(String fileName) throws IOException, URISyntaxException {
+		ArrayList<LogEntry> demoEntries;
+		String logJSON = JsonHandler.loadFile(fileName);
+		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 
-		/*
-		 * STEP 1: FIND CAUSE
-		 */
-		Cause cause = findCauseSer.findCause(logEntries, dbRules, dbErrors, entityIds);
-
-		// return in case no cause has been found
-		if (cause == null)
-			return "couldn't find cause to explain";
-
-		/*
-		 * STEP 2: GET CONTEXT
-		 */
-		State state = user.getState();
-
-		// get final context from context service
-		Context context = conSer.getAllContext(cause, userId, state, userLocation);
-
-		/*
-		 * STEP 3: ask rule engine what explanation type to generate
-		 */
-		View type = contextMappingSer.getExplanationType(context, cause);
-		
-		/*
-		 * STEP 4: generate the desired explanation
-		 */
-		if (type == null)
-			return "Unable to determine explanation type";
-		
-		explanation = transformFuncSer.transformExplanation(type, cause, context);
-		
-		logger.info("Explanation generated");
-		
-		return explanation;
+		logger.info("demoEntries have been loaded from {}", fileName);
+		return demoEntries;
 	}
 
 }

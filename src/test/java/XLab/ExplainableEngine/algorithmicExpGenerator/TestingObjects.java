@@ -19,17 +19,17 @@ import exengine.loader.JsonHandler;
  * to be uncoupled from the database. Thereby, testing with this data does not require to have 
  * the database always in a state that contains the test data.
  */
-class TestingObjects {
+public class TestingObjects {
 
 	private ArrayList<LogEntry> demoEntries;
 	private ArrayList<Rule> dbRules;
 	private ArrayList<Error> dbErrors;
 
-	TestingObjects() throws IOException, URISyntaxException {
+	public TestingObjects() throws IOException, URISyntaxException {
 		// populate demoEntries
-		String logJSON = JsonHandler.loadFile(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+		String logJSON = JsonHandler.loadFile("testingData/" + ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
-		
+
 		populateRules();
 		populateErrors();
 	}
@@ -59,6 +59,55 @@ class TestingObjects {
 
 		dbRules.add(new Rule("rule 2 (tv mute)", "2", demoEntries.get(8), triggers, conditions, actions, "2",
 				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
+
+		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers:
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(3));
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		conditions = new ArrayList<String>();
+		conditions.add("a made up condition");
+
+		dbRules.add(new Rule("rule 3 (constructed rule)", "3", demoEntries.get(8), triggers, conditions, actions, "2",
+				"Rule_3: a constructed rule for testing purposes"));
+
+		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers, one
+		// of which is never satisfied in the demo log (to test that the actions of this
+		// rule do not apply):
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(demoEntries.get(3));
+		
+		LogEntry neverSatisfiedTrigger = new LogEntry();
+		neverSatisfiedTrigger.setName("Never triggered alarm");
+		neverSatisfiedTrigger.setEntityId("alarm_fire");
+		neverSatisfiedTrigger.setState("on");
+		triggers.add(neverSatisfiedTrigger);
+		
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		
+		LogEntry neverSatisfiedAction = new LogEntry();
+		neverSatisfiedAction.setName("Never used strobo light");
+		neverSatisfiedAction.setEntityId("light_strobo");
+		neverSatisfiedAction.setState("on");
+		actions.add(neverSatisfiedAction);
+		
+		conditions = new ArrayList<String>();
+		conditions.add("a made up condition");
+
+		dbRules.add(new Rule("rule 4 (constructed rule)", "4", demoEntries.get(8), triggers, conditions, actions, "4",
+				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed"));
+		
+		// synthetic rule (same action as "rule 2 (tv mute)" but never triggered:
+		triggers = new ArrayList<LogEntry>();
+		triggers.add(neverSatisfiedTrigger);
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		conditions = new ArrayList<String>();
+		conditions.add("a made up condition");
+		
+		dbRules.add(new Rule("rule 5 (constructed rule)", "5", demoEntries.get(8), triggers, conditions, actions, "5",
+				"Rule_5: a constructed rule for testing purposes, never to be triggered"));
 	}
 
 	private void populateErrors() {
@@ -74,15 +123,15 @@ class TestingObjects {
 				"If DEEBOT can not free itself, manually remove the obstacles and restart"));
 	}
 
-	ArrayList<LogEntry> getDemoEntries() {
+	public ArrayList<LogEntry> getDemoEntries() {
 		return demoEntries;
 	}
 
-	ArrayList<Rule> getDBRules() {
+	public ArrayList<Rule> getDBRules() {
 		return dbRules;
 	}
 
-	ArrayList<Error> getDBErrors() {
+	public ArrayList<Error> getDBErrors() {
 		return dbErrors;
 	}
 

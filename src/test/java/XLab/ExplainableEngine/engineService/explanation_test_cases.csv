@@ -1,0 +1,18 @@
+userid, device, expected_explanation
+10; coffee_machine; unvalid userId: this user does not exist
+1; coffee_machine; Hi Alice, Smart Plug Social Room Coffee is off because you have set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state change has happened, so the rule has been fired.
+2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because Alice has set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state change has happened, so the rule has been fired.
+2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because currently daily energy consumption is higher than the threshold and state change has happened.
+2; tv; Hi Bob, you have set up a rule and at this moment the rule has been fired.
+1; tv; Hi Alice, the rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on"has been fired.
+1; tv; Hi Alice, Bob has set up a rule and at this moment the rule has been fired.
+1; tv; Hi Alice, Bob has set up a rule and at this moment the rule has been fired.
+2; tv; Hi Bob, you have set up a rule and at this moment the rule has been fired.
+2; robo_cleaner; Hi Bob, DEEBOT is tangled with something on the floor or might be stuck under furniture.
+1; robo_cleaner; Hi Alice, DEEBOT is tangled with something on the floor or might be stuck under furniture.
+2; robo_cleaner; Hi Bob, DEEBOT is tangled with something on the floor or might be stuck under furniture.
+3; robo_cleaner; Hi Chuck, If DEEBOT can not free itself, manually remove the obstacles and restart.
+2; robo_cleaner; Hi Bob, DEEBOT is tangled with something on the floor or might be stuck under furniture.
+5; unknown; Hi Freyja, tv_mute is active because Bob has set up a rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on" and currently a meeting in room 1 is going on and Lab TV is playing, so the rule has been fired.
+5; unknown; Hi Freyja, the rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on"has been fired.
+7; robo_cleaner; Hi Hanna, Error "No. 04: DEEBOT gets stuck while working and stops" happened. So DEEBOT is tangled with something on the floor or might be stuck under furniture. If DEEBOT can not free itself, manually remove the obstacles and restart.

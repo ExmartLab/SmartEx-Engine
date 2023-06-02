@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class HomeAssistantConnectionService {
 
 	String response = "";
 
+	@PostConstruct
 	public void printAPIStatus() {
 		String status = "not reachable";
 		try {

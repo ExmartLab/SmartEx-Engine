@@ -45,19 +45,33 @@ public class DatabaseSeeder {
 	@PostConstruct
 	public void seedDatabase() {
 		dataSer.resetDatabase();
-		
 		try {
-			seedUsers();
-			seedEntities();
-			seedRules();
-			seedErrors();
+			seedUsers(ExplainableEngineApplication.FILE_NAME_USERS);
+			seedEntities(ExplainableEngineApplication.FILE_NAME_ENTITIES);
+			seedRules(ExplainableEngineApplication.FILE_NAME_RULES);
+			seedErrors(ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public void seedDatabaseForTesting() {
+		dataSer.resetDatabase();
+		final String testingPrefix = "testingData/";
+		try {
+			seedUsers(testingPrefix + ExplainableEngineApplication.FILE_NAME_USERS);
+			seedEntities(testingPrefix + ExplainableEngineApplication.FILE_NAME_ENTITIES);
+			seedRules(testingPrefix + ExplainableEngineApplication.FILE_NAME_RULES);
+			seedErrors(testingPrefix + ExplainableEngineApplication.FILE_NAME_ERRORS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	private void seedUsers() {
-		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_USERS);
+		logger.info("Database reset and reseeded with testing data");
+	}
+
+	private void seedUsers(String fileName) {
+		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 			User user = new User();
@@ -80,8 +94,8 @@ public class DatabaseSeeder {
 		logger.info("Users seeded to database");
 	}
 
-	private void seedEntities() {
-		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ENTITIES);
+	private void seedEntities(String fileName) {
+		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 			Entity entity = new Entity();
@@ -96,8 +110,8 @@ public class DatabaseSeeder {
 		logger.info("Entities seeded to database");
 	}
 
-	private void seedRules() {
-		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_RULES);
+	private void seedRules(String fileName) {
+		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 
@@ -174,8 +188,8 @@ public class DatabaseSeeder {
 		logger.info("Rules seeded to database");
 	}
 
-	private void seedErrors() {
-		List<Map<String, Object>> dataList = loadDataMap(ExplainableEngineApplication.FILE_NAME_ERRORS);
+	private void seedErrors(String fileName) {
+		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 
