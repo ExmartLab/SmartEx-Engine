@@ -17,7 +17,7 @@ import exengine.datamodel.Error;
 import exengine.datamodel.RuleCause;
 
 @Service
-public class FindCauseServiceAlternative {
+public class FindCauseService {
 
 	/*
 	 * Differences to Algorithm 1 from the paper:

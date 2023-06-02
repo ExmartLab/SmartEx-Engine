@@ -16,19 +16,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import exengine.datamodel.Rule;
 import exengine.datamodel.Cause;
 import exengine.datamodel.Error;
-import exengine.algorithmicExpGenerator.FindCauseServiceAlternative;
+import exengine.algorithmicExpGenerator.FindCauseService;
 import exengine.datamodel.LogEntry;
 
-class FindCauseServiceAlternativeTest {
+class FindCauseServiceTest {
 
 	TestingObjects testingObjects;
 
-	FindCauseServiceAlternative underTest;
+	FindCauseService underTest;
 
 	@BeforeEach
 	void setUp() throws IOException, URISyntaxException {
 		testingObjects = new TestingObjects();
-		underTest = new FindCauseServiceAlternative();
+		underTest = new FindCauseService();
 	}
 
 	@DisplayName("Test Finding Candidate Rules Where Four Candidate Rules Exist (Case 1)")

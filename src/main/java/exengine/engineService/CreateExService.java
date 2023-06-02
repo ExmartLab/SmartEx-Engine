@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.algorithmicExpGenerator.FindCauseServiceAlternative;
+import exengine.algorithmicExpGenerator.FindCauseService;
 import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
 import exengine.contextManager.ContextService;
 import exengine.database.*;
@@ -37,7 +37,7 @@ public class CreateExService {
 	HomeAssistantConnectionService haSer;
 
 	@Autowired
-	FindCauseServiceAlternative findCauseSer;
+	FindCauseService findCauseSer;
 
 	@Autowired
 	ContextService conSer;
