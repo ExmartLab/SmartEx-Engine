@@ -49,7 +49,7 @@ public class CreateExService {
 	TransformationFunctionService transformFuncSer;
 
 	/**
-	 * Builds context-specific explanations for home assistant events.
+	 * Builds context-specific explanations for home assistant.
 	 * 
 	 * This function determines the causal path behind an explanandum and presents
 	 * an appropriate, context-dependent explanation. Refer to the paper for
