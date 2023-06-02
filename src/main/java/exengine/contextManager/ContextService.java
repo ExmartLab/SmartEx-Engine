@@ -7,7 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import exengine.datamodel.*;
+import exengine.datamodel.Context;
+import exengine.datamodel.Error;
+import exengine.datamodel.Occurrence;
+import exengine.datamodel.OccurrenceEntry;
+import exengine.datamodel.Role;
+import exengine.datamodel.Rule;
+import exengine.datamodel.User;
+import exengine.datamodel.State;
+import exengine.datamodel.Technicality;
 import exengine.database.*;
 
 /**
@@ -28,7 +36,7 @@ public class ContextService {
 	 * @param explainee    User that requests an explanation
 	 * @return Context (bundle of all contextual variables)
 	 */
-	public Context getAllContext(Cause cause, User explainee) {
+	public Context getAllContext(Object cause, User explainee) {
 
 		String explaineeId = explainee.getUserId();
 		State state = explainee.getState();
@@ -37,13 +45,13 @@ public class ContextService {
 		String id = null;
 
 		// Rule case
-		if (cause.getClass().equals(RuleCause.class)) {
+		if (cause instanceof Rule rule) {
 
-			id = ((RuleCause) cause).getRule().getRuleId();
+			id = rule.getRuleId();
 
 			occurrence = dataSer.findOccurrence(explaineeId, id, 90);
 
-			User ruleOwner = dataSer.findOwnerByRuleName(((RuleCause) cause).getRule().getRuleName());
+			User ruleOwner = dataSer.findOwnerByRuleName(rule.getRuleName());
 			// Set default user in case rule has no owner
 			if (ruleOwner == null)
 				ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);
@@ -56,9 +64,9 @@ public class ContextService {
 					explainee.getName(), ruleOwner.getName());
 		}
 		// Error case
-		else if (cause.getClass().equals(ErrorCause.class)) {
+		else if (cause instanceof Error error) {
 
-			id = ((ErrorCause) cause).getError().getErrorId();
+			id = error.getErrorId();
 
 			occurrence = dataSer.findOccurrence(explaineeId, id, 90);
 			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), state,

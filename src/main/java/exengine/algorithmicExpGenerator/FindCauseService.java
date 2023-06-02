@@ -9,12 +9,9 @@ import java.util.Iterator;
 
 import org.springframework.stereotype.Service;
 
-import exengine.datamodel.Cause;
-import exengine.datamodel.ErrorCause;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
 import exengine.datamodel.Error;
-import exengine.datamodel.RuleCause;
 
 /**
  * Component bundling the functionalities required to determine causes.
@@ -41,7 +38,7 @@ public class FindCauseService {
 	 *       so-called Error-Handling Plugin.
 	 * 
 	 *       (3.) Some naming, precisely: X = logEntries (after line 7 of the
-	 *       algorithm was executed), R = dbRules, P = path.
+	 *       algorithm was executed), R = dbRules.
 	 * 
 	 * @Note You find inline comments in the method that reference the lines of the
 	 *       description of Algorithm 1.
@@ -53,12 +50,11 @@ public class FindCauseService {
 	 * @return the exact rule or error that lead to the occurrence of the specified
 	 *         explanandum
 	 */
-	public Cause findCause(LogEntry explanandum, ArrayList<LogEntry> logEntries, List<Rule> dbRules,
+	public Object findCause(LogEntry explanandum, ArrayList<LogEntry> logEntries, List<Rule> dbRules,
 			List<Error> dbErrors) {
 
 		// Find Cause Path Algorithm (Algorithm 1 in the Paper):
 
-		Cause path = null; // Line 4
 		Rule firedRule = null; // Line 5
 
 		Collections.sort(logEntries, Collections.reverseOrder()); // Line 8
@@ -73,9 +69,7 @@ public class FindCauseService {
 		}
 
 		if (firedRule != null) { // Line 14
-			path = new RuleCause(firedRule.getTrigger().get(0), firedRule.getConditions(), firedRule.getActions(),
-					firedRule); // Line 15
-			return path;
+			return firedRule;
 		}
 
 		// Error-Handling Plug In:
@@ -83,12 +77,11 @@ public class FindCauseService {
 		Error error = getError(explanandum, dbErrors);
 
 		if (error != null) {
-			path = new ErrorCause(error.getActions(), error.getImplication(), error.getSolution(), error);
-			return path;
+			return error;
 		}
 
 		// No Path Found:
-		return path;
+		return null;
 
 	}
 

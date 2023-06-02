@@ -86,7 +86,7 @@ public class CreateExService {
 		// STEP 1: find causal path
 		List<Rule> dbRules = dataSer.findAllRules();
 		List<Error> dbErrors = dataSer.findAllErrors();
-		Cause cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
+		Object cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
 
 		if (cause == null) {
 			return "Could not find cause to explain";
@@ -103,7 +103,7 @@ public class CreateExService {
 		View view = contextMappingSer.getExplanationView(context, cause);
 
 		if (view == null) {
-			return "Could not determine explanation type";
+			return "Could not determine explanation view";
 		}
 
 		// STEP 4: generate the desired explanation

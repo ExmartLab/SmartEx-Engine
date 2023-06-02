@@ -12,14 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-
 import exengine.datamodel.Context;
 import exengine.datamodel.Occurrence;
 import exengine.datamodel.Role;
 import exengine.datamodel.Rule;
 import exengine.datamodel.User;
-import exengine.datamodel.RuleCause;
+import exengine.datamodel.Error;
 import exengine.datamodel.State;
 import exengine.datamodel.Technicality;
 import exengine.contextManager.ContextService;
@@ -62,7 +60,7 @@ class ContextServiceTest {
 	void testGetAllContextCause(boolean ruleOwnerIsExplainee) {
 		
 		// Given
-		RuleCause cause = new RuleCause(null, new ArrayList<>(), new ArrayList<>(), new Rule());
+		Rule rule = new Rule();
 		User user = new User(name, 30, role, technicality, state, "London");
 		user.setId("id");
 		User ruleOwner;
@@ -76,7 +74,7 @@ class ContextServiceTest {
 		Mockito.when(dataSer.findOccurrence(null, null, 90))
 				.thenReturn(occurrence);
 		Mockito.when(dataSer.findOwnerByRuleName(null)).thenReturn(ruleOwner);
-		Context context = underTest.getAllContext(cause, user);
+		Context context = underTest.getAllContext(rule, user);
 
 		// Then
 		if (ruleOwnerIsExplainee) {
@@ -96,14 +94,14 @@ class ContextServiceTest {
 	void testGetAllContextError() {
 		
 		// Given
-		RuleCause cause = new RuleCause(null, new ArrayList<>(), new ArrayList<>(), new Rule());
+		Error error = new Error();
 		User user = new User(name, 30, role, technicality, state, "London");
 		user.setId("id");
 
 		// When
 		Mockito.when(dataSer.findOccurrence(null, null, 90))
 				.thenReturn(occurrence);
-		Context context = underTest.getAllContext(cause, user);
+		Context context = underTest.getAllContext(error, user);
 
 		// Then
 		Assertions.assertEquals(role, context.getExplaineeRole());
@@ -111,6 +109,6 @@ class ContextServiceTest {
 		Assertions.assertEquals(technicality, context.getExplaineeTechnicality());
 		Assertions.assertEquals(state, context.getExplaineeState());
 		Assertions.assertEquals(name, context.getExplaineeName());
-		Assertions.assertEquals("no owner", context.getOwnerName());
+		Assertions.assertNull(context.getOwnerName());
 	}
 }
