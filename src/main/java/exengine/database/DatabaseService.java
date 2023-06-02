@@ -172,7 +172,6 @@ public class DatabaseService {
 	}
 
 	public Occurrence findOccurrence(String userId, String ruleId, int days) {
-		System.out.println("getting occurrence for user " + userId + " and rule " + ruleId);
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
 		long reference = new Date().getTime() - ((days) * 24l * 60l * 60l * 1000l);

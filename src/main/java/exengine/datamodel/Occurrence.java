@@ -3,13 +3,13 @@ package exengine.datamodel;
 public enum Occurrence {
 	FIRST("first"), SECOND("second"), MORE("more");
 
-	private String occurrence;
+	private String occurrenceString;
 
 	private Occurrence(String occurrence) {
-		this.occurrence = occurrence;
+		this.occurrenceString = occurrence;
 	}
 
-	public String toString() {
-		return occurrence;
+	public String getString() {
+		return occurrenceString;
 	}
 }

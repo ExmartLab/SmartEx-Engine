@@ -34,11 +34,11 @@ public class DatabaseController {
         if (optionalUser.isPresent()) {
             
             State state;
-    		if (userState.equals(State.WORKING.toString()))
+    		if (userState.equals(State.WORKING.getString()))
     			state = State.WORKING;
-    		else if (userState.equals(State.MEETING.toString()))
+    		else if (userState.equals(State.MEETING.getString()))
     			state = State.MEETING;
-    		else if (userState.equals(State.BREAK.toString()))
+    		else if (userState.equals(State.BREAK.getString()))
     			state = State.BREAK;
     		else return new ResponseEntity<>("userState does not match any of the following: \"working\", \"break\", or \"meeting\".", HttpStatus.BAD_REQUEST);
     		

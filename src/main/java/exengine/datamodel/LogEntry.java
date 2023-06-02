@@ -17,23 +17,11 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 
 	public LogEntry(String time, String name, String state, String entityId, ArrayList<String> other) {
-		this.time = time;
-		this.name = name;
-
-		if (state == null) {
-			this.state = "null";
-		} else {
-			this.state = state;
-		}
-
-		this.entityId = entityId;
-		this.other = other;
-	}
-
-	public String toString() {
-		String otherString = other == null ? "[]" : other.toString();
-		return "time: " + time + " name: " + name + " state: " + state + " entity_id: " + entityId + " other: "
-				+ otherString;
+		setTime(time);
+		setName(name);
+		setState(state);
+		setEntityId(entityId);
+		setOther(other);
 	}
 
 	public String getTime() {
@@ -49,7 +37,11 @@ public class LogEntry implements Comparable<LogEntry> {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if (name == null) {
+			this.name = "null";
+		} else {
+			this.name = name;
+		}
 	}
 
 	public String getState() {

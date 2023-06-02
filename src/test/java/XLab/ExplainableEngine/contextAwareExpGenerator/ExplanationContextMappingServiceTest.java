@@ -1,7 +1,5 @@
 package XLab.ExplainableEngine.contextAwareExpGenerator;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,15 +8,13 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 
 import exengine.datamodel.Occurrence;
 import exengine.datamodel.Role;
+import exengine.datamodel.Rule;
+import exengine.datamodel.Error;
 import exengine.datamodel.State;
 import exengine.datamodel.Technicality;
 import exengine.expPresentation.View;
 import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
-import exengine.datamodel.Cause;
 import exengine.datamodel.Context;
-import exengine.datamodel.ErrorCause;
-import exengine.datamodel.LogEntry;
-import exengine.datamodel.RuleCause;
 
 @DisplayName("Unit Test Rule Book Engine")
 class ExplanationContextMappingServiceTest {
@@ -52,11 +48,11 @@ class ExplanationContextMappingServiceTest {
 		Context context = new Context(Role.valueOf(role), Occurrence.valueOf(occurrence),
 				Technicality.valueOf(technicality), State.valueOf(state), null, null);
 
-		Cause cause;
+		Object cause;
 		if (causeType.equals("rule")) {
-			cause = new RuleCause(null, new ArrayList<String>(), new ArrayList<LogEntry>(), null);
+			cause = new Rule();
 		} else {
-			cause = new ErrorCause(new ArrayList<LogEntry>(), null, null, null);
+			cause = new Error();
 		}
 
 		// When

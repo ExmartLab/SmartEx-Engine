@@ -6,28 +6,37 @@ public class Context {
 	private Occurrence occurrence;
 	private Technicality explaineeTechnicality;
 	private State explaineeState;
-	private Integer theExpType;
+	private Integer explanationType;
 	private String explaineeName;
 	private String ownerName;
 
 	public Context(Role explaineeRole, Occurrence occurrence, Technicality explaineeTechnicality, State explaineeState,
 			Integer theExpType) {
-		this.explaineeRole = explaineeRole;
-		this.occurrence = occurrence;
-		this.explaineeTechnicality = explaineeTechnicality;
-		this.explaineeState = explaineeState;
-		this.theExpType = theExpType;
+		setExplaineeRole(explaineeRole);
+		setOccurrence(occurrence);
+		setExplaineeTechnicality(explaineeTechnicality);
+		setExplaineeState(explaineeState);
+		setExplanationType(theExpType);
 	}
 
-	// constructor for creating context by context service
+	/**
+	 * Constructor for creating context by context service
+	 * 
+	 * @param explaineeRole
+	 * @param occurrence
+	 * @param explaineeTechnicality
+	 * @param explaineeState
+	 * @param explaineeName
+	 * @param ownerName
+	 */
 	public Context(Role explaineeRole, Occurrence occurrence, Technicality explaineeTechnicality, State explaineeState,
 			String explaineeName, String ownerName) {
-		this.explaineeRole = explaineeRole;
-		this.occurrence = occurrence;
-		this.explaineeTechnicality = explaineeTechnicality;
-		this.explaineeState = explaineeState;
-		this.explaineeName = explaineeName;
-		this.ownerName = ownerName;
+		setExplaineeRole(explaineeRole);
+		setOccurrence(occurrence);
+		setExplaineeTechnicality(explaineeTechnicality);
+		setExplaineeState(explaineeState);
+		setExplaineeName(explaineeName);
+		setOwnerName(ownerName);
 	}
 
 	public Role getExplaineeRole() {
@@ -62,12 +71,12 @@ public class Context {
 		this.explaineeState = state;
 	}
 
-	public Integer getTheExpType() {
-		return theExpType;
+	public Integer getExplanationType() {
+		return explanationType;
 	}
 
-	public void setTheExpType(Integer theExpType) {
-		this.theExpType = theExpType;
+	public void setExplanationType(Integer theExpType) {
+		this.explanationType = theExpType;
 	}
 
 	public String getExplaineeName() {

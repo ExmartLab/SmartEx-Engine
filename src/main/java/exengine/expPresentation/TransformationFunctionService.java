@@ -6,11 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import exengine.datamodel.RuleCause;
-import exengine.datamodel.Cause;
 import exengine.datamodel.Context;
-import exengine.datamodel.ErrorCause;
 import exengine.datamodel.LogEntry;
+import exengine.datamodel.Rule;
+import exengine.datamodel.Error;
 
 /**
  * Component that transforms the building blocks of the explanation generation
@@ -33,24 +32,23 @@ public class TransformationFunctionService {
 	 * @Note this method is transitively tested by the CreateExService integration
 	 *       test
 	 */
-	public String transformExplanation(View view, Cause generalCause, Context context) {
+	public String transformExplanation(View view, Object cause, Context context) {
 		String explanation = null;
-		if (generalCause.getClass().equals(RuleCause.class)) {
-			RuleCause cause = (RuleCause) generalCause;
+		if (cause instanceof Rule rule) {
 			switch (view) {
 			case FULLEX:
 				explanation = String.format(
 						"Hi %s, %s because %s set up a rule: \"%s\" and currently %s and %s, so the rule has been fired.",
-						context.getExplaineeName(), getActionsString(cause), getOwnerString(context),
-						cause.getRule().getRuleDescription(), getConditionsString(cause), getTriggerString(cause));
+						context.getExplaineeName(), getActionsString(rule), getOwnerString(context),
+						rule.getRuleDescription(), getConditionsString(rule), getTriggerString(rule));
 				break;
 			case RULEEX:
 				explanation = String.format("Hi %s, the rule: \"%s\"has been fired.", context.getExplaineeName(),
-						cause.getRule().getRuleDescription());
+						rule.getRuleDescription());
 				break;
 			case FACTEX:
 				explanation = String.format("Hi %s," + " %s because currently %s and %s.", context.getExplaineeName(),
-						getActionsString(cause), getConditionsString(cause), getTriggerString(cause));
+						getActionsString(rule), getConditionsString(rule), getTriggerString(rule));
 				break;
 			case SIMPLDEX:
 				explanation = String.format("Hi %s, %s set up a rule and at this moment the rule has been fired.",
@@ -60,20 +58,17 @@ public class TransformationFunctionService {
 				break;
 			}
 		}
-		if (generalCause.getClass().equals(ErrorCause.class)) {
-			ErrorCause cause = (ErrorCause) generalCause;
+		if (cause instanceof Error error) {
 			switch (view) {
 			case ERRFULLEX:
 				explanation = String.format("Hi %s, Error \"%s\" happened. So %s. %s.", context.getExplaineeName(),
-						cause.getError().getErrorName(), cause.getError().getImplication(),
-						cause.getError().getSolution());
+						error.getErrorName(), error.getImplication(), error.getSolution());
 				break;
 			case ERRSOLEX:
-				explanation = String.format("Hi %s, %s.", context.getExplaineeName(), cause.getError().getSolution());
+				explanation = String.format("Hi %s, %s.", context.getExplaineeName(), error.getSolution());
 				break;
 			case ERROREX:
-				explanation = String.format("Hi %s, %s.", context.getExplaineeName(),
-						cause.getError().getImplication());
+				explanation = String.format("Hi %s, %s.", context.getExplaineeName(), error.getImplication());
 				break;
 			default:
 				break;
@@ -85,15 +80,15 @@ public class TransformationFunctionService {
 
 	/**
 	 * Builds a part of a natural language sentence that concatenates the conditions
-	 * of a RuleCause by "and".
+	 * of a rule by "and".
 	 * 
 	 * @param cause
 	 * @return A natural language sentence part
 	 */
-	public String getConditionsString(RuleCause cause) {
-		String conditionsString = cause.getConditions().get(0);
-		for (int i = 1; i < cause.getConditions().size(); i++) {
-			conditionsString = String.format("%s and %s", conditionsString, cause.getConditions().get(i));
+	public String getConditionsString(Rule rule) {
+		String conditionsString = rule.getConditions().get(0);
+		for (int i = 1; i < rule.getConditions().size(); i++) {
+			conditionsString = String.format("%s and %s", conditionsString, rule.getConditions().get(i));
 		}
 		return conditionsString;
 	}
@@ -105,8 +100,8 @@ public class TransformationFunctionService {
 	 * @param cause
 	 * @return A natural language sentence part
 	 */
-	public String getActionsString(Cause cause) {
-		ArrayList<LogEntry> actionList = cause.getActions();
+	public String getActionsString(Rule rule) {
+		ArrayList<LogEntry> actionList = rule.getActions();
 		LogEntry firstAction = actionList.remove(0);
 		String actionsString = firstAction.getName() + " is " + firstAction.getState();
 
@@ -139,8 +134,8 @@ public class TransformationFunctionService {
 	 * @param cause
 	 * @return A natural language sentence part
 	 */
-	public String getTriggerString(RuleCause cause) {
-		LogEntry trigger = cause.getTrigger();
+	public String getTriggerString(Rule rule) {
+		LogEntry trigger = rule.getTrigger().get(0); // TODO double check that getting the first index is good
 		return trigger == null ? "the rule was triggered"
 				: (trigger.getName() + " is " + trigger.getState()).replace("is null", "has happened");
 	}

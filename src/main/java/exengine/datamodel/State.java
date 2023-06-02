@@ -3,13 +3,13 @@ package exengine.datamodel;
 public enum State {
 	WORKING("working"), MEETING("meeting"), BREAK("break");
 
-	private String state;
+	private String stateString;
 
 	private State(String state) {
-		this.state = state;
+		this.stateString = state;
 	}
 
-	public String toString() {
-		return state;
+	public String getString() {
+		return stateString;
 	}
 }

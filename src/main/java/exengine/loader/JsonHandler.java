@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import exengine.ExplainableEngineApplication;
 import exengine.datamodel.LogEntry;
 
 public class JsonHandler {

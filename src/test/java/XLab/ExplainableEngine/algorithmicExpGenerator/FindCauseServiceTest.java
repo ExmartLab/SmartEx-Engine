@@ -14,7 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import exengine.datamodel.Rule;
-import exengine.datamodel.Cause;
 import exengine.datamodel.Error;
 import exengine.algorithmicExpGenerator.FindCauseService;
 import exengine.datamodel.LogEntry;
@@ -222,8 +221,8 @@ class FindCauseServiceTest {
 	
 	@DisplayName("Test findRuleCause For Rule Case")
 	@ParameterizedTest
-	@CsvSource({ "switch.smart_plug_social_room_coffee, off, 2022-06-23T09:50:50.848452+00:00, [Smart Plug Social Room Coffee|off;]",
-			"scene.tv_playing, null, 2022-06-23T11:19:31.037231+00:00, [tv_mute|null;]"})
+	@CsvSource({ "switch.smart_plug_social_room_coffee, off, 2022-06-23T09:50:50.848452+00:00, rule 1 (coffee)",
+			"scene.tv_playing, null, 2022-06-23T11:19:31.037231+00:00, rule 3 (constructed rule)"})
 	void testFindRuleCause(String entityId, String state, String time, String expectedOutput) {
 
 		// Given
@@ -236,10 +235,11 @@ class FindCauseServiceTest {
 		explanandum.setTime(time);
 		
 		// When
-		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+		Rule rule = (Rule) cause;
 
 		// Then
-		Assertions.assertEquals(expectedOutput, cause.getActionsString());
+		Assertions.assertEquals(expectedOutput, rule.getRuleName());
 	}
 	
 	@DisplayName("Test findRuleCause For Error Case")
@@ -256,10 +256,11 @@ class FindCauseServiceTest {
 		explanandum.setTime(time);
 
 		// When
-		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
-
+		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+		Error error = (Error) cause;
+		
 		// Then
-		Assertions.assertEquals("[Deebot last error|104;]", cause.getActionsString());
+		Assertions.assertEquals("No. 104: DEEBOT gets stuck while working and stops", error.getErrorName());
 	}
 	
 	@DisplayName("Test findRuleCause For Null Case")
@@ -276,7 +277,7 @@ class FindCauseServiceTest {
 		explanandum.setTime(time);
 
 		// When
-		Cause cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
+		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
 
 		// Then
 		Assertions.assertNull(cause);

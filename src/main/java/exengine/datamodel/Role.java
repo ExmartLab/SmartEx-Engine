@@ -3,13 +3,13 @@ package exengine.datamodel;
 public enum Role {
 	OWNER("owner"), COWORKER("coworker"), GUEST("guest");
 
-	private String role;
+	private String roleString;
 
 	private Role(String role) {
-		this.role = role;
+		this.roleString = role;
 	}
 
-	public String toString() {
-		return role;
+	public String getString() {
+		return roleString;
 	}
 }

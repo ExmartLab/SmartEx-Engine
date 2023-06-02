@@ -6,47 +6,35 @@ public class User {
 
 	@Id
 	public String id;
-
+	
 	private String name;
 	private int age;
 	private Role role;
 	private Technicality technicality;
 	private State state;
 	private String location;
-
-	private String stateString = "null";
-
+	private String stateString;
 	private String userid;
 
 	public User() {
-		// default state
-		this.setState(State.BREAK);
+		this.setState(State.BREAK); // default state
 	}
 
-	public User(String name, String userid, Role role, Technicality technicality) {
-		this.userid = userid;
-		this.name = name;
-		this.role = role;
-		this.technicality = technicality;
-
-		// default state
-		this.setState(State.BREAK);
+	public User(String name, String userId, Role role, Technicality technicality) {		
+		setUserId(userId);
+		setName(name);
+		setRole(role);
+		setTechnicality(technicality);
+		setState(State.BREAK); // default state
 	}
 
 	public User(String name, int age, Role role, Technicality technicality, State state, String location) {
-		this.name = name;
-		this.age = age;
-		this.role = role;
-		this.technicality = technicality;
-		this.state = state;
-		stateString = state.toString();
-		this.location = location;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("User[id=%s, userId=%s, name=%s, role=%s, expertise=%s]", id, userid, name,
-				role.toString(), technicality.toString());
+		setName(name);
+		setAge(age);
+		setRole(role);
+		setTechnicality(technicality);
+		setState(state);
+		setLocation(location);
 	}
 
 	public String getId() {
@@ -95,7 +83,7 @@ public class User {
 
 	public void setState(State state) {
 		this.state = state;
-		stateString = state.toString();
+		setStateString(state);
 	}
 
 	public String getLocation() {
@@ -110,8 +98,8 @@ public class User {
 		return stateString;
 	}
 
-	public void setStateString(String stateString) {
-		this.stateString = stateString;
+	public void setStateString(State state) {
+		this.stateString = state.toString();
 	}
 
 	public String getUserId() {

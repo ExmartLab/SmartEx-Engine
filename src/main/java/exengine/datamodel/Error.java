@@ -14,11 +14,11 @@ public class Error {
 	}
 
 	public Error(String errorName, String errorId, ArrayList<LogEntry> actions, String implication, String solution) {
-		this.errorName = errorName;
-		this.errorId = errorId;
-		this.actions = actions;
-		this.implication = implication;
-		this.solution = solution;
+		setErrorName(errorName);
+		setErrorId(errorId);
+		setActions(actions);
+		setImplication(implication);
+		setSolution(solution);
 	}
 
 	public ArrayList<LogEntry> getActions() {
