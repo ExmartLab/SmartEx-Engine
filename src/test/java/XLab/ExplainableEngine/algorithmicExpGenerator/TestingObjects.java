@@ -47,7 +47,7 @@ public class TestingObjects {
 		actions.add(demoEntries.get(5));
 		conditions = new ArrayList<String>();
 		conditions.add("daily energy consumption is higher than the threshold");
-		dbRules.add(new Rule("rule 1 (coffee)", "1", demoEntries.get(4), triggers, conditions, actions, "1",
+		dbRules.add(new Rule("rule 1 (coffee)", "1", triggers, conditions, actions, "1",
 				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"));
 
 		triggers = new ArrayList<LogEntry>();
@@ -57,7 +57,7 @@ public class TestingObjects {
 		conditions = new ArrayList<String>();
 		conditions.add("a meeting in room 1 is going on");
 
-		dbRules.add(new Rule("rule 2 (tv mute)", "2", demoEntries.get(8), triggers, conditions, actions, "2",
+		dbRules.add(new Rule("rule 2 (tv mute)", "2", triggers, conditions, actions, "2",
 				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
 
 		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers:
@@ -68,7 +68,7 @@ public class TestingObjects {
 		conditions = new ArrayList<String>();
 		conditions.add("a made up condition");
 
-		dbRules.add(new Rule("rule 3 (constructed rule)", "3", demoEntries.get(8), triggers, conditions, actions, "2",
+		dbRules.add(new Rule("rule 3 (constructed rule)", "3", triggers, conditions, actions, "2",
 				"Rule_3: a constructed rule for testing purposes"));
 
 		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers, one
@@ -76,28 +76,22 @@ public class TestingObjects {
 		// rule do not apply):
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
-		
-		LogEntry neverSatisfiedTrigger = new LogEntry();
-		neverSatisfiedTrigger.setName("Never triggered alarm");
-		neverSatisfiedTrigger.setEntityId("alarm_fire");
-		neverSatisfiedTrigger.setState("on");
+
+		LogEntry neverSatisfiedTrigger = new LogEntry(null, "Never triggered alarm", "on", "alarm_fire", null);
 		triggers.add(neverSatisfiedTrigger);
-		
+
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(9));
-		
-		LogEntry neverSatisfiedAction = new LogEntry();
-		neverSatisfiedAction.setName("Never used strobo light");
-		neverSatisfiedAction.setEntityId("light_strobo");
-		neverSatisfiedAction.setState("on");
+
+		LogEntry neverSatisfiedAction = new LogEntry(null, "Never used strobo light", "on", "light_strobo", null);
 		actions.add(neverSatisfiedAction);
-		
+
 		conditions = new ArrayList<String>();
 		conditions.add("a made up condition");
 
-		dbRules.add(new Rule("rule 4 (constructed rule)", "4", demoEntries.get(8), triggers, conditions, actions, "4",
+		dbRules.add(new Rule("rule 4 (constructed rule)", "4", triggers, conditions, actions, "4",
 				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed"));
-		
+
 		// synthetic rule (same action as "rule 2 (tv mute)" but never triggered:
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(neverSatisfiedTrigger);
@@ -105,8 +99,8 @@ public class TestingObjects {
 		actions.add(demoEntries.get(9));
 		conditions = new ArrayList<String>();
 		conditions.add("a made up condition");
-		
-		dbRules.add(new Rule("rule 5 (constructed rule)", "5", demoEntries.get(8), triggers, conditions, actions, "5",
+
+		dbRules.add(new Rule("rule 5 (constructed rule)", "5", triggers, conditions, actions, "5",
 				"Rule_5: a constructed rule for testing purposes, never to be triggered"));
 	}
 

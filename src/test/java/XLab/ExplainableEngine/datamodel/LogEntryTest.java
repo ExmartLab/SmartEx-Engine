@@ -25,11 +25,9 @@ class LogEntryTest {
 			throws IOException, URISyntaxException {
 		
 		// Given
-		LogEntry firstEntry = new LogEntry();
-		firstEntry.setTime("2022-06-23T09:07:26.920189+00:00");
+		LogEntry firstEntry = new LogEntry("2022-06-23T09:07:26.920189+00:00", null, null, null, null);
+		LogEntry secondEntry = new LogEntry("2022-06-23T11:19:31.037231+00:00", null, null, null, null);
 
-		LogEntry secondEntry = new LogEntry();
-		secondEntry.setTime("2022-06-23T11:19:31.037231+00:00");
 
 		List<LogEntry> logEntries = new ArrayList<>(Arrays.asList(firstEntry, secondEntry));
 		Assertions.assertEquals(logEntries.get(0), firstEntry);
@@ -48,18 +46,9 @@ class LogEntryTest {
 	void testEqualCheckLogEntry(String stateFirst, String stateSecond) {
 		
 		// Given
-		LogEntry firstEntry = new LogEntry();
-		firstEntry.setName("TV");
-		firstEntry.setEntityId("media.tv");
-		firstEntry.setState(stateFirst);
-		firstEntry.setTime("2022-06-23T09:07:26.920189+00:00");
+		LogEntry firstEntry = new LogEntry("2022-06-23T09:07:26.920189+00:00", "TV", stateFirst, "media.tv", null);
+		LogEntry secondEntry = new LogEntry("2020-05-21T10:05:06.920189+00:00", "Other name for TV", stateSecond, "media.tv", null);
 
-		LogEntry secondEntry = new LogEntry();
-		secondEntry.setName("Other name for TV");
-		secondEntry.setEntityId("media.tv");
-		secondEntry.setState(stateSecond);
-		secondEntry.setTime("2020-05-21T10:05:06.920189+00:00");
-		
 		// When
 		boolean equality = firstEntry.equals(secondEntry);
 		
@@ -73,17 +62,8 @@ class LogEntryTest {
 	void testUnEqualCheckLogEntry(String stateFirst, String stateSecond) {
 		
 		// Given
-		LogEntry firstEntry = new LogEntry();
-		firstEntry.setName("TV");
-		firstEntry.setEntityId("media.tv");
-		firstEntry.setState(stateFirst);
-		firstEntry.setTime("2022-06-23T09:07:26.920189+00:00");
-
-		LogEntry secondEntry = new LogEntry();
-		secondEntry.setName("Other name for TV");
-		secondEntry.setEntityId("media.tv");
-		secondEntry.setState(stateSecond);
-		secondEntry.setTime("2020-05-21T10:05:06.920189+00:00");
+		LogEntry firstEntry = new LogEntry("2022-06-23T09:07:26.920189+00:00", "TV", stateFirst, "media.tv", null);
+		LogEntry secondEntry = new LogEntry("2020-05-21T10:05:06.920189+00:00", "Other name for TV", stateSecond, "media.tv", null);
 		
 		// When
 		boolean equality = firstEntry.equals(secondEntry);
@@ -96,8 +76,7 @@ class LogEntryTest {
 	@Test
 	void testGetDate() {
 		// Given
-		LogEntry logEntry = new LogEntry();
-		logEntry.setTime("2022-06-23T09:07:26.920189+00:00");
+		LogEntry logEntry = new LogEntry("2022-06-23T09:07:26.920189+00:00", null, null, null, null);
 		
 		// When
 		LocalDateTime date = logEntry.getLocalDateTime();

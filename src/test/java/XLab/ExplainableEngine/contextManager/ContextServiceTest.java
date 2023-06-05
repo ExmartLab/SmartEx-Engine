@@ -51,16 +51,16 @@ class ContextServiceTest {
 	/*
 	 * This tests two cases:
 	 * 
-	 * 1. The explainee is the same person as the rule owner
-	 * 2. The explaine is not the same person as the rule owner
+	 * 1. The explainee is the same person as the rule owner 2. The explaine is not
+	 * the same person as the rule owner
 	 */
 	@DisplayName("Test Context For Cause Case")
 	@ParameterizedTest
-	@CsvSource({"true", "false"})
+	@CsvSource({ "true", "false" })
 	void testGetAllContextCause(boolean ruleOwnerIsExplainee) {
-		
+
 		// Given
-		Rule rule = new Rule();
+		Rule rule = new Rule(null, null, null, null, null, null, null);
 		User user = new User(name, 30, role, technicality, state, "London");
 		user.setId("id");
 		User ruleOwner;
@@ -71,8 +71,7 @@ class ContextServiceTest {
 		}
 
 		// When
-		Mockito.when(dataSer.findOccurrence(null, null, 90))
-				.thenReturn(occurrence);
+		Mockito.when(dataSer.findOccurrence(null, null, 90)).thenReturn(occurrence);
 		Mockito.when(dataSer.findOwnerByRuleName(null)).thenReturn(ruleOwner);
 		Context context = underTest.getAllContext(rule, user);
 
@@ -88,19 +87,18 @@ class ContextServiceTest {
 		Assertions.assertEquals(name, context.getExplaineeName());
 		Assertions.assertEquals(ruleOwner.getName(), context.getOwnerName());
 	}
-	
+
 	@DisplayName("Test Context For Error Case")
 	@Test
 	void testGetAllContextError() {
-		
+
 		// Given
-		Error error = new Error();
+		Error error = new Error(null, null, null, null, null);
 		User user = new User(name, 30, role, technicality, state, "London");
 		user.setId("id");
 
 		// When
-		Mockito.when(dataSer.findOccurrence(null, null, 90))
-				.thenReturn(occurrence);
+		Mockito.when(dataSer.findOccurrence(null, null, 90)).thenReturn(occurrence);
 		Context context = underTest.getAllContext(error, user);
 
 		// Then

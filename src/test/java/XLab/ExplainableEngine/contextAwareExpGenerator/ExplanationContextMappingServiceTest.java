@@ -50,9 +50,9 @@ class ExplanationContextMappingServiceTest {
 
 		Object cause;
 		if (causeType.equals("rule")) {
-			cause = new Rule();
+			cause = new Rule(null, null, null, null, null, null, null);
 		} else {
-			cause = new Error();
+			cause = new Error(null, null, null, null, null);
 		}
 
 		// When

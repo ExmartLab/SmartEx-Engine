@@ -135,7 +135,7 @@ public class TransformationFunctionService {
 	 * @return A natural language sentence part
 	 */
 	public String getTriggerString(Rule rule) {
-		LogEntry trigger = rule.getTrigger().get(0); // TODO double check that getting the first index is good
+		LogEntry trigger = rule.getTrigger().get(0);
 		return trigger == null ? "the rule was triggered"
 				: (trigger.getName() + " is " + trigger.getState()).replace("is null", "has happened");
 	}

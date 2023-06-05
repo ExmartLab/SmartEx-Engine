@@ -44,7 +44,7 @@ class DatabaseControllerTest {
     @Test
     void testSetUserState() throws Exception {
         // mock data
-        User user = new User();
+    	User user = new User(null, null, null, null);
         user.setName("John");
         user.setUserId("123");
         when(dataSer.findUserByUserId("123")).thenReturn(user);
@@ -82,7 +82,7 @@ class DatabaseControllerTest {
     @Test
     void testWrongState() throws Exception {
         // mock data
-        User user = new User();
+        User user = new User(null, null, null, null);
         user.setName("John");
         user.setUserId("123");
         when(dataSer.findUserByUserId("123")).thenReturn(user);

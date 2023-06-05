@@ -37,9 +37,8 @@ class FindCauseServiceTest {
 
 		// Given
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId("scene.tv_playing");
-		explanandum.setState(null);
+		LogEntry explanandum = new LogEntry(null, null, null, "scene.tv_playing", null);
+
 
 		// When
 		ArrayList<Rule> candidateRules = underTest.findCandidateRules(explanandum, dbRules);
@@ -56,9 +55,7 @@ class FindCauseServiceTest {
 
 		// Given
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId("switch.smart_plug_social_room_coffee");
-		explanandum.setState("off");
+		LogEntry explanandum = new LogEntry(null, null, "off", "switch.smart_plug_social_room_coffee", null);
 
 		// When
 		ArrayList<Rule> candidateRules = underTest.findCandidateRules(explanandum, dbRules);
@@ -74,9 +71,7 @@ class FindCauseServiceTest {
 
 		// Given
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId("scene.radio"); // r
-		explanandum.setState("off");
+		LogEntry explanandum = new LogEntry(null, null, "off", "scene.radio", null);
 
 		// When
 		ArrayList<Rule> candidateRules = underTest.findCandidateRules(explanandum, dbRules);
@@ -229,10 +224,7 @@ class FindCauseServiceTest {
 		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
 		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId(entityId);
-		explanandum.setState(state);
-		explanandum.setTime(time);
+		LogEntry explanandum = new LogEntry(time, null, state, entityId, null);
 		
 		// When
 		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
@@ -250,10 +242,7 @@ class FindCauseServiceTest {
 		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
 		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId(entityId);
-		explanandum.setState(state);
-		explanandum.setTime(time);
+		LogEntry explanandum = new LogEntry(time, null, state, entityId, null);
 
 		// When
 		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);
@@ -271,10 +260,7 @@ class FindCauseServiceTest {
 		ArrayList<LogEntry> demoEntries = testingObjects.getDemoEntries();
 		ArrayList<Rule> dbRules = testingObjects.getDBRules();
 		ArrayList<Error> dbErrors = testingObjects.getDBErrors();
-		LogEntry explanandum = new LogEntry();
-		explanandum.setEntityId(entityId);
-		explanandum.setState(state);
-		explanandum.setTime(time);
+		LogEntry explanandum = new LogEntry(time, null, state, entityId, null);
 
 		// When
 		Object cause = underTest.findCause(explanandum, demoEntries, dbRules, dbErrors);

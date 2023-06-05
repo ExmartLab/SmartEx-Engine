@@ -40,6 +40,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	 */
 	private static boolean demo = true;
 
+	/** Entry Point of this applciation. */
 	public static void main(String[] args) {
 		SpringApplication.run(ExplainableEngineApplication.class, args);
 	}
