@@ -27,7 +27,7 @@ import exengine.loader.JsonHandler;
 @Service
 public class HomeAssistantConnectionService {
 
-	private static final Logger logger = LoggerFactory.getLogger(HomeAssistantConnectionService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HomeAssistantConnectionService.class);
 
 	// token needs to be a long lived home assistant bearer token (create one under
 	// http://IP_ADDRESS:8123/profile)
@@ -51,7 +51,7 @@ public class HomeAssistantConnectionService {
 		} catch (Exception e) {
 			status = "unavailable because could not connect to Home Assistant: " + e.getMessage();
 		}
-		logger.info("API status {}", status);			
+		LOGGER.info("API status {}", status);			
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class HomeAssistantConnectionService {
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {
 			response = resp;
 		}).join();
-		logger.debug("Return of executeHttpClient for argument {} (String) is: {}", url, response);
+		LOGGER.debug("Return of executeHttpClient for argument {} (String) is: {}", url, response);
 		return response;
 	}
 

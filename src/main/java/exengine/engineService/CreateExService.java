@@ -15,10 +15,14 @@ import exengine.ExplainableEngineApplication;
 import exengine.algorithmicExpGenerator.FindCauseService;
 import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
 import exengine.contextManager.ContextService;
-import exengine.database.*;
-import exengine.datamodel.*;
+import exengine.database.DatabaseService;
+import exengine.datamodel.Context;
 import exengine.datamodel.Error;
-import exengine.expPresentation.*;
+import exengine.datamodel.User;
+import exengine.datamodel.LogEntry;
+import exengine.datamodel.Rule;
+import exengine.expPresentation.TransformationFunctionService;
+import exengine.expPresentation.View;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
@@ -28,7 +32,7 @@ import exengine.loader.JsonHandler;
 @Service
 public class CreateExService {
 
-	private static final Logger logger = LoggerFactory.getLogger(CreateExService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreateExService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -66,7 +70,7 @@ public class CreateExService {
 	 */
 	public String getExplanation(int min, String userId, String device) {
 
-		logger.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
+		LOGGER.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
 
 		ArrayList<LogEntry> logEntries = getLogEntries(min);
 
@@ -113,7 +117,7 @@ public class CreateExService {
 			return "Could not transform explanation into natural language";
 		}
 
-		logger.info("Explanation generated");
+		LOGGER.info("Explanation generated");
 		return explanation;
 	}
 
@@ -182,7 +186,7 @@ public class CreateExService {
 				// getting demo logs (stored in a json file, stored in the resources folder)
 				logEntries = loadDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 			} catch (IOException | URISyntaxException e) {
-				e.printStackTrace();
+				LOGGER.error("Unable to parse demo logs: {}", e.getMessage(), e);
 			}
 
 		} else {
@@ -190,7 +194,7 @@ public class CreateExService {
 				// getting logs directly from Home Assistant
 				logEntries = haSer.parseLastLogs(min);
 			} catch (IOException e) {
-				logger.error("Unable to parse last logs: {}", e.getMessage(), e);
+				LOGGER.error("Unable to parse last logs: {}", e.getMessage(), e);
 			}
 		}
 
@@ -211,7 +215,7 @@ public class CreateExService {
 		String logJSON = JsonHandler.loadFile(fileName);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 
-		logger.info("demoEntries have been loaded from {}", fileName);
+		LOGGER.info("demoEntries have been loaded from {}", fileName);
 		return demoEntries;
 	}
 

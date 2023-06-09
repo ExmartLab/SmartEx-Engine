@@ -18,7 +18,7 @@ import exengine.datamodel.Error;
 @Service
 public class TransformationFunctionService {
 
-	private static final Logger logger = LoggerFactory.getLogger(TransformationFunctionService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TransformationFunctionService.class);
 
 	/**
 	 * Transforms a causal path into a context-specific natural language
@@ -74,7 +74,7 @@ public class TransformationFunctionService {
 				break;
 			}
 		}
-		logger.debug("Found explanation is: {}", explanation);
+		LOGGER.debug("Found explanation is: {}", explanation);
 		return explanation;
 	}
 
@@ -120,10 +120,12 @@ public class TransformationFunctionService {
 	 * @return A natural language sentence part
 	 */
 	public String getOwnerString(Context context) {
-		if (context.getExplaineeName().equals(context.getOwnerName()))
-			return "you have";
-		else
-			return context.getOwnerName() + " has";
+		if (context.getExplaineeName().equals(context.getOwnerName())) {
+			return "you have";			
+		}
+		else {
+			return context.getOwnerName() + " has";			
+		}
 
 	}
 
@@ -136,8 +138,12 @@ public class TransformationFunctionService {
 	 */
 	public String getTriggerString(Rule rule) {
 		LogEntry trigger = rule.getTrigger().get(0);
-		return trigger == null ? "the rule was triggered"
-				: (trigger.getName() + " is " + trigger.getState()).replace("is null", "has happened");
+
+		if (trigger == null) {
+			return "the rule was triggered";
+		} else {
+			return (trigger.getName() + " is " + trigger.getState()).replace("is null", "has happened");
+		}
 	}
 
 }

@@ -26,7 +26,7 @@ import exengine.expPresentation.View;
 @Service
 public class ExplanationContextMappingService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExplanationContextMappingService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationContextMappingService.class);
 
 	/**
 	 * Runs rulebook for finding a legal and most prioritized view. It demarcates
@@ -57,7 +57,7 @@ public class ExplanationContextMappingService {
 			return getView(context, ruleBookErrors, allowedViews);
 
 		}
-		logger.debug("No valid explanation type found, therefore returning view type: ");
+		LOGGER.debug("No valid explanation type found, therefore returning view type: ");
 		return null;
 	}
 
@@ -89,7 +89,7 @@ public class ExplanationContextMappingService {
 		// Running the rulebook
 		ruleBook.setDefaultResult(allowedViewValues);
 		ruleBook.run(explanationFacts);
-		ruleBook.getResult().ifPresent(result -> logger.debug("The explanation type is: {} (from the allowed: {})",
+		ruleBook.getResult().ifPresent(result -> LOGGER.debug("The explanation type is: {} (from the allowed: {})",
 				context.getExplanationType(), result));
 
 		// Getting the resulting type from the rulebook

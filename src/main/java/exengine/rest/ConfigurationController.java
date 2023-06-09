@@ -19,7 +19,7 @@ import exengine.ExplainableEngineApplication;
 @RestController
 public class ConfigurationController {
 
-	private static final Logger logger = LoggerFactory.getLogger(ConfigurationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 
 	/**
 	 * Retrieves the status of the Explainable Engine.
@@ -28,7 +28,7 @@ public class ConfigurationController {
 	 */
 	@GetMapping("/status")
 	public ResponseEntity<String> getStatus() {
-		logger.info("HTTP GET: Status returned");
+		LOGGER.info("HTTP GET: Status returned");
 		return new ResponseEntity<>("Explainable Engine running", HttpStatus.OK);
 	}
 
@@ -40,7 +40,7 @@ public class ConfigurationController {
 	@PostMapping("/demo/off")
 	public ResponseEntity<String> demoOff() {
 		ExplainableEngineApplication.setDemo(false);
-		logger.info("HTTP POST: Testing turned off");
+		LOGGER.info("HTTP POST: Testing turned off");
 		return new ResponseEntity<>("Testing turned off", HttpStatus.CREATED);
 	}
 
@@ -52,7 +52,7 @@ public class ConfigurationController {
 	@PostMapping("/demo/on")
 	public ResponseEntity<String> demoOn() {
 		ExplainableEngineApplication.setDemo(true);
-		logger.info("HTTP POST: Testing turned on");
+		LOGGER.info("HTTP POST: Testing turned on");
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}
 
@@ -66,7 +66,7 @@ public class ConfigurationController {
 		ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory
 				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		Level level = rootLogger.getLevel();
-		logger.debug("HTTP GET: Log level was requested, which is {}", level);
+		LOGGER.debug("HTTP GET: Log level was requested, which is {}", level);
 		return new ResponseEntity<>(String.format("The current log level is %s", level), HttpStatus.OK);
 	}
 
@@ -110,7 +110,7 @@ public class ConfigurationController {
 				.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
 		rootLogger.setLevel(newLevel);
 
-		logger.info("Log level changed to {}", rootLogger.getLevel());
+		LOGGER.info("Log level changed to {}", rootLogger.getLevel());
 
 		return new ResponseEntity<>(String.format("Log level changed to %s", newLevel), HttpStatus.OK);
 	}

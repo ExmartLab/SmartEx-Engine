@@ -20,7 +20,7 @@ import exengine.datamodel.Error;
 public class FindCauseService {
 
 	/**
-	 * Determines the causal path (i.e., the rule or error) that lead to the
+	 * Determines the causal path (i.e., the rule or error) that led to the
 	 * occurrence of an explanandum.
 	 * 
 	 * @See Algorithm 1, "Find the Cause Path" in the paper "SmartEx: A Framework

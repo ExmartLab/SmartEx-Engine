@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import exengine.database.DatabaseService;
 import exengine.datamodel.Context;
 import exengine.datamodel.Error;
 import exengine.datamodel.Occurrence;
@@ -16,7 +17,6 @@ import exengine.datamodel.Rule;
 import exengine.datamodel.User;
 import exengine.datamodel.State;
 import exengine.datamodel.Technicality;
-import exengine.database.*;
 
 /**
  * Component to collect all contextual variables for enriching explanations.
@@ -24,7 +24,7 @@ import exengine.database.*;
 @Service
 public class ContextService {
 
-	private static final Logger logger = LoggerFactory.getLogger(ContextService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContextService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -53,12 +53,14 @@ public class ContextService {
 
 			User ruleOwner = dataSer.findOwnerByRuleName(rule.getRuleName());
 			// Set default user in case rule has no owner
-			if (ruleOwner == null)
-				ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);
+			if (ruleOwner == null) {
+				ruleOwner = new User("no owner", "0", Role.OWNER, Technicality.TECHNICAL);				
+			}
 
 			// Check if explainee is Owner and set Role accordingly
-			if (explainee.getId().equals(ruleOwner.getId()))
-				explainee.setRole(Role.OWNER);
+			if (explainee.getId().equals(ruleOwner.getId())) {
+				explainee.setRole(Role.OWNER);				
+			}
 
 			context = new Context(explainee.getRole(), occurrence, explainee.getTechnicality(), state,
 					explainee.getName(), ruleOwner.getName());
@@ -77,8 +79,8 @@ public class ContextService {
 		dataSer.saveNewOccurrenceEntry(new OccurrenceEntry(explaineeId, id, new Date().getTime()));
 
 		if (context != null) {
-			logger.debug(
-					"Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}, device: {}",
+			LOGGER.debug(
+					"Found context contains owner: {}, explainee: {}, role: {}, state: {}, technicality: {}, occurrence: {}",
 					context.getOwnerName(), context.getExplaineeName(), context.getExplaineeRole(),
 					context.getExplaineeState(), context.getExplaineeTechnicality(), context.getOccurrence());
 		}

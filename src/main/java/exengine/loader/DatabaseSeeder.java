@@ -37,7 +37,7 @@ import exengine.datamodel.LogEntry;
 @Component
 public class DatabaseSeeder {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseSeeder.class);
 
 	private final DatabaseService dataSer;
 	private final ResourceLoader resourceLoader;
@@ -69,7 +69,8 @@ public class DatabaseSeeder {
 			seedRules(ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    // Handle other exceptions
+		    LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 	}
 
@@ -89,10 +90,11 @@ public class DatabaseSeeder {
 			seedRules(testingPrefix + ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(testingPrefix + ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-			e.printStackTrace();
+		    // Handle other exceptions
+		    LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 
-		logger.info("Database reset and reseeded with testing data");
+		LOGGER.info("Database reset and reseeded with testing data");
 	}
 
 	/**
@@ -121,7 +123,7 @@ public class DatabaseSeeder {
 			}
 			dataSer.saveNewUser(user);
 		}
-		logger.info("Users seeded to database");
+		LOGGER.info("Users seeded to database");
 	}
 
 	/**
@@ -139,7 +141,7 @@ public class DatabaseSeeder {
 			
 			dataSer.saveNewEntity(new Entity(entityId, deviceName));
 		}
-		logger.info("Entities seeded to database");
+		LOGGER.info("Entities seeded to database");
 	}
 
 	/**
@@ -193,7 +195,7 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewRule(new Rule(name, ruleId, triggers, conditions, actions, ownerId, ruleDescription));
 		}
-		logger.info("Rules seeded to database");
+		LOGGER.info("Rules seeded to database");
 	}
 
 	/**
@@ -232,7 +234,7 @@ public class DatabaseSeeder {
 
 			dataSer.saveNewError(new Error(name, errorId, actions, implication, solution));
 		}
-		logger.info("Errors seeded to database");
+		LOGGER.info("Errors seeded to database");
 	}
 
 	/**
@@ -263,7 +265,7 @@ public class DatabaseSeeder {
 		try {
 			inputStream = resource.getInputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
+		    LOGGER.error("An exception occurred while loading a datamap: " + e.getMessage());
 		}
 		Yaml yaml = new Yaml();
 		return yaml.load(inputStream);

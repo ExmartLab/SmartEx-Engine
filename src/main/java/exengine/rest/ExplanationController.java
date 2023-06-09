@@ -17,7 +17,7 @@ import exengine.engineService.CreateExService;
 @RestController
 public class ExplanationController {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExplanationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationController.class);
 
 	@Autowired
 	CreateExService createExSer;
@@ -36,17 +36,15 @@ public class ExplanationController {
 			@RequestParam(value = "userid", defaultValue = "0") String userId,
 			@RequestParam(value = "device", defaultValue = "unknown") String device) {
 
-		// initiating integer variables
 		int minNumber = 30;
 
-		// trying to assign the given values to the integer variables
 		try {
 			minNumber = Integer.parseInt(min);
 		} catch (NumberFormatException e) {
-			logger.info(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
-		logger.debug("HTTP GET: Explanation requested: last {} min, userId: {}, device: {}", minNumber, userId, device);
+		LOGGER.debug("HTTP GET: Explanation requested: last {} min, userId: {}, device: {}", minNumber, userId, device);
 
 		String explanation = createExSer.getExplanation(minNumber, userId, device);
 		return new ResponseEntity<>(explanation, HttpStatus.OK);

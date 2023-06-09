@@ -10,8 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.datamodel.*;
+import exengine.datamodel.Entity;
 import exengine.datamodel.Error;
+import exengine.datamodel.LogEntry;
+import exengine.datamodel.Occurrence;
+import exengine.datamodel.OccurrenceEntry;
+import exengine.datamodel.Rule;
+import exengine.datamodel.User;
 
 /**
  * The DatabaseService class provides methods for interacting with the database
@@ -21,7 +26,7 @@ import exengine.datamodel.Error;
 @Service
 public class DatabaseService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseService.class);
 
 	@Autowired
 	UserRepository userRepo;
@@ -49,9 +54,9 @@ public class DatabaseService {
 		deleteAllEntities();
 		if (ExplainableEngineApplication.isDemo()) {
 			deleteAllOccurrencies();
-			logger.info("Database was completely reset");
+			LOGGER.info("Database was completely reset");
 		} else {
-			logger.info("Database was reset, except for the Occurrencies table");
+			LOGGER.info("Database was reset, except for the Occurrencies table");
 		}
 	}
 
@@ -240,7 +245,7 @@ public class DatabaseService {
 		long reference = new Date().getTime() - ((days) * 24l * 60l * 60l * 1000l);
 		for (OccurrenceEntry entry : entries) {
 			String lookAtDate = new Date(entry.getTime()).toString();
-			logger.trace("looking at entry: {}", lookAtDate);
+			LOGGER.trace("looking at entry: {}", lookAtDate);
 			if (entry.getTime() > reference) {
 				count++;
 			}

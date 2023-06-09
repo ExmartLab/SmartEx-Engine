@@ -68,9 +68,11 @@ public class Rule {
 	 * @return the list of trigger log entries (empty if no trigger exists)
 	 */
 	public ArrayList<LogEntry> getTrigger() {
-		if (trigger != null)
-			return trigger;
-		return new ArrayList<>();
+		if (trigger != null) {
+			return trigger;			
+		} else {
+			return new ArrayList<>();			
+		}
 	}
 
 	/**

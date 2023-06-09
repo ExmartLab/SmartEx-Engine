@@ -24,7 +24,7 @@ import exengine.datamodel.User;
 @RequestMapping("/database")
 public class DatabaseController {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseController.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -45,23 +45,24 @@ public class DatabaseController {
 		if (optionalUser.isPresent()) {
 
 			State state;
-			if (userState.equals(State.WORKING.getString()))
+			if (userState.equals(State.WORKING.getString())) {
 				state = State.WORKING;
-			else if (userState.equals(State.MEETING.getString()))
+			} else if (userState.equals(State.MEETING.getString())) {
 				state = State.MEETING;
-			else if (userState.equals(State.BREAK.getString()))
+			} else if (userState.equals(State.BREAK.getString())) {
 				state = State.BREAK;
-			else
+			} else {
 				return new ResponseEntity<>(
 						"userState does not match any of the following: \"working\", \"break\", or \"meeting\".",
 						HttpStatus.BAD_REQUEST);
+			}
 
 			User user = optionalUser.get();
 			String oldState = user.getStateString();
 			user.setState(state);
 			dataSer.saveNewUser(user);
 
-			logger.info("HTTP Post: User {} changed state from {} to {}", user.getName(), oldState, state);
+			LOGGER.info("HTTP Post: User {} changed state from {} to {}", user.getName(), oldState, state);
 			return new ResponseEntity<>(
 					String.format("User %s (id: %s) changed state to \"%s\"", user.getName(), userId, state),
 					HttpStatus.OK);

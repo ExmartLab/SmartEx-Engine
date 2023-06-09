@@ -182,5 +182,15 @@ public class LogEntry implements Comparable<LogEntry> {
 
 		return (this.entityId.equals(otherLogEntry.getEntityId()) && this.state.equals(otherLogEntry.getState()));
 	}
+	
+	/**
+	 * Note: Needed to override
+	 */
+	@Override
+	public int hashCode() {
+	    int result = entityId.hashCode();
+	    result = 31 * result + state.hashCode();
+	    return result;
+	}
 
 }

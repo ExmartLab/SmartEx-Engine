@@ -22,7 +22,7 @@ import exengine.datamodel.LogEntry;
  */
 public class JsonHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(JsonHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JsonHandler.class);
 
 	private JsonHandler() {
 	}
@@ -39,7 +39,7 @@ public class JsonHandler {
 		URL resourceUrl = JsonHandler.class.getClassLoader().getResource(fileName);
 		Path resourcePath = Paths.get(resourceUrl.toURI());
 		String filePath = resourcePath.toAbsolutePath().toString();
-		logger.debug("File loaded");
+		LOGGER.debug("File loaded");
 		return Files.readString(Path.of(filePath));
 	}
 
@@ -85,12 +85,12 @@ public class JsonHandler {
 
 			// Create a new object with the parsed properties and add it to the list
 			logEntries.add(new LogEntry(time, name, state, entityId, other));
-			logger.trace(
+			LOGGER.trace(
 					"New log entry was added to logEntries list, with parameters time: {}, name. {}, state: {}, entityId: {}, other: {}",
 					time, name, state, entityId, other);
 		}
 
-		logger.debug("logEntries loaded from JSON");
+		LOGGER.debug("logEntries loaded from JSON");
 		return logEntries;
 	}
 
