@@ -69,8 +69,8 @@ public class DatabaseSeeder {
 			seedRules(ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-		    // Handle other exceptions
-		    LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
+			// Handle other exceptions
+			LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 	}
 
@@ -90,8 +90,8 @@ public class DatabaseSeeder {
 			seedRules(testingPrefix + ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(testingPrefix + ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-		    // Handle other exceptions
-		    LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
+			// Handle other exceptions
+			LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 
 		LOGGER.info("Database reset and reseeded with testing data");
@@ -106,22 +106,18 @@ public class DatabaseSeeder {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
-			User user = new User();
-			if (dataMap.containsKey("name")) {
-				user.setName(dataMap.get("name").toString());
-			}
-			if (dataMap.containsKey("userid")) {
-				user.setUserId(dataMap.get("userid").toString());
-			}
-			if (dataMap.containsKey("role")) {
-				String roleString = dataMap.get("role").toString();
-				user.setRole(Role.valueOf(roleString));
-			}
-			if (dataMap.containsKey("technicality")) {
-				String technicalityString = dataMap.get("technicality").toString();
-				user.setTechnicality(Technicality.valueOf(technicalityString));
-			}
-			dataSer.saveNewUser(user);
+
+			String name = tryToGet("name", dataMap);
+			
+			String userid = tryToGet("userid", dataMap);
+			
+			String roleString = tryToGet("role", dataMap);
+			Role role = Role.valueOf(roleString);
+			
+			String technicalityString = tryToGet("technicality", dataMap);
+			Technicality technicality = Technicality.valueOf(technicalityString);
+			
+			dataSer.saveNewUser(new User(name, userid, role, technicality));
 		}
 		LOGGER.info("Users seeded to database");
 	}
@@ -135,10 +131,10 @@ public class DatabaseSeeder {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
-			
+
 			String entityId = tryToGet("entityId", dataMap);
 			String deviceName = tryToGet("deviceName", dataMap);
-			
+
 			dataSer.saveNewEntity(new Entity(entityId, deviceName));
 		}
 		LOGGER.info("Entities seeded to database");
@@ -162,14 +158,7 @@ public class DatabaseSeeder {
 			String ruleId = tryToGet("ruleId", dataMap);
 
 			// triggers (type: ArrayList<LogEntry>)
-			ArrayList<LogEntry> triggers = new ArrayList<>();
-			if (dataMap.containsKey("triggers")) {
-				List<Map<String, Object>> triggersMap = (List<Map<String, Object>>) dataMap.get("triggers");
-				for (Map<String, Object> dataMapLower : triggersMap) {
-					LogEntry trigger = generateLogEntry(dataMapLower);
-					triggers.add(trigger);
-				}
-			}
+			ArrayList<LogEntry> triggers = tryToGetLogEntries(dataMap, "triggers");
 
 			// conditions (type: ArrayList<String>)
 			ArrayList<String> conditions = new ArrayList<>();
@@ -178,14 +167,7 @@ public class DatabaseSeeder {
 			}
 
 			// actions (type: ArrayList<LogEntry>)
-			ArrayList<LogEntry> actions = new ArrayList<>();
-			if (dataMap.containsKey("actions")) {
-				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = generateLogEntry(dataMapLower);
-					actions.add(action);
-				}
-			}
+			ArrayList<LogEntry> actions = tryToGetLogEntries(dataMap, "actions");
 
 			// ownerId (type: String)
 			String ownerId = tryToGet("ownerId", dataMap);
@@ -215,16 +197,7 @@ public class DatabaseSeeder {
 			String errorId = tryToGet("errorId", dataMap);
 
 			// actions (type: ArrayList<LogEntry>)
-			ArrayList<LogEntry> actions = new ArrayList<>();
-			if (dataMap.containsKey("actions")) {
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-
-				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = generateLogEntry(dataMapLower);
-					actions.add(action);
-				}
-			}
+			ArrayList<LogEntry> actions = tryToGetLogEntries(dataMap, "actions");
 
 			// implication (type: String)
 			String implication = tryToGet("implication", dataMap);
@@ -238,7 +211,7 @@ public class DatabaseSeeder {
 	}
 
 	/**
-	 * Seeds the entities into the database. 
+	 * Seeds the entities into the database.
 	 * 
 	 * @Note Only loads name, entityId and state
 	 * 
@@ -265,7 +238,7 @@ public class DatabaseSeeder {
 		try {
 			inputStream = resource.getInputStream();
 		} catch (IOException e) {
-		    LOGGER.error("An exception occurred while loading a datamap: " + e.getMessage());
+			LOGGER.error("An exception occurred while loading a datamap: " + e.getMessage());
 		}
 		Yaml yaml = new Yaml();
 		return yaml.load(inputStream);
@@ -285,6 +258,28 @@ public class DatabaseSeeder {
 		} else {
 			return "null";
 		}
+	}
+
+	/**
+	 * Scans a map for a key and dives into a nested map in order to retrieve an
+	 * array of LogEntry objects.
+	 * 
+	 * @param dataMap the data map to scan
+	 * @param key     the key to look for in the map
+	 * @return a list of all LogEntry objects that are nested in the map under the
+	 *         specified key
+	 */
+	private ArrayList<LogEntry> tryToGetLogEntries(Map<String, Object> dataMap, String key) {
+		ArrayList<LogEntry> logEntryList = new ArrayList<>();
+		if (dataMap.containsKey(key)) {
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> logEntryMap = (List<Map<String, Object>>) dataMap.get(key);
+			for (Map<String, Object> dataMapLower : logEntryMap) {
+				LogEntry logEntry = generateLogEntry(dataMapLower);
+				logEntryList.add(logEntry);
+			}
+		}
+		return logEntryList;
 	}
 
 }
