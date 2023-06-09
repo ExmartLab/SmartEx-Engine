@@ -1,4 +1,4 @@
-package exengine.contextManager;
+package exengine.contextmanager;
 
 import java.util.Date;
 

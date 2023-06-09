@@ -1,4 +1,4 @@
-package exengine.engineService;
+package exengine.engineservice;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -12,17 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.algorithmicExpGenerator.FindCauseService;
-import exengine.contextAwareExpGenerator.ExplanationContextMappingService;
-import exengine.contextManager.ContextService;
+import exengine.algorithmicexplanationgenerator.FindCauseService;
+import exengine.contextexplanationgenerator.ExplanationContextMappingService;
+import exengine.contextmanager.ContextService;
 import exengine.database.DatabaseService;
 import exengine.datamodel.Context;
 import exengine.datamodel.Error;
 import exengine.datamodel.User;
+import exengine.explanationpresentation.TransformationFunctionService;
+import exengine.explanationpresentation.View;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
-import exengine.expPresentation.TransformationFunctionService;
-import exengine.expPresentation.View;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
