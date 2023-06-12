@@ -69,8 +69,8 @@ public class Context {
 	 *
 	 * @param explaineeRole the role of the explainee
 	 */
-	public void setExplaineeRole(Role role) {
-		this.explaineeRole = role;
+	public void setExplaineeRole(Role explaineeRole) {
+		this.explaineeRole = explaineeRole;
 	}
 
 	/**
@@ -105,8 +105,8 @@ public class Context {
 	 *
 	 * @param explaineeTechnicality the technicality of the explainee
 	 */
-	public void setExplaineeTechnicality(Technicality technicality) {
-		this.explaineeTechnicality = technicality;
+	public void setExplaineeTechnicality(Technicality explaineeTechnicality) {
+		this.explaineeTechnicality = explaineeTechnicality;
 	}
 
 	/**
@@ -123,8 +123,8 @@ public class Context {
 	 *
 	 * @param explaineeState the state of the explainee
 	 */
-	public void setExplaineeState(State state) {
-		this.explaineeState = state;
+	public void setExplaineeState(State explaineeState) {
+		this.explaineeState = explaineeState;
 	}
 
 	/**
@@ -141,8 +141,8 @@ public class Context {
 	 *
 	 * @param explanationType the type of explanation
 	 */
-	public void setExplanationType(Integer theExpType) {
-		this.explanationType = theExpType;
+	public void setExplanationType(Integer explanationType) {
+		this.explanationType = explanationType;
 	}
 
 	/**
@@ -177,8 +177,8 @@ public class Context {
 	 *
 	 * @param ownerName the name of the owner
 	 */
-	public void setOwnerName(String ownername) {
-		this.ownerName = ownername;
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
 	}
 
 }
