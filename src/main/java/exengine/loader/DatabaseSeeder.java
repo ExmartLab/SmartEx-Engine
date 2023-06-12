@@ -28,20 +28,38 @@ import exengine.datamodel.Error;
 import exengine.datamodel.Entity;
 import exengine.datamodel.LogEntry;
 
+/**
+ * The DatabaseSeeder class is responsible for seeding the database with initial
+ * data. It provides methods to seed users, entities, rules, and errors into the
+ * database.
+ */
+
 @Component
 public class DatabaseSeeder {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseSeeder.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseSeeder.class);
+
 	private final DatabaseService dataSer;
 	private final ResourceLoader resourceLoader;
 
+	/**
+	 * Constructs a new DatabaseSeeder instance.
+	 * 
+	 * @param dataSer        The DatabaseService used
+	 * @param resourceLoader The ResourceLoader used for loading resources
+	 */
 	@Autowired
 	public DatabaseSeeder(DatabaseService dataSer, ResourceLoader resourceLoader) {
 		this.dataSer = dataSer;
 		this.resourceLoader = resourceLoader;
 	}
-	
+
+	/**
+	 * Seeds the database with initial data. This method resets the database and
+	 * then seeds it with data from YAML files.
+	 * 
+	 * @See ExplanainableEngineApplication class
+	 */
 	@PostConstruct
 	public void seedDatabase() {
 		dataSer.resetDatabase();
@@ -51,10 +69,18 @@ public class DatabaseSeeder {
 			seedRules(ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-			e.printStackTrace();
+			// Handle other exceptions
+			LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * Seeds the database with testing data. This method resets the database and
+	 * then seeds it with testing data from YAML files under the testingData
+	 * foulder.
+	 * 
+	 * @Note it is used for integration testing only.
+	 */
 	public void seedDatabaseForTesting() {
 		dataSer.resetDatabase();
 		final String testingPrefix = "testingData/";
@@ -64,205 +90,196 @@ public class DatabaseSeeder {
 			seedRules(testingPrefix + ExplainableEngineApplication.FILE_NAME_RULES);
 			seedErrors(testingPrefix + ExplainableEngineApplication.FILE_NAME_ERRORS);
 		} catch (Exception e) {
-			e.printStackTrace();
+			// Handle other exceptions
+			LOGGER.error("An unexpected error occurred while seeding data: " + e.getMessage());
 		}
 
-		logger.info("Database reset and reseeded with testing data");
+		LOGGER.info("Database reset and reseeded with testing data");
 	}
 
+	/**
+	 * Seeds the users into the database.
+	 * 
+	 * @param fileName The name of the YAML file containing user data.
+	 */
 	private void seedUsers(String fileName) {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
-			User user = new User();
-			if (dataMap.containsKey("name")) {
-				user.setName(dataMap.get("name").toString());
-			}
-			if (dataMap.containsKey("userid")) {
-				user.setUserId(dataMap.get("userid").toString());
-			}
-			if (dataMap.containsKey("role")) {
-				String roleString = dataMap.get("role").toString();
-				user.setRole(Role.valueOf(roleString));
-			}
-			if (dataMap.containsKey("technicality")) {
-				String technicalityString = dataMap.get("technicality").toString();
-				user.setTechnicality(Technicality.valueOf(technicalityString));
-			}
-			dataSer.saveNewUser(user);
+
+			String name = tryToGet("name", dataMap);
+			
+			String userid = tryToGet("userid", dataMap);
+			
+			String roleString = tryToGet("role", dataMap);
+			Role role = Role.valueOf(roleString);
+			
+			String technicalityString = tryToGet("technicality", dataMap);
+			Technicality technicality = Technicality.valueOf(technicalityString);
+			
+			dataSer.saveNewUser(new User(name, userid, role, technicality));
 		}
-		logger.info("Users seeded to database");
+		LOGGER.info("Users seeded to database");
 	}
 
+	/**
+	 * Seeds the entities into the database.
+	 * 
+	 * @param fileName The name of the YAML file containing entity data.
+	 */
 	private void seedEntities(String fileName) {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
-			Entity entity = new Entity();
-			if (dataMap.containsKey("entityId")) {
-				entity.setEntityId(dataMap.get("entityId").toString());
-			}
-			if (dataMap.containsKey("deviceName")) {
-				entity.setDeviceName(dataMap.get("deviceName").toString());
-			}
-			dataSer.saveNewEntity(entity);
+
+			String entityId = tryToGet("entityId", dataMap);
+			String deviceName = tryToGet("deviceName", dataMap);
+
+			dataSer.saveNewEntity(new Entity(entityId, deviceName));
 		}
-		logger.info("Entities seeded to database");
+		LOGGER.info("Entities seeded to database");
 	}
 
+	/**
+	 * Seeds the rules into the database.
+	 * 
+	 * @param fileName The name of the YAML file containing rule data.
+	 */
+	@SuppressWarnings("unchecked")
 	private void seedRules(String fileName) {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 
-			Rule rule = new Rule();
-
 			// name (type: String)
-			if (dataMap.containsKey("name")) {
-				rule.setRuleName(dataMap.get("name").toString());
-			}
+			String name = tryToGet("name", dataMap);
 
 			// ruleId (type: String)
-			if (dataMap.containsKey("ruleId")) {
-				rule.setRuleId(dataMap.get("ruleId").toString());
-			}
-
-			// ruleEntry (type: LogEntry)
-			if (dataMap.containsKey("ruleEntry")) {
-				@SuppressWarnings("unchecked")
-				Map<String, Object> ruleEntryMap = (Map<String, Object>) dataMap.get("ruleEntry");
-				LogEntry ruleEntry = generateLogEntry(ruleEntryMap);
-				rule.setRuleEntry(ruleEntry);
-
-			}
+			String ruleId = tryToGet("ruleId", dataMap);
 
 			// triggers (type: ArrayList<LogEntry>)
-			if (dataMap.containsKey("triggers")) {
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> triggersMap = (List<Map<String, Object>>) dataMap.get("triggers");
-				ArrayList<LogEntry> triggers = new ArrayList<>();
-
-				for (Map<String, Object> dataMapLower : triggersMap) {
-					LogEntry trigger = generateLogEntry(dataMapLower);
-					triggers.add(trigger);
-				}
-
-				rule.setTrigger(triggers);
-
-			}
+			ArrayList<LogEntry> triggers = tryToGetLogEntries(dataMap, "triggers");
 
 			// conditions (type: ArrayList<String>)
+			ArrayList<String> conditions = new ArrayList<>();
 			if (dataMap.containsKey("conditions")) {
-				@SuppressWarnings("unchecked")
-				ArrayList<String> conditions = (ArrayList<String>) dataMap.get("conditions");
-				rule.setConditions(conditions);
+				conditions = (ArrayList<String>) dataMap.get("conditions");
 			}
 
 			// actions (type: ArrayList<LogEntry>)
-			if (dataMap.containsKey("actions")) {
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<>();
-
-				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = generateLogEntry(dataMapLower);
-					actions.add(action);
-				}
-
-				rule.setActions(actions);
-
-			}
+			ArrayList<LogEntry> actions = tryToGetLogEntries(dataMap, "actions");
 
 			// ownerId (type: String)
-			if (dataMap.containsKey("ownerId")) {
-				rule.setOwnerId(dataMap.get("ownerId").toString());
-			}
+			String ownerId = tryToGet("ownerId", dataMap);
 
 			// ruleDescription (type: String)
-			if (dataMap.containsKey("ruleDescription")) {
-				rule.setRuleDescription(dataMap.get("ruleDescription").toString());
-			}
+			String ruleDescription = tryToGet("ruleDescription", dataMap);
 
-			dataSer.saveNewRule(rule);
+			dataSer.saveNewRule(new Rule(name, ruleId, triggers, conditions, actions, ownerId, ruleDescription));
 		}
-		logger.info("Rules seeded to database");
+		LOGGER.info("Rules seeded to database");
 	}
 
+	/**
+	 * Seeds the errors into the database.
+	 * 
+	 * @param fileName The name of the YAML file containing error data.
+	 */
 	private void seedErrors(String fileName) {
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
 
-			Error error = new Error();
-
 			// name (type: String)
-			if (dataMap.containsKey("name")) {
-				error.setErrorName(dataMap.get("name").toString());
-			}
+			String name = tryToGet("name", dataMap);
 
 			// errorId (type: String)
-			if (dataMap.containsKey("errorId")) {
-				error.setErrorId(dataMap.get("errorId").toString());
-			}
+			String errorId = tryToGet("errorId", dataMap);
 
 			// actions (type: ArrayList<LogEntry>)
-			if (dataMap.containsKey("actions")) {
-				@SuppressWarnings("unchecked")
-				List<Map<String, Object>> actionsMap = (List<Map<String, Object>>) dataMap.get("actions");
-				ArrayList<LogEntry> actions = new ArrayList<>();
-
-				for (Map<String, Object> dataMapLower : actionsMap) {
-					LogEntry action = generateLogEntry(dataMapLower);
-					actions.add(action);
-				}
-
-				error.setActions(actions);
-
-			}
+			ArrayList<LogEntry> actions = tryToGetLogEntries(dataMap, "actions");
 
 			// implication (type: String)
-			if (dataMap.containsKey("implication")) {
-				error.setImplication(dataMap.get("implication").toString());
-			}
+			String implication = tryToGet("implication", dataMap);
 
 			// solution (type: String)
-			if (dataMap.containsKey("solution")) {
-				error.setSolution(dataMap.get("solution").toString());
-			}
+			String solution = tryToGet("solution", dataMap);
 
-			dataSer.saveNewError(error);
+			dataSer.saveNewError(new Error(name, errorId, actions, implication, solution));
 		}
-		logger.info("Errors seeded to database");
+		LOGGER.info("Errors seeded to database");
 	}
 
+	/**
+	 * Seeds the entities into the database.
+	 * 
+	 * @Note Only loads name, entityId and state
+	 * 
+	 * @param fileName The name of the YAML file containing entity data.
+	 */
 	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
-		LogEntry logEntry = new LogEntry();
 
-		if (dataMapLower.containsKey("name")) {
-			logEntry.setName(dataMapLower.get("name").toString());
-		}
+		String name = tryToGet("name", dataMapLower);
+		String entityId = tryToGet("entity_id", dataMapLower);
+		String state = tryToGet("state", dataMapLower);
 
-		if (dataMapLower.containsKey("entity_id")) {
-			logEntry.setEntityId(dataMapLower.get("entity_id").toString());
-		}
-
-		if (dataMapLower.containsKey("state")) {
-			logEntry.setState(dataMapLower.get("state").toString());
-		}
-
-		return logEntry;
+		return new LogEntry(null, name, state, entityId, null);
 	}
 
+	/**
+	 * Loads a list of map objects from file.
+	 * 
+	 * @param path file path
+	 * @return list of map objects t
+	 */
 	private List<Map<String, Object>> loadDataMap(String path) {
 		Resource resource = resourceLoader.getResource("classpath:" + path);
 		InputStream inputStream = null;
 		try {
 			inputStream = resource.getInputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("An exception occurred while loading a datamap: " + e.getMessage());
 		}
 		Yaml yaml = new Yaml();
 		return yaml.load(inputStream);
+	}
+
+	/**
+	 * Scans a map for a key and returns it if available.
+	 * 
+	 * @param key     the key to look for in the map
+	 * @param dataMap the data map to scan
+	 * @return the value to the key, if the key exists, else a String containing
+	 *         "null"
+	 */
+	String tryToGet(String key, Map<String, Object> dataMap) {
+		if (dataMap.containsKey(key)) {
+			return dataMap.get(key).toString();
+		} else {
+			return "null";
+		}
+	}
+
+	/**
+	 * Scans a map for a key and dives into a nested map in order to retrieve an
+	 * array of LogEntry objects.
+	 * 
+	 * @param dataMap the data map to scan
+	 * @param key     the key to look for in the map
+	 * @return a list of all LogEntry objects that are nested in the map under the
+	 *         specified key
+	 */
+	private ArrayList<LogEntry> tryToGetLogEntries(Map<String, Object> dataMap, String key) {
+		ArrayList<LogEntry> logEntryList = new ArrayList<>();
+		if (dataMap.containsKey(key)) {
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> logEntryMap = (List<Map<String, Object>>) dataMap.get(key);
+			for (Map<String, Object> dataMapLower : logEntryMap) {
+				LogEntry logEntry = generateLogEntry(dataMapLower);
+				logEntryList.add(logEntry);
+			}
+		}
+		return logEntryList;
 	}
 
 }

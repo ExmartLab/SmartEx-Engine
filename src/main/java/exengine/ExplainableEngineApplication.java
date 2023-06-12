@@ -19,7 +19,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExplainableEngineApplication.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplainableEngineApplication.class);
 
 	public static final String FILE_NAME_USERS = "seeds/users.yaml";
 	public static final String FILE_NAME_ENTITIES = "seeds/entities.yaml";
@@ -40,13 +40,14 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	 */
 	private static boolean demo = true;
 
+	/** Entry Point of this applciation. */
 	public static void main(String[] args) {
 		SpringApplication.run(ExplainableEngineApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		logger.info("Explainable Engine running");
+		LOGGER.info("Explainable Engine running");
 	}
 
 	/**
@@ -68,7 +69,7 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	 */
 	public static void setDemo(boolean demo) {
 		ExplainableEngineApplication.demo = demo;
-		logger.debug("Demo mode set to {}", demo);
+		LOGGER.debug("Demo mode set to {}", demo);
 	}
 
 }

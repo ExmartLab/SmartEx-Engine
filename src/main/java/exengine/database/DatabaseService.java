@@ -10,13 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.datamodel.*;
+import exengine.datamodel.Entity;
 import exengine.datamodel.Error;
+import exengine.datamodel.LogEntry;
+import exengine.datamodel.Occurrence;
+import exengine.datamodel.OccurrenceEntry;
+import exengine.datamodel.Rule;
+import exengine.datamodel.User;
 
+/**
+ * The DatabaseService class provides methods for interacting with the database
+ * to perform operations related to rules, errors, users, entities, and
+ * occurrences.
+ */
 @Service
 public class DatabaseService {
 
-	private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseService.class);
 
 	@Autowired
 	UserRepository userRepo;
@@ -33,6 +43,10 @@ public class DatabaseService {
 	@Autowired
 	EntityRepository entityRepo;
 
+	/**
+	 * Resets the database by deleting all rules, errors, users, and entities. If
+	 * the application is in demo mode, it also deletes all occurrences.
+	 */
 	public void resetDatabase() {
 		deleteAllRules();
 		deleteAllErrors();
@@ -40,79 +54,100 @@ public class DatabaseService {
 		deleteAllEntities();
 		if (ExplainableEngineApplication.isDemo()) {
 			deleteAllOccurrencies();
-			logger.info("Database was completely reset");
+			LOGGER.info("Database was completely reset");
 		} else {
-			logger.info("Database was reset, except for the Occurrencies table");
+			LOGGER.info("Database was reset, except for the Occurrencies table");
 		}
 	}
 
-	/*
-	 * RULE OPERATIONS
+	// RULE OPERATIONS
+
+	/**
+	 * Retrieves a list of all rules stored in the database.
+	 *
+	 * @return the list of all rules
 	 */
 	public List<Rule> findAllRules() {
 		return ruleRepo.findAll();
 	}
 
+	/**
+	 * Saves a new rule to the database.
+	 *
+	 * @param rule the rule to be saved
+	 */
 	public void saveNewRule(Rule rule) {
 		ruleRepo.save(rule);
 	}
 
+	/**
+	 * Deletes all rules from the database.
+	 */
 	public void deleteAllRules() {
 		ruleRepo.deleteAll();
 	}
 
+	/**
+	 * Finds a rule in the database by its name.
+	 *
+	 * @param ruleName the name of the rule
+	 * @return the rule object if found, or null otherwise
+	 */
 	public Rule findRuleByName(String ruleName) {
 		return ruleRepo.findByName(ruleName);
 	}
 
-	public Rule findRuleByRuleId(String ruleId) {
-		return ruleRepo.findByRuleId(ruleId);
-	}
+	// ERROR OPERATIONS
 
-	public String findRuleDescriptionByRuleName(String ruleName) {
-		return ruleRepo.findByName(ruleName).getRuleDescription();
-	}
-
-	/*
-	 * ERROR OPERATIONS
+	/**
+	 * Retrieves a list of all errors stored in the database.
+	 *
+	 * @return the list of all errors
 	 */
 	public List<exengine.datamodel.Error> findAllErrors() {
 		return errorRepo.findAll();
 	}
 
+	/**
+	 * Saves a new error to the database.
+	 *
+	 * @param error the error to be saved
+	 */
 	public void saveNewError(exengine.datamodel.Error error) {
 		errorRepo.save(error);
 	}
 
+	/**
+	 * Deletes all errors from the database.
+	 */
 	public void deleteAllErrors() {
 		errorRepo.deleteAll();
 	}
 
-	/*
-	 * USER OPERATIONS
+	// USER OPERATIONS
+
+	/**
+	 * Saves a new user to the database.
+	 *
+	 * @param user the user to be saved
 	 */
 	public void saveNewUser(User user) {
 		userRepo.save(user);
 	}
 
+	/**
+	 * Deletes all users from the database.
+	 */
 	public void deleteAllUsers() {
 		userRepo.deleteAll();
 	}
 
-	public User findUserByName(String userName) {
-		return userRepo.findByName(userName);
-	}
-
-	public User findUserById(String id) {
-		User user;
-		try {
-			user = userRepo.findById(id).get();
-		} catch (Exception e) {
-			user = null;
-		}
-		return user;
-	}
-
+	/**
+	 * Finds a user in the database by their user ID.
+	 *
+	 * @param userId the user ID
+	 * @return the user object if found, or null otherwise
+	 */
 	public User findUserByUserId(String userId) {
 		User user;
 		try {
@@ -122,30 +157,42 @@ public class DatabaseService {
 		}
 		return user;
 	}
+	
+	/**
+	 * Finds the owner of a rule by its name.
+	 *
+	 * @param ruleName the name of the rule
+	 * @return the owner user object if found, or null otherwise
+	 */
+	public User findOwnerByRuleName(String ruleName) {
+		String ownerId = findRuleByName(ruleName).getOwnerId();
+		return findUserByUserId(ownerId);
+	}
 
-	/*
-	 * HA ENTITY OPERATIONS
+	// HA ENTITY OPERATIONS
+
+	/**
+	 * Deletes all entities from the database.
 	 */
 	public void deleteAllEntities() {
 		entityRepo.deleteAll();
 	}
 
+	/**
+	 * Saves a new entity to the database.
+	 *
+	 * @param entity the entity to be saved
+	 */
 	public void saveNewEntity(Entity entity) {
 		entityRepo.save(entity);
 	}
 
-	public Entity findEntityByEntityId(String entityId) {
-		return entityRepo.findByEntityId(entityId);
-	}
-
-	public Entity findEntityByDeviceName(String deviceName) {
-		return entityRepo.findByDeviceName(deviceName);
-	}
-
-	public ArrayList<Entity> findEntitiesByDeviceName(String deviceName) {
-		return entityRepo.findEntitiesByDeviceName(deviceName);
-	}
-
+	/**
+	 * Finds a list of entity IDs in the database by their device name.
+	 *
+	 * @param deviceName the device name
+	 * @return the list of entity IDs with matching device names
+	 */
 	public ArrayList<String> findEntityIdsByDeviceName(String deviceName) {
 		ArrayList<Entity> entities = entityRepo.findEntitiesByDeviceName(deviceName);
 		ArrayList<String> entityIds = new ArrayList<>();
@@ -155,29 +202,50 @@ public class DatabaseService {
 		return entityIds;
 	}
 
-	/*
-	 * OCCURENCE OPERATIONS
+	// OCCURENCE OPERATIONS
+	
+	/**
+	 * Deletes all occurrences from the database.
 	 */
-
 	public void deleteAllOccurrencies() {
 		occEntrRepo.deleteAll();
 	}
 
+	/**
+	 * Saves a new occurrence entry to the database.
+	 *
+	 * @param occurrenceEntry the occurrence entry to be saved
+	 */
 	public void saveNewOccurrenceEntry(OccurrenceEntry occurrenceEntry) {
 		occEntrRepo.save(occurrenceEntry);
 	}
 
+	/**
+	 * Finds occurrence entries in the database by user ID and rule ID.
+	 *
+	 * @param userId the user ID
+	 * @param ruleId the rule ID
+	 * @return the list of occurrence entries with matching user ID and rule ID
+	 */
 	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String userId, String ruleId) {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 	}
 
-	public Occurrence findOccurrence(String userId, String ruleId, int days) {
+	/**
+	 * Finds an occurrence by user ID, rule ID, and the number of days.
+	 *
+	 * @param userId the user ID
+	 * @param ruleId the rule ID
+	 * @param days   the number of days
+	 * @return the occurrence based on the criteria
+	 */
+	public Occurrence findOccurrence(String userId, String ruleId, int days) { // TODO refactor this method
 		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
 		long reference = new Date().getTime() - ((days) * 24l * 60l * 60l * 1000l);
 		for (OccurrenceEntry entry : entries) {
 			String lookAtDate = new Date(entry.getTime()).toString();
-			logger.trace("looking at entry: {}", lookAtDate);
+			LOGGER.trace("looking at entry: {}", lookAtDate);
 			if (entry.getTime() > reference) {
 				count++;
 			}
@@ -226,14 +294,6 @@ public class DatabaseService {
 		}
 
 		return actions;
-	}
-
-	/*
-	 * MISC.
-	 */
-	public User findOwnerByRuleName(String ruleName) {
-		String ownerId = findRuleByName(ruleName).getOwnerId();
-		return findUserByUserId(ownerId);
 	}
 
 }

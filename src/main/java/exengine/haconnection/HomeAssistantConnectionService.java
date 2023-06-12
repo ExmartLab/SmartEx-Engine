@@ -6,9 +6,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
@@ -19,10 +21,13 @@ import org.springframework.stereotype.Service;
 import exengine.datamodel.LogEntry;
 import exengine.loader.JsonHandler;
 
+/**
+ * Service to perform retrieval of Home Assistant data.
+ */
 @Service
 public class HomeAssistantConnectionService {
 
-	private static final Logger logger = LoggerFactory.getLogger(HomeAssistantConnectionService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(HomeAssistantConnectionService.class);
 
 	// token needs to be a long lived home assistant bearer token (create one under
 	// http://IP_ADDRESS:8123/profile)
@@ -35,25 +40,41 @@ public class HomeAssistantConnectionService {
 
 	String response = "";
 
+	/**
+	 * Logs the connection status to the specified Home Assistant connector.
+	 */
 	@PostConstruct
 	public void printAPIStatus() {
-		String status = "not reachable";
+		String status = "";
 		try {
 			status = executeHttpClient(apiurl);
 		} catch (Exception e) {
-			status += " because " + e.getMessage();
+			status = "unavailable because could not connect to Home Assistant: " + e.getMessage();
 		}
-		logger.info("API status {}", status);
+		LOGGER.info("API status {}", status);			
 	}
 
+	/**
+	 * Retrieves list of logs from locally running Home Assistant and puts the
+	 * entries in LogEntry objects.
+	 * 
+	 * @param min number of minutes representing the maximum age of retrieved log
+	 *            entries
+	 * @return a list of the log entries
+	 * @throws IOException
+	 */
 	public ArrayList<LogEntry> parseLastLogs(int min) throws IOException {
-		return JsonHandler.loadLogEntriesFromJson(executeHttpClient(getURLlastXMin(min)));
+		String url = getURL(min);
+		String getResponse = executeHttpClient(url);
+		return JsonHandler.loadLogEntriesFromJson(getResponse);
 	}
 
-	public ArrayList<LogEntry> parseLogsLastHour() throws IOException {
-		return JsonHandler.loadLogEntriesFromJson(executeHttpClient(getURLlastHour()));
-	}
-
+	/**
+	 * Sends authorized get requests.
+	 * 
+	 * @param url the api endpoint
+	 * @return the server's response
+	 */
 	public String executeHttpClient(String url) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET()
@@ -61,40 +82,28 @@ public class HomeAssistantConnectionService {
 		client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(resp -> {
 			response = resp;
 		}).join();
-		logger.debug("Return of executeHttpClient for argument {} (String) is: {}", url, response);
+		LOGGER.debug("Return of executeHttpClient for argument {} (String) is: {}", url, response);
 		return response;
 	}
 
-	public String getURLlastHour() {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String s = logsurl + formatter.format(new Date()) + "+03:00";
-		String[] arr = s.split(" ");
-		s = arr[0] + "T" + arr[1];
-		logger.debug("Return of get URLlastHour is: {}", s);
-		return s;
-	}
+	/**
+	 * Generates a URL for retrieving the latest logs in Home Assistant.
+	 * 
+	 * @param min min number of minutes specifiyng the age of the retrieved logs.
+	 * @return the connection URL
+	 */
+	public String getURL(int min) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+		ZoneId zoneId = ZoneId.systemDefault();
 
-	// returns URL for the last X minutes
-	public String getURLlastXMin(int min) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		int hours = min / 60;
-		min = min - (hours * 60);
-		String h = Integer.toString(2 + hours);
-		if (hours < 10)
-			h = "0" + h;
-		String m = Integer.toString(min);
-		if (min < 10)
-			m = "0" + m;
-		String s = logsurl + formatter.format(new Date()) + "+" + h + ":" + m;
-		String[] arr = s.split(" ");
-		s = arr[0] + "T" + arr[1];
-		logger.debug("Return from getURLlastXMin for argument {} (int): {}", min, s);
-		return s;
-	}
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime newTime = currentTime.minusMinutes(min);
 
-	public String getURLentireDay() {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		return logsurl + formatter.format(new Date()) + "T00:00:00+00:00";
+		ZonedDateTime zonedDateTime = ZonedDateTime.of(newTime, zoneId);
+		String formattedTime = zonedDateTime.format(formatter);
+
+		// Generate the URL with the formatted timestamp
+		return "http://homeassistant.local:8123/api/logbook/" + formattedTime;
 	}
 
 }
