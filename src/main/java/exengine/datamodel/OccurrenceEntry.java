@@ -10,6 +10,11 @@ public class OccurrenceEntry {
 
 	private String userId;
 	private String causeId;
+
+	/*
+	 * Time in in miliseconds since the Unix epoch, which is defined as January 1,
+	 * 1970, 00:00:00 UTC
+	 */
 	private long time;
 
 	/**
@@ -62,7 +67,8 @@ public class OccurrenceEntry {
 	}
 
 	/**
-	 * Returns the time of the occurrence information.
+	 * Returns the time of the occurrence information. Time in in miliseconds since
+	 * the Unix epoch, which is defined as January 1, 1970, 00:00:00 UTC
 	 *
 	 * @return the time of the occurrence information
 	 */
@@ -71,7 +77,8 @@ public class OccurrenceEntry {
 	}
 
 	/**
-	 * Sets the time of the occurrence information.
+	 * Sets the time of the occurrence information. Time in in miliseconds since the
+	 * Unix epoch, which is defined as January 1, 1970, 00:00:00 UTC
 	 *
 	 * @param time the time of the occurrence information
 	 */
