@@ -211,11 +211,11 @@ public class DatabaseSeeder {
 	}
 
 	/**
-	 * Seeds the entities into the database.
+	 * Generates LogEntry object from dataMap details.
 	 * 
 	 * @Note Only loads name, entityId and state
 	 * 
-	 * @param fileName The name of the YAML file containing entity data.
+	 * @param dataMapLower the data map to scan
 	 */
 	private LogEntry generateLogEntry(Map<String, Object> dataMapLower) {
 

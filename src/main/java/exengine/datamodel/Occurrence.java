@@ -2,8 +2,8 @@ package exengine.datamodel;
 
 /**
  * The Occurrence enum represents different occurrences (i.e., how often an
- * explanation was generated). Each occurrence has an associated string
- * representation.
+ * explanation was generated, i.e., a count encoded as strings). Each occurrence
+ * has an associated string representation.
  */
 public enum Occurrence {
 	FIRST("first"), SECOND("second"), MORE("more");

@@ -1,7 +1,6 @@
 package exengine.database;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import exengine.ExplainableEngineApplication;
 import exengine.datamodel.Entity;
 import exengine.datamodel.Error;
 import exengine.datamodel.LogEntry;
-import exengine.datamodel.Occurrence;
 import exengine.datamodel.OccurrenceEntry;
 import exengine.datamodel.Rule;
 import exengine.datamodel.User;
@@ -229,36 +227,6 @@ public class DatabaseService {
 	 */
 	public ArrayList<OccurrenceEntry> findOccurrenceEntriesByUserIdAndRuleId(String userId, String ruleId) {
 		return occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
-	}
-
-	/**
-	 * Finds an occurrence by user ID, rule ID, and the number of days.
-	 *
-	 * @param userId the user ID
-	 * @param ruleId the rule ID
-	 * @param days   the number of days
-	 * @return the occurrence based on the criteria
-	 */
-	public Occurrence findOccurrence(String userId, String ruleId, int days) { // TODO refactor this method
-		ArrayList<OccurrenceEntry> entries = occEntrRepo.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
-		int count = 0;
-		long reference = new Date().getTime() - ((days) * 24l * 60l * 60l * 1000l);
-		for (OccurrenceEntry entry : entries) {
-			String lookAtDate = new Date(entry.getTime()).toString();
-			LOGGER.trace("looking at entry: {}", lookAtDate);
-			if (entry.getTime() > reference) {
-				count++;
-			}
-
-		}
-		switch (count) {
-		case 0:
-			return Occurrence.FIRST;
-		case 1:
-			return Occurrence.SECOND;
-		default:
-			return Occurrence.MORE;
-		}
 	}
 
 	/**
