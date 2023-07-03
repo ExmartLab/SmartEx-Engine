@@ -1,5 +1,6 @@
 package exengine.rest;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import exengine.database.DatabaseService;
 import exengine.datamodel.State;
 import exengine.datamodel.User;
+import exengine.datamodel.FrequencyEntry;
 
 /**
  * REST controller for all live (runtime) configurations made to the
@@ -69,6 +71,14 @@ public class DatabaseController {
 		} else {
 			return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	@PostMapping("frequency/increment")
+	public ResponseEntity<String> setUserState(@RequestParam(value = "ruleid", defaultValue = "unknown") String ruleId) {
+		long time = new Date().getTime();
+		FrequencyEntry frequencyEntry = new FrequencyEntry(ruleId, time);
+		dataSer.saveFrequencyEntry(frequencyEntry);
+		return new ResponseEntity<>(String.format("Frequency stored for %s at %s", ruleId, time), HttpStatus.OK);
 	}
 
 }
