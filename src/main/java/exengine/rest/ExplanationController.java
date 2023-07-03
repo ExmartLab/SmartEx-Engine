@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import exengine.engineservice.CreateExService;
 
 /**
- * REST controller for providing explanation demanding endpoints.
+ * REST controller for providing explanation demanding api endpoints.
  */
 @RestController
 public class ExplanationController {
