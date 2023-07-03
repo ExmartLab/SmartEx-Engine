@@ -20,7 +20,7 @@ import exengine.loader.JsonHandler;
 
 public abstract class ExplanationService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CreateExService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CausalExplanationService.class);
 
 
 	@Autowired

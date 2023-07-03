@@ -20,9 +20,9 @@ import exengine.datamodel.Rule;
  * Service hub responsible for building and delivering explanations.
  */
 @Service
-public class CreateExService extends ExplanationService {
+public class CausalExplanationService extends ExplanationService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CreateExService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CausalExplanationService.class);
 
 	@Autowired
 	FindCauseService findCauseSer;
