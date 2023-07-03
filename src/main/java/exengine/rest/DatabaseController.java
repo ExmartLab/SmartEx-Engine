@@ -73,9 +73,21 @@ public class DatabaseController {
 		}
 	}
 
+	/**
+	 * Stores the occurrence of a rule being fired in Home Assistant into the
+	 * database. This is to count the frequency of rule-firings for explanation
+	 * fitting.
+	 * 
+	 * @param ruleId of the fired rule
+	 * @return A ResponseEntity containing a String message indicating that the
+	 *         frequency for the specified rule was stored and HttpStatus.OK if the
+	 *         transaction was successful.
+	 */
 	@PostMapping("frequency/increment")
-	public ResponseEntity<String> setUserState(@RequestParam(value = "ruleid", defaultValue = "unknown") String ruleId) {
-		long time = new Date().getTime();
+	public ResponseEntity<String> setUserState(
+			@RequestParam(value = "ruleid", defaultValue = "unknown") String ruleId) {
+		Date date = new Date();
+		long time = date.getTime();
 		FrequencyEntry frequencyEntry = new FrequencyEntry(ruleId, time);
 		dataSer.saveFrequencyEntry(frequencyEntry);
 		return new ResponseEntity<>(String.format("Frequency stored for %s at %s", ruleId, time), HttpStatus.OK);

@@ -41,7 +41,7 @@ public class DatabaseService {
 
 	@Autowired
 	EntityRepository entityRepo;
-	
+
 	@Autowired
 	FrequencyRepository frequencyRepo;
 
@@ -159,7 +159,7 @@ public class DatabaseService {
 		}
 		return user;
 	}
-	
+
 	/**
 	 * Finds the owner of a rule by its name.
 	 *
@@ -205,7 +205,7 @@ public class DatabaseService {
 	}
 
 	// OCCURENCE OPERATIONS
-	
+
 	/**
 	 * Deletes all occurrences from the database.
 	 */
@@ -267,13 +267,23 @@ public class DatabaseService {
 
 		return actions;
 	}
-	
+
 	// FREQUENCY OPERATIONS
-	
+
+	/**
+	 * Returns all FrequencyEntry stored in the database.
+	 *
+	 * @return the list FrequencyEntry
+	 */
 	public List<FrequencyEntry> getAllFrequencyEntries() {
 		return frequencyRepo.findAll();
 	}
-	
+
+	/**
+	 * Saves a new frequency entry to the database.
+	 *
+	 * @param frequencyEntry the FrequencyEntry entry to be saved
+	 */
 	public void saveFrequencyEntry(FrequencyEntry frequencyEntry) {
 		frequencyRepo.save(frequencyEntry);
 	}

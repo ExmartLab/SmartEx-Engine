@@ -22,16 +22,20 @@ public class ExplanationController {
 
 	@Autowired
 	CausalExplanationService causalExSer;
-	
+
 	@Autowired
 	ContrastiveExplanationService contrastiveExSer;
 
 	/**
 	 * Generates and returns an explanation for the provided attributes.
 	 * 
-	 * @param min    number of minutes in history to take into account
-	 * @param userId the user identifier of the explainee
-	 * @param device the device which exhibited the explanandum
+	 * @param min               number of minutes in history to take into account
+	 * @param userId            the user identifier of the explainee
+	 * @param device            the device which exhibited the explanandum
+	 * @param contrastiveString indicating type of explanation: If true, this
+	 *                          function will return a contrastive explanation, if
+	 *                          false, this function will reside to the default
+	 *                          causal explanations.
 	 * @return A ResponseEntity containing a String message containing the
 	 *         explanation and HttpStatus.OK.
 	 */

@@ -17,7 +17,7 @@ import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
 
 /**
- * Service hub responsible for building and delivering explanations.
+ * Service hub responsible for building and delivering <b>causal</b> explanations.
  */
 @Service
 public class CausalExplanationService extends ExplanationService {
@@ -28,9 +28,9 @@ public class CausalExplanationService extends ExplanationService {
 	FindCauseService findCauseSer;
 
 	/**
-	 * Builds context-specific explanations for home assistant.
+	 * Builds context-specific <b>causal</b> explanations for home assistant.
 	 * 
-	 * This function determines the causal path behind an explanandum and presents
+	 * This function determines the <b>causal</b> path behind an explanandum and presents
 	 * an appropriate, context-dependent explanation. Refer to the paper for
 	 * details.
 	 * 

@@ -18,9 +18,12 @@ import exengine.explanationpresentation.TransformationFunctionService;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
+/**
+ * Abstract service hub responsible for building and delivering explanations.
+ */
 public abstract class ExplanationService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CausalExplanationService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationService.class);
 
 
 	@Autowired
