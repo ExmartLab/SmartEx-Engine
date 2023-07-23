@@ -105,9 +105,9 @@ public abstract class ExplanationService {
 	 * @return a list of log entries that are no older than min, starting from when
 	 *         this function is called.
 	 * 
-	 * @Note If the ExplainableEngineApplication is running in mode mode, the
+	 * @Note If the ExplainableEngineApplication is running in demo mode, the
 	 *       returned list of log entries will be loaded statically from a json file
-	 *       stored in the resources foulder of this project.
+	 *       stored in the resources folder of this project.
 	 */
 	public ArrayList<LogEntry> getLogEntries(int min) {
 		ArrayList<LogEntry> logEntries = null;
