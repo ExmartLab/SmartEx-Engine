@@ -86,7 +86,8 @@ public class TransformationFunctionService {
 	 * @return A natural language sentence part
 	 */
 	public String getConditionsString(Rule rule) {
-		String conditionsString = rule.getConditions().get(0);
+		//TODO how to handle new way of storing conditions here?s
+		String conditionsString = rule.getConditions().get(0).getName();
 		for (int i = 1; i < rule.getConditions().size(); i++) {
 			conditionsString = String.format("%s and %s", conditionsString, rule.getConditions().get(i));
 		}

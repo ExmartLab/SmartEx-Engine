@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +147,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 				expectedRule = topsis(mostLikelyRuleCandidates, weights, isBeneficial, preconditionSimList,
 						ownershipList, frequencyList, occurrenceList);
+				
 				if (expectedRule == null) {
 					// TODO TOPSIS Fehler abfangen
 				}
@@ -154,6 +156,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 				// CASE ERROR HAPPENED
 				// TODO expectedRule = letzte Rule, die mit device in question ausgelöst wurde
 			}
+			
 		} else {
 			// CASE NO EVENT HAPPENED
 
@@ -250,34 +253,37 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 	private ArrayList<Double> calculatePreconditionSimilarity(ArrayList<Rule> ruleCandidates, Rule happenedRule) {
 
+		//create List that will be filled and returned
 		ArrayList<Double> preconditionSimList = new ArrayList<Double>();
 
-		ArrayList<LogEntry> happenedRulePrec = happenedRule.getTrigger();
+		//get list with all precondition
+		ArrayList<LogEntry> happenedRulePrec = new ArrayList<LogEntry>();
+		happenedRulePrec.addAll(happenedRule.getTrigger());
 		happenedRulePrec.addAll(happenedRule.getConditions());
 
-		// create list of devices of preconditions of happened rule with possible duplicates
+		// create list of devices of preconditions of happened rule with possible
+		// duplicates
 		ArrayList<String> happenedRuleDevicesWithDuplicates = new ArrayList<String>();
-		for(LogEntry precondition : happenedRulePrec) {
-			happenedRuleDevicesWithDuplicates.add(precondition.getEntityId());
-		}
+		happenedRuleDevicesWithDuplicates = (ArrayList<String>) happenedRulePrec.stream().map(prec -> prec.getEntityId()).collect(Collectors.toList());
 		ArrayList<String> happenedRuleDevices = removeDuplicates(happenedRuleDevicesWithDuplicates);
-		
+
+		//loop trough candidate Rules to determine their similarity scores
 		for (Rule candidate : ruleCandidates) {
 			ArrayList<LogEntry> candidatePrec = candidate.getTrigger();
 			candidatePrec.addAll(candidate.getConditions());
-			
+
 			ArrayList<LogEntry> combP1 = new ArrayList<LogEntry>();
 			combP1.addAll(candidatePrec);
 			combP1.addAll(happenedRulePrec);
 			ArrayList<LogEntry> combinedPrecList = removeDuplicates(combP1);
-			
-			// create list of devices of preconditions of candidate rule with possible duplicates
+
+			// create list of devices of preconditions of candidate rule with possible
+			// duplicates
 			ArrayList<String> candidateRuleDevicesWithDuplicates = new ArrayList<String>();
-			for(LogEntry precondition : candidatePrec) {
-				candidateRuleDevicesWithDuplicates.add(precondition.getEntityId());
-			}
-			ArrayList<String> candidateRuleDevices = removeDuplicates(happenedRuleDevicesWithDuplicates);
+			candidateRuleDevicesWithDuplicates = (ArrayList<String>) candidatePrec.stream().map(prec -> prec.getEntityId()).collect(Collectors.toList());
 			
+			ArrayList<String> candidateRuleDevices = removeDuplicates(candidateRuleDevicesWithDuplicates);
+
 			ArrayList<String> combD1 = new ArrayList<String>();
 			combD1.addAll(candidateRuleDevices);
 			combD1.addAll(happenedRuleDevices);
@@ -285,18 +291,21 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 			int distanceBetweenCandidateAndHappenedRule = 0;
 			for (LogEntry precon : combinedPrecList) {
+				// if the usage of a precondition is different, add 1 to the distance between Candidate rule and happened rule
 				if (candidatePrec.contains(precon) ^ happenedRulePrec.contains(precon)) {
 					distanceBetweenCandidateAndHappenedRule++;
 				}
 			}
 			for (String device : combinedDevices) {
-				if(candidateRuleDevices.contains(device) ^ happenedRuleDevices.contains(device)) {
+				// if the usage of a device is different, add 1 to the distance between Candidate rule and happened rule
+				if (candidateRuleDevices.contains(device) ^ happenedRuleDevices.contains(device)) {
 					distanceBetweenCandidateAndHappenedRule++;
 				}
 			}
-			// EXTEND WITH DEVICE PRECONDITIONS???
 
-			preconditionSimList.add(1.0 - (distanceBetweenCandidateAndHappenedRule / (combinedPrecList.size() + combinedDevices.size())));
+			//add normalized similarity score to return list
+			preconditionSimList.add(1.0
+					- (distanceBetweenCandidateAndHappenedRule / (combinedPrecList.size() + combinedDevices.size())));
 		}
 
 		return preconditionSimList;
@@ -309,7 +318,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 		// TODO iterate über alternatives ODER columns
 
 		// check that lenghts of lists are same as dimensions of matrix
-		if (weights.size() != alternatives.size() || isBeneficial.size() != matrixColumns.length) {
+		//(size of alternatives and matrixColumns as reference)
+		if (weights.size() != matrixColumns.length || isBeneficial.size() != matrixColumns.length) {
 			return null;
 		}
 
@@ -413,7 +423,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 	}
 
 	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list) {
-		
+
 		Set<T> set = new LinkedHashSet<>();
 		set.addAll(list);
 		list.clear();
