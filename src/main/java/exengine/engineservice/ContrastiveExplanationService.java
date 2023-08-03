@@ -75,6 +75,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 		 * TODO check entity IDs for conditions in rule yaml
 		 * 
 		 * TODO add rules for contrastive explanations in rule yaml
+		 * 
+		 * VIEW TO DOs in Jira
 		 */
 
 		String explanation = "found nothing to explain"; // default return value
