@@ -62,7 +62,7 @@ public class FindCauseService {
 		ArrayList<Rule> candidateRules = findCandidateRules(explanandum, dbRules); // Line 9
 
 		for (Rule rule : candidateRules) { // Line 10
-			if (actionsApply(explanandum, rule, logEntries, 1000) // Line 11
+			if (actionsApply(explanandum, rule, logEntries, 3) // Line 11
 					&& preconditionsApply(explanandum, rule, logEntries)) { // Line 12 - 13
 				firedRule = rule;
 			}

@@ -114,6 +114,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			if (happenedEvent instanceof Rule) { // a rule has happened
 				// CASE RULE HAPPENED
 
+				//TODO not only remove happened rule but all rules that have the same action (with the device)
 				mostLikelyRuleCandidates.remove(happenedEvent); // remove happened Rule from the candidate list for most
 																// likely rules
 				// as of now, mostLikelyRuleCandidates contains all rules, that use device in at
@@ -269,7 +270,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 		//loop trough candidate Rules to determine their similarity scores
 		for (Rule candidate : ruleCandidates) {
-			ArrayList<LogEntry> candidatePrec = candidate.getTrigger();
+			ArrayList<LogEntry> candidatePrec = new ArrayList<LogEntry>();
+			candidatePrec.addAll(candidate.getTrigger());
 			candidatePrec.addAll(candidate.getConditions());
 
 			ArrayList<LogEntry> combP1 = new ArrayList<LogEntry>();
@@ -281,7 +283,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 			// duplicates
 			ArrayList<String> candidateRuleDevicesWithDuplicates = new ArrayList<String>();
 			candidateRuleDevicesWithDuplicates = (ArrayList<String>) candidatePrec.stream().map(prec -> prec.getEntityId()).collect(Collectors.toList());
-			
 			ArrayList<String> candidateRuleDevices = removeDuplicates(candidateRuleDevicesWithDuplicates);
 
 			ArrayList<String> combD1 = new ArrayList<String>();
@@ -338,16 +339,15 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 		// calculate normalized matrix from columns
 		ArrayList<Double>[] normalizedMatrix = matrixColumns.clone();
-		// TODO because of shallow object, change loops as described above
-		for (ArrayList<Double> column : normalizedMatrix) {
+		for (int i = 0; i < matrixColumns.length; i++) {
 			Double squaredSums = 0.0;
-			for (Double value : column) {
-				squaredSums += value * value;
+			for (int j = 0; j < matrixColumns[i].size(); j++) {
+				squaredSums += Math.pow(matrixColumns[i].get(j), 2.0);
 			}
 			Double rootOfSquaredSums = Math.sqrt(squaredSums);
 
-			for (Double value : column) {
-				value /= rootOfSquaredSums;
+			for (int j = 0; j < matrixColumns[i].size(); j++) {
+				normalizedMatrix[i].set(j, matrixColumns[i].get(j)/rootOfSquaredSums);
 			}
 		}
 
@@ -359,7 +359,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 			}
 		}
 
-		// calculate idealBestes/idealWorsts
+		// calculate idealBests/idealWorsts
+		//TODO use number of columns as dimension
 		Double[] idealBests = new Double[normalizedWeights.size()];
 		Double[] idealWorsts = new Double[normalizedWeights.size()];
 		for (int i = 0; i < isBeneficial.size(); i++) {
@@ -429,13 +430,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 		list.clear();
 		list.addAll(set);
 		return list;
-
-		/*
-		 * ArrayList<T> newList = new ArrayList<T>();
-		 * 
-		 * for (T element : list) { if (!newList.contains(element)) {
-		 * newList.add(element); } } return newList;
-		 */
 	}
 
 }
