@@ -30,6 +30,6 @@ public interface FrequencyRepository extends MongoRepository<FrequencyEntry, Str
 	 *         ruleId, or an empty ArrayList if not found.
 	 */
 	@Query(value = "{'ruleId' : '?0'}")
-	public ArrayList<FrequencyEntry> findAllFrequencyEntriesById(String ruleId);
+	public ArrayList<FrequencyEntry> findFrequencyEntriesById(String ruleId);
 
 }

@@ -288,4 +288,15 @@ public class DatabaseService {
 		frequencyRepo.save(frequencyEntry);
 	}
 
+	/**
+	 * Finds frequency entries in the database by rule ID
+	 *
+	 * @param ruleId the rule ID
+	 * @return the list of occurrence entries with matching user ID and rule ID
+	 */
+	public List<FrequencyEntry> findAllFrequencyEntriesByRuleId(String ruleId) {
+		return frequencyRepo.findFrequencyEntriesById(ruleId);
+	}
+
+
 }

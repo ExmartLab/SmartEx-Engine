@@ -84,7 +84,7 @@ public class DatabaseController {
 	 *         transaction was successful.
 	 */
 	@PostMapping("frequency/increment")
-	public ResponseEntity<String> setUserState(
+	public ResponseEntity<String> incrementFrequency(
 			@RequestParam(value = "ruleid", defaultValue = "unknown") String ruleId) {
 		Date date = new Date();
 		long time = date.getTime();

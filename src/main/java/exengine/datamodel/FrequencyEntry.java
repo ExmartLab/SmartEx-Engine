@@ -31,4 +31,14 @@ public class FrequencyEntry {
 		this.timeMiliSec = timeMiliSec;
 	}
 
+	
+	/**
+	 * Returns the time of the frequency information. Time in in miliseconds since
+	 * the Unix epoch, which is defined as January 1, 1970, 00:00:00 UTC
+	 *
+	 * @return the time of the occurrence information
+	 */
+	public long getTime() {
+		return timeMiliSec;
+	}
 }

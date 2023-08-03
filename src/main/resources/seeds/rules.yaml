@@ -8,8 +8,10 @@
   - name: "state change"
     entity_id: "scene.state_change"
     state: "null"
-  conditions: 
-  - "daily energy consumption is higher than the threshold"
+  conditions:
+  - name: "daily energy consumption is higher than the threshold"
+    entity_id: "smartplug coffee machine"
+    state: "null"
   actions:
   - name: "Smart Plug Social Room Coffee"
     entity_id: "switch.smart_plug_social_room_coffee"
@@ -28,7 +30,9 @@
     entity_id: "media_player.lab_tv"
     state: "playing"
   conditions:
-  - "a meeting in room 1 is going on"
+  - name: "a meeting in room 1 is going on"
+    entity_id: "calendar?"
+    state: "???"
   actions:
   - name: "tv_mute"
     entity_id: "scene.tv_playing"

@@ -13,7 +13,7 @@ public class Rule {
 	private String id; // only for MongoDB
 	private String ruleName;
 	private ArrayList<LogEntry> trigger;
-	private ArrayList<String> conditions;
+	private ArrayList<LogEntry> conditions;
 	private ArrayList<LogEntry> actions;
 	private String ownerId;
 	private String ruleDescription;
@@ -33,7 +33,7 @@ public class Rule {
 	 * @param ownerId         the ID of the rule's owner
 	 * @param ruleDescription the description of the rule
 	 */
-	public Rule(String ruleName, String ruleId, ArrayList<LogEntry> trigger, ArrayList<String> conditions,
+	public Rule(String ruleName, String ruleId, ArrayList<LogEntry> trigger, ArrayList<LogEntry> conditions,
 			ArrayList<LogEntry> actions, String ownerId, String ruleDescription) {
 		setRuleName(ruleName);
 		setRuleId(ruleId);
@@ -107,7 +107,7 @@ public class Rule {
 	 *
 	 * @return the list of conditions
 	 */
-	public ArrayList<String> getConditions() {
+	public ArrayList<LogEntry> getConditions() {
 		return conditions;
 	}
 
@@ -116,7 +116,7 @@ public class Rule {
 	 *
 	 * @param conditions the list of conditions to set
 	 */
-	public void setConditions(ArrayList<String> conditions) {
+	public void setConditions(ArrayList<LogEntry> conditions) {
 		this.conditions = conditions;
 	}
 
