@@ -25,7 +25,9 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static final String FILE_NAME_ENTITIES = "seeds/entities.yaml";
 	public static final String FILE_NAME_RULES = "seeds/rules.yaml";
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
-	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
+	public static final String FILE_NAME_DEMO_LOGS_0 = "demoLogs.json";
+	public static final String FILE_NAME_DEMO_LOGS_1 = "demoLogsContrastive1.json";
+	public static final String FILE_NAME_DEMO_LOGS_2 = "demoLogsContrastive2.json";
 
 	/**
 	 * Configuration property of the application.
@@ -35,10 +37,17 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	 * Home Assistant). Else, the explanations will be generated based on an
 	 * up-to-date fetch of logs (i.e., most recent/live events in Home Assistant).
 	 * 
+	 * the <code>demoScenario</code> states which events for demonstration shall be
+	 * used if <code>demo=true</code>
+	 * 0: default Causal explanation
+	 * 1: contrastive scenario 1
+	 * 2: contrastive scenario 2
+	 * 
 	 * @Note If <code>demo=false</code>, the application needs to have a connection
 	 *       to Home Assistant.
 	 */
 	private static boolean demo = true;
+	private static int demoScenario = 1;
 
 	/** Entry Point of this applciation. */
 	public static void main(String[] args) {
@@ -70,6 +79,27 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static void setDemo(boolean demo) {
 		ExplainableEngineApplication.demo = demo;
 		LOGGER.debug("Demo mode set to {}", demo);
+	}
+
+	/**
+	 * Gets the demo scenario.
+	 * 
+	 * @return demo scenario
+	 */
+	public static int getDemoScenario() {
+		return demoScenario;
+	}
+
+	/**
+	 * Sets the demo scenario configuration.
+	 * 
+	 * @param demoScenario an int that sets the scenario for demonstration
+	 * 
+	 * @see {@link #demo demo mode} for implications.
+	 */
+	public static void setDemoScenario(int demoScenario) {
+		ExplainableEngineApplication.demoScenario = demoScenario;
+		LOGGER.debug("Demo scenario set to {}", demoScenario);
 	}
 
 }

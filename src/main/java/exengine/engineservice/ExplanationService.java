@@ -22,9 +22,8 @@ import exengine.loader.JsonHandler;
  * Abstract service hub responsible for building and delivering explanations.
  */
 public abstract class ExplanationService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationService.class);
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -98,7 +97,7 @@ public abstract class ExplanationService {
 
 		return null;
 	}
-	
+
 	/**
 	 * Fetches (or when in demo, retrieves) a list of most recent log entries from
 	 * Home Assistant.
@@ -116,14 +115,28 @@ public abstract class ExplanationService {
 		ArrayList<LogEntry> logEntries = null;
 
 		if (ExplainableEngineApplication.isDemo()) {
+			String filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_0; // default
+			switch (ExplainableEngineApplication.getDemoScenario()) {
+			case 0:
+				filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_0;
+				break;
+			case 1:
+				filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_1;
+				break;
+			case 2:
+				filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_2;
+				break;
+			}
 			try {
 				// getting demo logs (stored in a json file, stored in the resources folder)
-				logEntries = loadDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
+				logEntries = loadDemoEntries(filename);
 			} catch (IOException | URISyntaxException e) {
 				LOGGER.error("Unable to parse demo logs: {}", e.getMessage(), e);
 			}
 
-		} else {
+		} else
+
+		{
 			try {
 				// getting logs directly from Home Assistant
 				logEntries = haSer.parseLastLogs(min);

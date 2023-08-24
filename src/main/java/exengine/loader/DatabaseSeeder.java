@@ -108,15 +108,15 @@ public class DatabaseSeeder {
 		for (Map<String, Object> dataMap : dataList) {
 
 			String name = tryToGet("name", dataMap);
-			
+
 			String userid = tryToGet("userid", dataMap);
-			
+
 			String roleString = tryToGet("role", dataMap);
 			Role role = Role.valueOf(roleString);
-			
+
 			String technicalityString = tryToGet("technicality", dataMap);
 			Technicality technicality = Technicality.valueOf(technicalityString);
-			
+
 			dataSer.saveNewUser(new User(name, userid, role, technicality));
 		}
 		LOGGER.info("Users seeded to database");
@@ -147,6 +147,7 @@ public class DatabaseSeeder {
 	 */
 	@SuppressWarnings("unchecked")
 	private void seedRules(String fileName) {
+
 		List<Map<String, Object>> dataList = loadDataMap(fileName);
 
 		for (Map<String, Object> dataMap : dataList) {
@@ -161,10 +162,14 @@ public class DatabaseSeeder {
 			ArrayList<LogEntry> triggers = tryToGetLogEntries(dataMap, "triggers");
 
 			// conditions (type: ArrayList<String>)
-			ArrayList<String> conditions = new ArrayList<>();
-			if (dataMap.containsKey("conditions")) {
-				conditions = (ArrayList<String>) dataMap.get("conditions");
-			}
+			ArrayList<LogEntry> conditions = tryToGetLogEntries(dataMap, "conditions");
+
+			/*
+			 * old version of seeding conditions as a list of strings not logEntries
+			 * ArrayList<LogEntry> conditions = new ArrayList<>(); if
+			 * (dataMap.containsKey("conditions")) { conditions = (ArrayList<LogEntry>)
+			 * dataMap.get("conditions"); }
+			 */
 
 			// actions (type: ArrayList<LogEntry>)
 			ArrayList<LogEntry> actions = tryToGetLogEntries(dataMap, "actions");
@@ -176,6 +181,7 @@ public class DatabaseSeeder {
 			String ruleDescription = tryToGet("ruleDescription", dataMap);
 
 			dataSer.saveNewRule(new Rule(name, ruleId, triggers, conditions, actions, ownerId, ruleDescription));
+
 		}
 		LOGGER.info("Rules seeded to database");
 	}
