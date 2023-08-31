@@ -58,7 +58,7 @@
   - name: "Turn Meeting Room Status Light green"
     entity_id: "light.meeting_room_status_light"
     state: "green"
-  ownerId: "2"
+  ownerId: "1"
   ruleDescription: "Rule_3: turns the meeting room status light green if the room is not occupied"
 
 - name: "Meeting room occupied"
@@ -79,7 +79,7 @@
   - name: "Turn Meeting Room Status Light orange"
     entity_id: "light.meeting_room_status_light"
     state: "orange"
-  ownerId: "2"
+  ownerId: "1"
   ruleDescription: "Rule_4: turns the meeting room status light orange if the room is occupied"
 
 - name: "Rain at lunch"
@@ -148,6 +148,6 @@
   - name: "Turn Meeting Room Status Light orange"
     entity_id: "light.meeting_room_status_light"
     state: "orange"
-  ownerId: "2"
+  ownerId: "3"
   ruleDescription: "Rule_7: turns the meeting room status light orange if danger occurs"
 

@@ -203,6 +203,19 @@ public class DatabaseService {
 		}
 		return entityIds;
 	}
+	
+
+
+	/**
+	 * Finds entity in the database by their entity ID.
+	 *
+	 * @param entity ID
+	 * @return entity
+	 */
+	public Entity findEntityByEntityID(String entityId) {
+		Entity entity = entityRepo.findEntityByEntityId(entityId);
+		return entity;
+	}
 
 	// OCCURENCE OPERATIONS
 

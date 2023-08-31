@@ -83,8 +83,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 		 * 
 		 * TODO check entity IDs for conditions in rule yaml
 		 * 
-		 * TODO add rules for contrastive explanations in rule yaml
-		 * 
 		 * 
 		 * 
 		 * VIEW TO DOs in Jira
@@ -110,8 +108,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 		// TODO remove after testing
 		happenedEvent = dataSer.findRuleByName("Meeting room occupied");
 
-		if(happenedEvent != null)
-			if(happenedEvent instanceof Rule)
+		if (happenedEvent != null)
+			if (happenedEvent instanceof Rule)
 				LOGGER.debug("happened Event: {}", ((Rule) happenedEvent).getRuleName());
 			else
 				LOGGER.debug("happened Event: {}", ((Error) happenedEvent).getErrorName());
@@ -136,6 +134,9 @@ public class ContrastiveExplanationService extends ExplanationService {
 				i.remove(); // remove if rule doesn't have an action with device
 			}
 		}
+		for (Rule r : mostLikelyRuleCandidates) {
+			System.out.println(r.getRuleName());
+		}
 
 		LOGGER.debug("Using happened Event to determine expected Rule");
 
@@ -154,41 +155,48 @@ public class ContrastiveExplanationService extends ExplanationService {
 						}
 					}
 
-					// remove all rules from candidate list that have the same action as the
+					// add all rules to reduced candidate list that dont have the same action as the
 					// happened rule
-					try {
-					Iterator<Rule> i2 = mostLikelyRuleCandidates.iterator();
-					while (i2.hasNext()) {
-						Rule r = i2.next();
+					ArrayList<Rule> reducedCandidates = new ArrayList<Rule>();
+					for (Rule r : mostLikelyRuleCandidates) {
 						boolean ruleHasSameAction = false;
 						for (LogEntry action : r.getActions()) {
 							if (action.equals(happenedAction)) {
 								ruleHasSameAction = true;
 							}
 						}
-						if (ruleHasSameAction) {
-							i2.remove(); // remove rule if also leads to the happened action
+						if (!ruleHasSameAction) {
+							reducedCandidates.add(r);
 						}
 					}
-					} catch (Exception e) {}
-					
+					for (Rule r : reducedCandidates) {
+						System.out.println(r.getRuleName());
+					}
 
 					// as of now, mostLikelyRuleCandidates contains all rules, that use the device
 					// in a different way in at least one action
 
 					// calculate Precondition similarity
-					ArrayList<Double> preconditionSimList = calculatePreconditionSimilarity(mostLikelyRuleCandidates,
+					ArrayList<Double> preconditionSimList = calculatePreconditionSimilarity(reducedCandidates,
 							(Rule) happenedEvent);
 
 					// calculate Ownership
-					ArrayList<Double> ownershipList = calculateOwnership(mostLikelyRuleCandidates, userId);
+					ArrayList<Double> ownershipList = calculateOwnership(reducedCandidates, userId);
 
 					// calculate frequency
-					ArrayList<Double> frequencyList = calculateFrequency(mostLikelyRuleCandidates, FREQUENCY_THRESHOLD);
+					ArrayList<Double> frequencyList = calculateFrequency(reducedCandidates, FREQUENCY_THRESHOLD);
 
 					// calculate occurrence
-					ArrayList<Double> occurrenceList = calculateOccurrence(mostLikelyRuleCandidates,
-							OCCURRENCE_THRESHOLD, userId);
+					ArrayList<Double> occurrenceList = calculateOccurrence(reducedCandidates, OCCURRENCE_THRESHOLD,
+							userId);
+
+					// TODO remove after testing
+					frequencyList.clear();
+					frequencyList.addAll(Arrays.asList(0.0, 4.0));
+
+					// TODO remove after testing
+					occurrenceList.clear();
+					occurrenceList.addAll(Arrays.asList(0.0, 3.0));
 
 					ArrayList<Double> weights = new ArrayList<Double>();
 					weights.add(PRECONDITION_WEIGHT);
@@ -202,8 +210,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 					isBeneficial.add(FREQUENCY_BENEFICIAL);
 					isBeneficial.add(OCCURRENCE_BENEFICIAL);
 
-					expectedRule = topsis(mostLikelyRuleCandidates, weights, isBeneficial, preconditionSimList,
-							ownershipList, frequencyList, occurrenceList);
+					expectedRule = topsis(reducedCandidates, weights, isBeneficial, preconditionSimList, ownershipList,
+							frequencyList, occurrenceList);
 
 					if (expectedRule == null) {
 						// TODO TOPSIS Fehler abfangen
@@ -227,10 +235,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 				ArrayList<Double> occurrenceList = calculateOccurrence(mostLikelyRuleCandidates, OCCURRENCE_THRESHOLD,
 						userId);
 
-				// TODO remove after testing
-				occurrenceList.clear();
-				occurrenceList.addAll(Arrays.asList(2.0, 0.0, 3.0, 0.0, 1.0));
-
 				ArrayList<Double> weights = new ArrayList<Double>();
 				weights.add(OWNERSHIP_WEIGHT);
 				weights.add(FREQUENCY_WEIGHT);
@@ -252,7 +256,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			expectedRule = mostLikelyRuleCandidates.get(0);
 		}
 
-		String pattern = transformationFunction(expectedRule, happenedEvent);
+		String pattern = patternCreation(expectedRule, happenedEvent, userId, device);
 
 		explanation = callNLP(pattern);
 
@@ -597,16 +601,70 @@ public class ContrastiveExplanationService extends ExplanationService {
 		return alternatives.get(index);
 	}
 
-	private String transformationFunction(Rule expectedRule, Object happenedEvent) {
+	private String patternCreation(Rule expectedRule, Object happenedEvent, String explaineeid, String device) {
 		// TODO construct pattern for explanation
+
+		String pattern = "";
+		if (happenedEvent != null) {
+			if (happenedEvent instanceof Rule) {
+				// CC1
+				// result: <Device name> is <action HR> and <negate(action ER)> because
+				// <preconditions HR>
+				String deviceName = dataSer.findEntityByEntityID(device).getDeviceName();
+				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, device);
+				LogEntry expectedAction = getDeviceAction(expectedRule, device);
+				ArrayList<String> preconditions = new ArrayList<String>();
+				for (LogEntry condition : ((Rule) happenedEvent).getConditions()) {
+					preconditions.add(condition.getName() + " is " + condition.getState());
+				}
+				for (LogEntry trigger : ((Rule) happenedEvent).getTrigger()) {
+					preconditions.add(trigger.getName() + " is " + trigger.getState());
+				}
+				String preconditionString = "";
+				for (String precondition : preconditions) {
+					preconditionString += ", " + precondition;
+				}
+				/*
+				 * System.out.println(String.format("The %s is %s and negate(%s) because %s",
+				 * deviceName, happenedAction.getState(), expectedAction.getState(),
+				 * preconditionString));
+				 */
+				pattern = String.format(
+						"The [device] is [AHR] and negate([AER]) because [PHR]\n" + "[device] = %s\n" + "[AHR] = %s\n"
+								+ "[AER] = %s\n" + "[PHR] = %s\n",
+						deviceName, happenedAction.getState(), expectedAction.getState(), preconditionString);
+				System.out.println("pattern created:\n" + pattern);
+			} else if (happenedEvent instanceof Error) {
+				// CC2
+				// result: <Device name> is not
+			}
+		} else {
+			// CC3
+			// result: <Device name> is off and not <action ER> because <rule name> wasn't
+			// fired.
+		}
+
+		return pattern;
+	}
+
+	private String callNLP(String pattern) {
+		// TODO prompt engineering
+
+		// TODO call NLP API
 
 		return null;
 	}
 
-	private String callNLP(String pattern) {
-		// TODO call NLP API
-
-		return null;
+	// returns the LogEntry which is the action of the given rule which uses the
+	// given device
+	private LogEntry getDeviceAction(Rule rule, String device) {
+		LogEntry deviceAction = null;
+		for (LogEntry action : rule.getActions()) {
+			if (action.getEntityId().equals(device)) {
+				deviceAction = action;
+			}
+		}
+		return deviceAction;
 	}
 
 	/**
