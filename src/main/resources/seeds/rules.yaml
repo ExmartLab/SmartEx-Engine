@@ -148,6 +148,6 @@
   - name: "Turn Meeting Room Status Light orange"
     entity_id: "light.meeting_room_status_light"
     state: "orange"
-  ownerId: "3"
+  ownerId: "1"
   ruleDescription: "Rule_7: turns the meeting room status light orange if danger occurs"
 
