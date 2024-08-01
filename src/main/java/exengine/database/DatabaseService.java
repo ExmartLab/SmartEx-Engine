@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import exengine.ExplainableEngineApplication;
 import exengine.datamodel.Entity;
 import exengine.datamodel.Error;
+import exengine.datamodel.FrequencyEntry;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.OccurrenceEntry;
 import exengine.datamodel.Rule;
@@ -40,6 +41,9 @@ public class DatabaseService {
 
 	@Autowired
 	EntityRepository entityRepo;
+	
+	@Autowired
+	FrequencyRepository frequencyRepo;
 
 	/**
 	 * Resets the database by deleting all rules, errors, users, and entities. If
@@ -262,6 +266,16 @@ public class DatabaseService {
 		}
 
 		return actions;
+	}
+	
+	// FREQUENCY OPERATIONS
+	
+	public List<FrequencyEntry> getAllFrequencyEntries() {
+		return frequencyRepo.findAll();
+	}
+	
+	public void saveFrequencyEntry(FrequencyEntry frequencyEntry) {
+		frequencyRepo.save(frequencyEntry);
 	}
 
 }

@@ -209,8 +209,8 @@ public class FindCauseService {
 	 * @param logEntries list of LogEntries to be filtered
 	 * @param startTime  lower bound in time
 	 * @param endTime    upper bound in time
-	 * @return a list of log entries whose LogEntry are no younger than startTime
-	 *         and no older than endTime
+	 * @return a list of log entries whose LogEntry are no older than startTime
+	 *         and no younger than endTime
 	 */
 	public ArrayList<LogEntry> filterLogEntriesByTime(ArrayList<LogEntry> logEntries, LocalDateTime startTime,
 			LocalDateTime endTime) {

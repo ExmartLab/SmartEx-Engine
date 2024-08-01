@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Entry point for the application.
  * 
  * Also defines the global {@link #demo demo} variable, as well as constants
- * defining all file-names that are within the application.
+ * defining all file-names that are accessed within the application.
  */
 @SpringBootApplication
 public class ExplainableEngineApplication implements CommandLineRunner {

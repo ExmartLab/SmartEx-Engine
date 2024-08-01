@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import exengine.database.DatabaseService;
 import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
-import exengine.engineservice.CreateExService;
+import exengine.engineservice.CausalExplanationService;
 import exenginetest.algorithmicexplanationgenerator.TestingObjects;
 import exengine.datamodel.Error;
 
@@ -27,7 +27,7 @@ import exengine.datamodel.Error;
 class CreateExServiceTest {
 
 	@InjectMocks
-	private CreateExService underTest;
+	private CausalExplanationService underTest;
 
 	@Mock
 	private DatabaseService dataSer;

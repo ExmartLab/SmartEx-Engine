@@ -4,44 +4,30 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.algorithmicexplanationgenerator.FindCauseService;
 import exengine.contextexplanationgenerator.ExplanationContextMappingService;
 import exengine.contextmanager.ContextService;
 import exengine.database.DatabaseService;
-import exengine.datamodel.Context;
-import exengine.datamodel.Error;
-import exengine.datamodel.User;
-import exengine.explanationpresentation.TransformationFunctionService;
-import exengine.explanationpresentation.View;
 import exengine.datamodel.LogEntry;
-import exengine.datamodel.Rule;
+import exengine.explanationpresentation.TransformationFunctionService;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
-/**
- * Service hub responsible for building and delivering explanations.
- */
-@Service
-public class CreateExService {
+public abstract class ExplanationService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CausalExplanationService.class);
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CreateExService.class);
 
 	@Autowired
 	DatabaseService dataSer;
 
 	@Autowired
 	HomeAssistantConnectionService haSer;
-
-	@Autowired
-	FindCauseService findCauseSer;
 
 	@Autowired
 	ContextService conSer;
@@ -53,11 +39,7 @@ public class CreateExService {
 	TransformationFunctionService transformFuncSer;
 
 	/**
-	 * Builds context-specific explanations for home assistant.
-	 * 
-	 * This function determines the causal path behind an explanandum and presents
-	 * an appropriate, context-dependent explanation. Refer to the paper for
-	 * details.
+	 * Shall build context-specific explanations for home assistant.
 	 * 
 	 * @param min    Representing the number of minutes taken into account for
 	 *               analyzing past events, starting from the call of the method
@@ -68,58 +50,7 @@ public class CreateExService {
 	 * @return Either the built explanation, or an error description in case the
 	 *         explanation could not be built.
 	 */
-	public String getExplanation(int min, String userId, String device) {
-
-		LOGGER.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
-
-		ArrayList<LogEntry> logEntries = getLogEntries(min);
-
-		User user = dataSer.findUserByUserId(userId);
-
-		if (user == null) {
-			return "unvalid userId: this user does not exist";
-		}
-
-		// STEP 0: identify explanandum's LogEntry
-		LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
-
-		if (explanandum == null) {
-			return "Could not find explanandum in the logs";
-		}
-
-		// STEP 1: find causal path
-		List<Rule> dbRules = dataSer.findAllRules();
-		List<Error> dbErrors = dataSer.findAllErrors();
-		Object cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
-
-		if (cause == null) {
-			return "Could not find cause to explain";
-		}
-
-		// STEP 2: get final context from context service
-		Context context = conSer.getAllContext(cause, user);
-
-		if (context == null) {
-			return "Could not collect context";
-		}
-
-		// STEP 3: ask rule engine what explanation type to generate
-		View view = contextMappingSer.getExplanationView(context, cause);
-
-		if (view == null) {
-			return "Could not determine explanation view";
-		}
-
-		// STEP 4: generate the desired explanation
-		String explanation = transformFuncSer.transformExplanation(view, cause, context);
-
-		if (explanation == null) {
-			return "Could not transform explanation into natural language";
-		}
-
-		LOGGER.info("Explanation generated");
-		return explanation;
-	}
+	public abstract String getExplanation(int min, String userId, String device);
 
 	/**
 	 * Transform the explanandum's device name to the exact LogEntry describing the
@@ -164,7 +95,7 @@ public class CreateExService {
 
 		return null;
 	}
-
+	
 	/**
 	 * Fetches (or when in demo, retrieves) a list of most recent log entries from
 	 * Home Assistant.
@@ -174,9 +105,9 @@ public class CreateExService {
 	 * @return a list of log entries that are no older than min, starting from when
 	 *         this function is called.
 	 * 
-	 * @Note If the ExplainableEngineApplication is running in mode mode, the
+	 * @Note If the ExplainableEngineApplication is running in demo mode, the
 	 *       returned list of log entries will be loaded statically from a json file
-	 *       stored in the resources foulder of this project.
+	 *       stored in the resources folder of this project.
 	 */
 	public ArrayList<LogEntry> getLogEntries(int min) {
 		ArrayList<LogEntry> logEntries = null;

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import exengine.ExplainableEngineApplication;
-import exengine.engineservice.CreateExService;
+import exengine.engineservice.CausalExplanationService;
 import exengine.loader.DatabaseSeeder;
 
 @DisplayName("Integration Test for Building an Explanation")
@@ -23,7 +23,7 @@ class CreateExServiceIntegrationTest {
 	private DatabaseSeeder seeder;
 
 	@Autowired
-	private CreateExService underTest;
+	private CausalExplanationService underTest;
 
 	@BeforeAll
 	void init() {
