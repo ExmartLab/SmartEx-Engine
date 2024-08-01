@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import exengine.engineservice.CreateExService;
+import exengine.engineservice.CausalExplanationService;
 
 /**
  * REST controller for providing explanation demanding api endpoints.
@@ -20,7 +20,7 @@ public class ExplanationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationController.class);
 
 	@Autowired
-	CreateExService createExSer;
+	CausalExplanationService createExSer;
 
 	/**
 	 * Generates and returns an explanation for the provided attributes.
