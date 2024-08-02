@@ -18,10 +18,12 @@ import exengine.explanationpresentation.TransformationFunctionService;
 import exengine.haconnection.HomeAssistantConnectionService;
 import exengine.loader.JsonHandler;
 
+/**
+ * Abstract service hub responsible for building and delivering explanations.
+ */
 public abstract class ExplanationService {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CausalExplanationService.class);
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExplanationService.class);
 
 	@Autowired
 	DatabaseService dataSer;
@@ -95,7 +97,7 @@ public abstract class ExplanationService {
 
 		return null;
 	}
-	
+
 	/**
 	 * Fetches (or when in demo, retrieves) a list of most recent log entries from
 	 * Home Assistant.
@@ -119,7 +121,6 @@ public abstract class ExplanationService {
 			} catch (IOException | URISyntaxException e) {
 				LOGGER.error("Unable to parse demo logs: {}", e.getMessage(), e);
 			}
-
 		} else {
 			try {
 				// getting logs directly from Home Assistant

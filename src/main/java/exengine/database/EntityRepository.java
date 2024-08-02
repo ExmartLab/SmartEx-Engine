@@ -50,4 +50,7 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
 	@Query(value = "{'deviceName' : '?0'}")
 	ArrayList<Entity> findEntitiesByDeviceName(String deviceName);
 
+	@Query(value = "{'entityId' : '?0'}")
+	Entity findEntityByEntityId(String entityID);
+
 }

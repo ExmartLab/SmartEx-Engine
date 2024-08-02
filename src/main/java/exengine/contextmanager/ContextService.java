@@ -93,7 +93,7 @@ public class ContextService {
 	}
 
 	/**
-	 * Finds an occurrence by user ID, rule ID. This method counts the observations 
+	 * Finds an occurrence by user ID, rule ID. This method counts the observations
 	 *
 	 * @param userId the user ID
 	 * @param ruleId the rule ID
@@ -101,6 +101,21 @@ public class ContextService {
 	 * @return the occurrence (basically the count encoded in the Occurrence enum)
 	 */
 	public Occurrence findOccurrence(String userId, String ruleId, int days) {
+		
+		int count = calculateOccurrenceCount(userId, ruleId, days);
+		
+		switch (count) {
+		case 0:
+			return Occurrence.FIRST;
+		case 1:
+			return Occurrence.SECOND;
+		default:
+			return Occurrence.MORE;
+		}
+	}
+
+	public int calculateOccurrenceCount(String userId, String ruleId, int days) {
+
 		ArrayList<OccurrenceEntry> entries = dataSer.findOccurrenceEntriesByUserIdAndRuleId(userId, ruleId);
 		int count = 0;
 		LocalDateTime reference = LocalDateTime.now().minusDays(days);
@@ -113,19 +128,10 @@ public class ContextService {
 			if (entryDateTime.isAfter(reference)) {
 				count++;
 			}
-			if (count > 2) { // stop early because count > 2 are treated uniformly
-				break;
-			}
+			// break to stop early (for performance) because count > 2 are treated uniformly removed because of other use
 		}
 
-		switch (count) {
-		case 0:
-			return Occurrence.FIRST;
-		case 1:
-			return Occurrence.SECOND;
-		default:
-			return Occurrence.MORE;
-		}
+		return count;
 	}
 
 }

@@ -8,15 +8,17 @@
   - name: "state change"
     entity_id: "scene.state_change"
     state: "null"
-  conditions: 
-  - "daily energy consumption is higher than the threshold"
+  conditions:
+  - name: "daily energy consumption is higher than the threshold"
+    entity_id: "smartplug coffee machine"
+    state: "null"
   actions:
   - name: "Smart Plug Social Room Coffee"
     entity_id: "switch.smart_plug_social_room_coffee"
     state: "off"
   ownerId: "1"
   ruleDescription: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"
-  
+
 - name: "rule 2 (tv mute)"
   ruleId: "2"
   ruleEntry:
@@ -28,10 +30,124 @@
     entity_id: "media_player.lab_tv"
     state: "playing"
   conditions:
-  - "a meeting in room 1 is going on"
+  - name: "a meeting in room 1 is going on"
+    entity_id: "calendar?"
+    state: "???"
   actions:
   - name: "tv_mute"
     entity_id: "scene.tv_playing"
     state: "null"
   ownerId: "2"
   ruleDescription: "Rule_2: mutes the TV if TV is playing while a meeting is going on"
+
+- name: "Meeting room not occupied"
+  ruleId: "3"
+  ruleEntry:
+    name: "Rule: Meeting Room Not Occupied"
+    entity_id: "automation.rule_meeting_room_not_occupied"
+    state: "null"
+  triggers:
+  - name: "Contact Sensor Meeting Room Opening"
+    entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+    state: "on"
+  conditions:
+  - name: "No Motion in meeting room"
+    entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
+    state: "clear"
+  actions:
+  - name: "Turn Meeting Room Status Light green"
+    entity_id: "light.meeting_room_status_light"
+    state: "green"
+  ownerId: "2"
+  ruleDescription: "Rule_3: turns the meeting room status light green if the room is not occupied"
+
+- name: "Meeting room occupied"
+  ruleId: "4"
+  ruleEntry:
+    name: "Rule: Meeting Room Occupied"
+    entity_id: "automation.rule_meeting_room_occupied"
+    state: "null"
+  triggers:
+  - name: "Contact Sensor Meeting Room Opening"
+    entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+    state: "off"
+  conditions:
+  - name: "Occupancy of meeting room"
+    entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
+    state: "Detected"
+  actions:
+  - name: "Turn Meeting Room Status Light orange"
+    entity_id: "light.meeting_room_status_light"
+    state: "orange"
+  ownerId: "2"
+  ruleDescription: "Rule_4: turns the meeting room status light orange if the room is occupied"
+
+- name: "Rain at lunch"
+  ruleId: "5"
+  ruleEntry:
+    name: "Rule: Rain At Lunch Warning"
+    entity_id: "automation.rule_rain_at_lunch_warning"
+    state: "null"
+  triggers:
+  - name: "Forecast Xmart-Lab"
+    entity_id: "weather.xmart_lab"
+    state: "rainy"
+  conditions:
+  - name: "Time between 11 am and 1 pm"
+    entity_id: "sensor.worldclock_sensor"
+    state: "11:00-13:00"
+  actions:
+  - name: "Turn Meeting Room Status Light blue"
+    entity_id: "light.meeting_room_status_light"
+    state: "blue"
+  ownerId: "2"
+  ruleDescription: "Rule_5: turns all lights blue if rain at lunch is expected"
+
+- name: "Sunny at lunch"
+  ruleId: "6"
+  ruleEntry:
+    name: "Rule: Sunny At Lunch"
+    entity_id: "automation.rule_rain_at_lunch_warning"
+    state: "null"
+  triggers:
+  - name: "Forecast Xmart-Lab"
+    entity_id: "weather.xmart_lab"
+    state: "sunny"
+  conditions:
+  - name: "Time between 11 am and 1 pm"
+    entity_id: "sensor.worldclock_sensor"
+    state: "11:00-13:00"
+  actions:
+  - name: "Turn Meeting Room Status Light orange"
+    entity_id: "light.meeting_room_status_light"
+    state: "orange"
+  ownerId: "2"
+  ruleDescription: "Rule_5: turns all lights orange if rain at lunch is expected"
+
+- name: "Danger"
+  ruleId: "7"
+  ruleEntry:
+    name: "Rule: Danger"
+    entity_id: "automation.danger"
+    state: "null"
+  triggers:
+  - name: "Smoke detected"
+    entity_id: "binary_sensor.smoke_detector"
+    state: "on"
+  - name: "CO2 detected"
+    entity_id: "binary_sensor.co2_detector"
+    state: "on"
+  - name: "Fire alarm"
+    entity_id: "binary_sensor.fire_alarm"
+    state: "on"
+  conditions:
+  - name: "Time between 8 am and 6 pm"
+    entity_id: "sensor.worldclock_sensor"
+    state: "08:00-18:00"
+  actions:
+  - name: "Turn Meeting Room Status Light orange"
+    entity_id: "light.meeting_room_status_light"
+    state: "orange"
+  ownerId: "2"
+  ruleDescription: "Rule_7: turns the meeting room status light orange if danger occurs"
+

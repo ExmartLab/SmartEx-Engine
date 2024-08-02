@@ -38,15 +38,18 @@ public class TestingObjects {
 		dbRules = new ArrayList<Rule>();
 
 		ArrayList<LogEntry> triggers;
-		ArrayList<String> conditions;
+		ArrayList<LogEntry> conditions;
 		ArrayList<LogEntry> actions;
 
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(3));
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(5));
-		conditions = new ArrayList<String>();
-		conditions.add("daily energy consumption is higher than the threshold");
+		conditions = new ArrayList<LogEntry>(); // String time, String name, String state, String entityId,
+												// ArrayList<String> other
+
+		//
+		conditions.add(new LogEntry(null, "daily energy consumption is higher than the threshold", null, null, null));
 		dbRules.add(new Rule("rule 1 (coffee)", "1", triggers, conditions, actions, "1",
 				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"));
 
@@ -54,8 +57,8 @@ public class TestingObjects {
 		triggers.add(demoEntries.get(7));
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(9));
-		conditions = new ArrayList<String>();
-		conditions.add("a meeting in room 1 is going on");
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(new LogEntry(null, "a meeting in room 1 is going on", null, null, null));
 
 		dbRules.add(new Rule("rule 2 (tv mute)", "2", triggers, conditions, actions, "2",
 				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
@@ -65,8 +68,8 @@ public class TestingObjects {
 		triggers.add(demoEntries.get(3));
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(9));
-		conditions = new ArrayList<String>();
-		conditions.add("a made up condition");
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 3 (constructed rule)", "3", triggers, conditions, actions, "2",
 				"Rule_3: a constructed rule for testing purposes"));
@@ -86,8 +89,8 @@ public class TestingObjects {
 		LogEntry neverSatisfiedAction = new LogEntry(null, "Never used strobo light", "on", "light_strobo", null);
 		actions.add(neverSatisfiedAction);
 
-		conditions = new ArrayList<String>();
-		conditions.add("a made up condition");
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 4 (constructed rule)", "4", triggers, conditions, actions, "4",
 				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed"));
@@ -97,8 +100,8 @@ public class TestingObjects {
 		triggers.add(neverSatisfiedTrigger);
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(9));
-		conditions = new ArrayList<String>();
-		conditions.add("a made up condition");
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 5 (constructed rule)", "5", triggers, conditions, actions, "5",
 				"Rule_5: a constructed rule for testing purposes, never to be triggered"));

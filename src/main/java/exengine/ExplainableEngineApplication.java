@@ -26,6 +26,8 @@ public class ExplainableEngineApplication implements CommandLineRunner {
 	public static final String FILE_NAME_RULES = "seeds/rules.yaml";
 	public static final String FILE_NAME_ERRORS = "seeds/errors.yaml";
 	public static final String FILE_NAME_DEMO_LOGS = "demoLogs.json";
+	public static final String FILE_NAME_DEMO_LOGS_1 = "demoLogsContrastive1.json";
+	public static final String FILE_NAME_DEMO_LOGS_2 = "demoLogsContrastive2.json";
 
 	/**
 	 * Configuration property of the application.

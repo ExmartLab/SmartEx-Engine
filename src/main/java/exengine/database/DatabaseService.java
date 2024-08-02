@@ -41,7 +41,7 @@ public class DatabaseService {
 
 	@Autowired
 	EntityRepository entityRepo;
-	
+
 	@Autowired
 	FrequencyRepository frequencyRepo;
 
@@ -159,7 +159,7 @@ public class DatabaseService {
 		}
 		return user;
 	}
-	
+
 	/**
 	 * Finds the owner of a rule by its name.
 	 *
@@ -203,9 +203,22 @@ public class DatabaseService {
 		}
 		return entityIds;
 	}
+	
+
+
+	/**
+	 * Finds entity in the database by their entity ID.
+	 *
+	 * @param entity ID
+	 * @return entity
+	 */
+	public Entity findEntityByEntityID(String entityId) {
+		Entity entity = entityRepo.findEntityByEntityId(entityId);
+		return entity;
+	}
 
 	// OCCURENCE OPERATIONS
-	
+
 	/**
 	 * Deletes all occurrences from the database.
 	 */
@@ -267,15 +280,36 @@ public class DatabaseService {
 
 		return actions;
 	}
-	
+
 	// FREQUENCY OPERATIONS
-	
+
+	/**
+	 * Returns all FrequencyEntry stored in the database.
+	 *
+	 * @return the list FrequencyEntry
+	 */
 	public List<FrequencyEntry> getAllFrequencyEntries() {
 		return frequencyRepo.findAll();
 	}
-	
+
+	/**
+	 * Saves a new frequency entry to the database.
+	 *
+	 * @param frequencyEntry the FrequencyEntry entry to be saved
+	 */
 	public void saveFrequencyEntry(FrequencyEntry frequencyEntry) {
 		frequencyRepo.save(frequencyEntry);
 	}
+
+	/**
+	 * Finds frequency entries in the database by rule ID
+	 *
+	 * @param ruleId the rule ID
+	 * @return the list of occurrence entries with matching user ID and rule ID
+	 */
+	public List<FrequencyEntry> findAllFrequencyEntriesByRuleId(String ruleId) {
+		return frequencyRepo.findFrequencyEntriesById(ruleId);
+	}
+
 
 }

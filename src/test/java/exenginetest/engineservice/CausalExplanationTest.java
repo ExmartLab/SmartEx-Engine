@@ -14,10 +14,10 @@ import exengine.ExplainableEngineApplication;
 import exengine.engineservice.CausalExplanationService;
 import exengine.loader.DatabaseSeeder;
 
-@DisplayName("Integration Test for Building an Explanation")
+@DisplayName("Integration Test for Building a Causal Explanation")
 @TestInstance(Lifecycle.PER_CLASS)
 @SpringBootTest(classes = ExplainableEngineApplication.class)
-class CreateExServiceIntegrationTest {
+class CausalExplanationTest {
 
 	@Autowired
 	private DatabaseSeeder seeder;
@@ -43,7 +43,7 @@ class CreateExServiceIntegrationTest {
 	 * Order of test cases (rows) in CSV is relevant
 	 */
 	@ParameterizedTest
-	@CsvFileSource(resources = "explanation_test_cases.csv", numLinesToSkip = 1, delimiter = ';')
+	@CsvFileSource(resources = "causal_explanation_test_cases.csv", numLinesToSkip = 1, delimiter = ';')
 	void integrationTestGetExplanation(String userId, String device, String expectedExplanation) {
 		// When
 		String explanation = underTest.getExplanation(30, userId, device);
