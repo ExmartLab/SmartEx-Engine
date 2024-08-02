@@ -103,33 +103,29 @@ public class ContrastiveExplanationService extends ExplanationService {
 		 * get rules that have actions with entityId (get all rules and remove those
 		 * that don't use entityId)
 		 */
-		ArrayList<Rule> mostLikelyRuleCandidates = new ArrayList<Rule>(dataSer.findAllRules()); // find all rules
+		ArrayList<Rule> candidateRules = new ArrayList<Rule>(dataSer.findAllRules()); // find all Rules
 
-		Iterator<Rule> i = mostLikelyRuleCandidates.iterator();
+		Iterator<Rule> i = candidateRules.iterator();
 		while (i.hasNext()) {
-			Rule r = i.next();
+			Rule rule = i.next();
 			boolean usesDeviceInAction = false;
-			for (LogEntry action : r.getActions()) {
+			for (LogEntry action : rule.getActions()) {
 				if (action.getEntityId().equals(entityId)) {
 					usesDeviceInAction = true;
 				}
 			}
 			if (!usesDeviceInAction) {
-				i.remove(); // remove if rule doesn't have an action with device
+				i.remove(); // remove if rule doesn't have an action with entityId
 			}
 		}
 
 		LOGGER.debug("Using happened Event to determine expected Rule");
 
-		// declare expectedRule variable
 		Rule expectedRule = null;
 
-		if (mostLikelyRuleCandidates.size() > 1) {
-			LOGGER.debug("mostLikelyRuleCandidates.size > 1");
+		if (candidateRules.size() > 1) {
 			if (happenedEvent != null) { // explanandum & cause were found
-				if (happenedEvent instanceof Rule) { // a rule has happened
-
-					// CASE RULE HAPPENED (CC1)
+				if (happenedEvent instanceof Rule) { // CASE RULE HAPPENED (CC1)
 
 					LogEntry happenedAction = ((Rule) happenedEvent).getActions().get(0);
 					for (LogEntry action : ((Rule) happenedEvent).getActions()) {
@@ -138,26 +134,30 @@ public class ContrastiveExplanationService extends ExplanationService {
 						}
 					}
 
-					// add all rules to reduced candidate list that dont have the same action as the
-					// happened rule
+					/*
+					 * add all rules to reduced candidate list that dont have the same action as the
+					 * happened rule
+					 */
 					ArrayList<Rule> reducedCandidates = new ArrayList<Rule>();
-					for (Rule r : mostLikelyRuleCandidates) {
+					for (Rule rule : candidateRules) {
 						boolean ruleHasSameAction = false;
-						for (LogEntry action : r.getActions()) {
+						for (LogEntry action : rule.getActions()) {
 							if (action.equals(happenedAction)) {
 								ruleHasSameAction = true;
 							}
 						}
 						if (!ruleHasSameAction) {
-							reducedCandidates.add(r);
+							reducedCandidates.add(rule);
 						}
 					}
-					for (Rule r : reducedCandidates) {
-						System.out.println(r.getRuleName());
+					for (Rule rule : reducedCandidates) {
+						System.out.println(rule.getRuleName());
 					}
 
-					// as of now, mostLikelyRuleCandidates contains all rules, that use the entityId
-					// in a different way in at least one action
+					/*
+					 * as of now, candidateRules contains all rules, that use the entityId
+					 * in a different way in at least one action
+					 */
 
 					// calculate Precondition similarity
 					ArrayList<Double> preconditionSimList = calculatePreconditionSimilarity(reducedCandidates,
@@ -193,9 +193,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 						return null;
 					}
 
-				} else { // an error has happened
-
-					// CASE ERROR HAPPENED (CC2)
+				} else { // CASE ERROR HAPPENED (CC2)
 
 					// remove old explanandum
 					logEntries.remove(explanandum);
@@ -221,18 +219,16 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 				}
 
-			} else {
-
-				// CASE NO EVENT HAPPENED (CC3)
+			} else { // CASE NO EVENT HAPPENED (CC3)
 
 				// calculate Ownership
-				ArrayList<Double> ownershipList = calculateOwnership(mostLikelyRuleCandidates, userId);
+				ArrayList<Double> ownershipList = calculateOwnership(candidateRules, userId);
 
 				// calculate frequency
-				ArrayList<Double> frequencyList = calculateFrequency(mostLikelyRuleCandidates, FREQUENCY_THRESHOLD);
+				ArrayList<Double> frequencyList = calculateFrequency(candidateRules, FREQUENCY_THRESHOLD);
 
 				// calculate occurrence
-				ArrayList<Double> occurrenceList = calculateOccurrence(mostLikelyRuleCandidates, OCCURRENCE_THRESHOLD,
+				ArrayList<Double> occurrenceList = calculateOccurrence(candidateRules, OCCURRENCE_THRESHOLD,
 						userId);
 
 				ArrayList<Double> weights = new ArrayList<Double>();
@@ -245,7 +241,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 				isBeneficial.add(FREQUENCY_BENEFICIAL);
 				isBeneficial.add(OCCURRENCE_BENEFICIAL);
 
-				expectedRule = topsis(mostLikelyRuleCandidates, weights, isBeneficial, ownershipList, frequencyList,
+				expectedRule = topsis(candidateRules, weights, isBeneficial, ownershipList, frequencyList,
 						occurrenceList);
 
 				if (expectedRule == null) {
@@ -253,10 +249,12 @@ public class ContrastiveExplanationService extends ExplanationService {
 					return null;
 				}
 			}
-		} else {
+		} else if (candidateRules.size() == 1) {
 			// if only one Rule refers to the entityId in question, it is the expected Rule
-			LOGGER.debug("mostLikelyRuleCandidates.size <= 1");
-			expectedRule = mostLikelyRuleCandidates.get(0);
+			expectedRule = candidateRules.get(0);
+		} else {
+			LOGGER.debug("Could not generate contrastive explanation");
+			return explanation;
 		}
 
 		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId, device);
@@ -573,8 +571,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 		String pattern = "";
 		if (happenedEvent != null) {
-			if (happenedEvent instanceof Rule) {
-				// CC1
+			if (happenedEvent instanceof Rule) { // CC1
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
 				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, entityId);
@@ -596,8 +593,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 								+ "[AER] = %s " + "[PHR] = %s",
 						deviceName, happenedAction.getState(), expectedAction.getState(), preconditionString);
 
-			} else if (happenedEvent instanceof Error) {
-				// CC2
+			} else if (happenedEvent instanceof Error) { // CC2
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
@@ -609,8 +605,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 								+ "[AER] = %s",
 						((Error) happenedEvent).getErrorName(), deviceName, expectedAction.getState());
 			}
-		} else {
-			// CC3
+		} else { // CC3
 
 			LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 			ArrayList<String> preconditionsExpected = new ArrayList<String>();
@@ -647,8 +642,14 @@ public class ContrastiveExplanationService extends ExplanationService {
 		return pattern;
 	}
 
-	// returns the LogEntry which is the action of the given rule which uses the
-	// given device
+	/**
+	 * returns the LogEntry which is the action of the given rule which uses the
+	 * given entityId
+	 * 
+	 * @param rule
+	 * @param entityId
+	 * @return
+	 */
 	private LogEntry getDeviceAction(Rule rule, String entityId) {
 		LogEntry deviceAction = null;
 		for (LogEntry action : rule.getActions()) {
