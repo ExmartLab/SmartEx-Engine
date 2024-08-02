@@ -121,10 +121,7 @@ public abstract class ExplanationService {
 			} catch (IOException | URISyntaxException e) {
 				LOGGER.error("Unable to parse demo logs: {}", e.getMessage(), e);
 			}
-
-		} else
-
-		{
+		} else {
 			try {
 				// getting logs directly from Home Assistant
 				logEntries = haSer.parseLastLogs(min);

@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Distance;
 import org.springframework.stereotype.Service;
 
 import exengine.algorithmicexplanationgenerator.FindCauseService;
@@ -71,19 +69,21 @@ public class ContrastiveExplanationService extends ExplanationService {
 		LOGGER.debug("getExplanation (contrastive) called with arguments min: {}, user id: {}, device: {}", min, userId,
 				device);
 
+		// default return value
+		String explanation = "found nothing to explain";
 
-		String explanation = "found nothing to explain"; // default return value
-
-		LOGGER.debug("find happenedEvent");
 		ArrayList<LogEntry> logEntries = getLogEntries(min);
 
 		// identify explanandum's LogEntry
 		LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
 
+		String entityId = "none";
 		Object happenedEvent = null;
 
 		if (explanandum != null) { // an event happened
 			LOGGER.info("Found explanandum: {}", explanandum);
+			entityId = explanandum.getEntityId();
+
 			List<Rule> dbRules = dataSer.findAllRules();
 			List<Error> dbErrors = dataSer.findAllErrors();
 			happenedEvent = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
@@ -99,15 +99,18 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 		LOGGER.debug("Finding Candidates for Most Likely Rule");
 
-		// get rules that have actions with device (get all rules and remove those that
-		// don't use device)
+		/*
+		 * get rules that have actions with entityId (get all rules and remove those
+		 * that don't use entityId)
+		 */
 		ArrayList<Rule> mostLikelyRuleCandidates = new ArrayList<Rule>(dataSer.findAllRules()); // find all rules
+
 		Iterator<Rule> i = mostLikelyRuleCandidates.iterator();
 		while (i.hasNext()) {
 			Rule r = i.next();
 			boolean usesDeviceInAction = false;
 			for (LogEntry action : r.getActions()) {
-				if (action.getEntityId().equals(device)) {
+				if (action.getEntityId().equals(entityId)) {
 					usesDeviceInAction = true;
 				}
 			}
@@ -125,14 +128,15 @@ public class ContrastiveExplanationService extends ExplanationService {
 		Rule expectedRule = null;
 
 		if (mostLikelyRuleCandidates.size() > 1) {
+			LOGGER.debug("mostLikelyRuleCandidates.size > 1");
 			if (happenedEvent != null) { // explanandum & cause were found
 				if (happenedEvent instanceof Rule) { // a rule has happened
-					
+
 					// CASE RULE HAPPENED (CC1)
 
 					LogEntry happenedAction = ((Rule) happenedEvent).getActions().get(0);
 					for (LogEntry action : ((Rule) happenedEvent).getActions()) {
-						if (action.getEntityId().equals(device)) {
+						if (action.getEntityId().equals(entityId)) {
 							happenedAction = action;
 						}
 					}
@@ -155,7 +159,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 						System.out.println(r.getRuleName());
 					}
 
-					// as of now, mostLikelyRuleCandidates contains all rules, that use the device
+					// as of now, mostLikelyRuleCandidates contains all rules, that use the entityId
 					// in a different way in at least one action
 
 					// calculate Precondition similarity
@@ -193,7 +197,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 					}
 
 				} else { // an error has happened
-					
+
 					// CASE ERROR HAPPENED (CC2)
 
 					// remove old explanandum
@@ -221,9 +225,9 @@ public class ContrastiveExplanationService extends ExplanationService {
 				}
 
 			} else {
-				
+
 				// CASE NO EVENT HAPPENED (CC3)
-				
+
 				// calculate Ownership
 				ArrayList<Double> ownershipList = calculateOwnership(mostLikelyRuleCandidates, userId);
 
@@ -243,21 +247,22 @@ public class ContrastiveExplanationService extends ExplanationService {
 				isBeneficial.add(OWNERSHIP_BENEFICIAL);
 				isBeneficial.add(FREQUENCY_BENEFICIAL);
 				isBeneficial.add(OCCURRENCE_BENEFICIAL);
-				
+
 				expectedRule = topsis(mostLikelyRuleCandidates, weights, isBeneficial, ownershipList, frequencyList,
 						occurrenceList);
-				
+
 				if (expectedRule == null) {
 					LOGGER.error("Error in TOPSIS Calculation");
 					return null;
 				}
 			}
 		} else {
-			// if only one Rule refers to the device in question, it is the expected Rule
+			// if only one Rule refers to the entityId in question, it is the expected Rule
+			LOGGER.debug("mostLikelyRuleCandidates.size <= 1");
 			expectedRule = mostLikelyRuleCandidates.get(0);
 		}
 
-		String pattern = patternCreation(expectedRule, happenedEvent, userId, device);
+		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId);
 
 		explanation = callNLP(pattern);
 
@@ -360,7 +365,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		/*
 		 * the line references refer to Algorithm 1 in the thesis
 		 */
-		
+
 		// create List that will be filled and returned
 		ArrayList<Double> preconditionSimList = new ArrayList<Double>();
 
@@ -370,7 +375,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		happenedRulePrec.addAll(happenedRule.getTrigger());
 		happenedRulePrec.addAll(happenedRule.getConditions());
 
-		// create list of devices of preconditions of happened rule with possible
+		// create list of entityIds of preconditions of happened rule with possible
 		// duplicates
 		ArrayList<String> happenedRuleDevicesWithDuplicates = new ArrayList<String>();
 		happenedRuleDevicesWithDuplicates = (ArrayList<String>) happenedRulePrec.stream()
@@ -380,7 +385,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		// line 6
 		// loop trough candidate Rules to determine their similarity scores
 		for (Rule candidate : ruleCandidates) {
-			
+
 			// line 7
 			ArrayList<LogEntry> candidatePrec = new ArrayList<LogEntry>();
 			candidatePrec.addAll(candidate.getTrigger());
@@ -406,10 +411,10 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 			// line 9
 			int distanceBetweenCandidateAndHappenedRule = 0;
-			
+
 			// line 10
 			for (LogEntry precon : combinedPrecList) {
-				
+
 				// line 11
 				// if the usage of a precondition is different, add 1 to the distance between
 				// Candidate rule and happened rule
@@ -425,15 +430,11 @@ public class ContrastiveExplanationService extends ExplanationService {
 					distanceBetweenCandidateAndHappenedRule++;
 				}
 			}
-//			System.out.println("Precon. Simi. for " + happenedRule.getRuleName() + ": ");
-//			System.out.println("distance: " + distanceBetweenCandidateAndHappenedRule);
-//			System.out.println("preconsize: " + combinedPrecList.size() + " devicesize: " + combinedDevices.size());
 
 			// line 15
 			Double similarityScore = 1.0 - ((double) distanceBetweenCandidateAndHappenedRule
 					/ (double) ((combinedPrecList.size() + combinedDevices.size())));
-//			System.out.println("simScore: " + similarityScore);
-			
+
 			// line 16
 			// add normalized similarity score to return list
 			preconditionSimList.add(similarityScore);
@@ -460,52 +461,10 @@ public class ContrastiveExplanationService extends ExplanationService {
 	private static Rule topsis(ArrayList<Rule> alternatives, ArrayList<Double> weights, ArrayList<Boolean> isBeneficial,
 			ArrayList<Double>... matrixColumns) {
 
-		//for testing
-//		@SuppressWarnings("rawtypes")
-//		List<List<String>> rows = new ArrayList();
-//
-//		List<String> rowA;
-//		if (matrixColumns.length > 3) {
-//			rowA = Arrays.asList("Alternatives", "Precondition", "Ownership", "Frequency", "Occurrence");
-//		} else {
-//			rowA = Arrays.asList("Alternatives", "Ownership", "Frequency", "Occurrence");
-//		}
-
-//		rows.add(rowA);
-
-//		for (int i = 0; i < alternatives.size(); i++) {
-//			List<String> rowX = new ArrayList<>();
-//			rowX.add(alternatives.get(i).getRuleName());
-//			for (ArrayList<Double> column : matrixColumns) {
-//				rowX.add(column.get(i).toString());
-//			}
-//			rows.add(rowX);
-//		}
-
-//		List<String> weightRow = new ArrayList();
-//		weightRow.add("weights");
-//		for (Double d : weights) {
-//			String s = d.toString();
-//			weightRow.add(s);
-//		}
-//		for (String s : weightRow) {
-//			System.out.print(s + "\t");
-//		}
-//		rows.add(weightRow);
-//		List<String> beneficialRow = new ArrayList();
-//		beneficialRow.add("isBeneficial");
-//		for (Boolean b : isBeneficial) {
-//			weightRow.add(b.toString());
-//		}
-//		rows.add(beneficialRow);
-
-//		System.out.println(formatAsTable(rows));
-
-
 		/*
 		 * The following steps refer to the TOPSIS steps outlined in the thesis
 		 */
-		
+
 		// STEP 1
 		// check that lenghts of lists are same as dimensions of matrix
 		// (size of alternatives and matrixColumns as reference)
@@ -527,7 +486,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		for (Double weight : weights) {
 			normalizedWeights.add(weight / weightsSum);
 		}
-		
+
 		// STEP 2
 		// calculate normalized matrix from columns
 		ArrayList<Double>[] normalizedMatrix = matrixColumns.clone();
@@ -543,22 +502,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 			}
 		}
 
-//		System.out.println("normalizedMatrix:");
-//
-//		rows = new ArrayList();
-//
-//		rows.add(rowA);
-//
-//		for (int i = 0; i < alternatives.size(); i++) {
-//			List<String> rowX = new ArrayList<>();
-//			rowX.add(alternatives.get(i).getRuleName());
-//			for (ArrayList<Double> column : normalizedMatrix) {
-//				rowX.add(column.get(i).toString());
-//			}
-//			rows.add(rowX);
-//		}
-//		System.out.println(formatAsTable(rows));
-
 		// STEP 3
 		// calculate weighted normalized matrix
 		ArrayList<Double>[] weightedNormalizedMatrix = normalizedMatrix.clone();
@@ -567,22 +510,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 				weightedNormalizedMatrix[i].set(j, normalizedMatrix[i].get(j) * normalizedWeights.get(i));
 			}
 		}
-
-//		System.out.println("weighted normalizedMatrix:");
-//		rows = new ArrayList();
-//
-//		rows.add(rowA);
-//
-//		for (int i = 0; i < alternatives.size(); i++) {
-//			List<String> rowX = new ArrayList<>();
-//			rowX.add(alternatives.get(i).getRuleName());
-//			for (ArrayList<Double> column : weightedNormalizedMatrix) {
-//				rowX.add(column.get(i).toString());
-//			}
-//			rows.add(rowX);
-//		}
-//
-//		System.out.println(formatAsTable(rows));
 
 		// STEP 4
 		// calculate idealBests/idealWorsts
@@ -613,7 +540,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 				double ijValue = weightedNormalizedMatrix[j].get(i);
 				// System.out.println("i:" + i + "; j:" + j + "; ijValue:" + ijValue);
 				totalDistancesSquared += Math.pow((ijValue - idealBests[j]), 2);
-				//System.out.println("distance squared: " + totalDistancesSquared);
+				// System.out.println("distance squared: " + totalDistancesSquared);
 			}
 			s_iPlus.add(Math.sqrt(totalDistancesSquared));
 		}
@@ -635,22 +562,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 			p_i.add(s_iMinus.get(i) / (s_iPlus.get(i) + s_iMinus.get(i)));
 		}
 
-		// prints for testing
-//		System.out.println("s minus");
-//		for (Double d : s_iMinus) {
-//			System.out.println(d);
-//		}
-//
-//		System.out.println("s plus");
-//		for (Double d : s_iPlus) {
-//			System.out.println(d);
-//		}
-//
-//		System.out.println("performance scores");
-//		for (Double d : p_i) {
-//			System.out.println(d);
-//		}
-
 		// STEP 7
 		Double max = Collections.max(p_i);
 		int index = p_i.indexOf(max);
@@ -660,16 +571,16 @@ public class ContrastiveExplanationService extends ExplanationService {
 		return alternatives.get(index);
 	}
 
-	private String patternCreation(Rule expectedRule, Object happenedEvent, String explaineeid, String device) {
+	private String patternCreation(Rule expectedRule, Object happenedEvent, String explaineeid, String entityId) {
 
 		String pattern = "";
 		if (happenedEvent != null) {
 			if (happenedEvent instanceof Rule) {
 				// CC1
 
-				String deviceName = dataSer.findEntityByEntityID(device).getDeviceName();
-				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, device);
-				LogEntry expectedAction = getDeviceAction(expectedRule, device);
+				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
+				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, entityId);
+				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 				ArrayList<String> preconditions = new ArrayList<String>();
 				for (LogEntry condition : ((Rule) happenedEvent).getConditions()) {
 					preconditions.add(condition.getName() + " is " + condition.getState());
@@ -686,24 +597,25 @@ public class ContrastiveExplanationService extends ExplanationService {
 						"The [device] is [AHR] and negate([AER]) because [PHR].\n" + "[device] = %s\n" + "[AHR] = %s\n"
 								+ "[AER] = %s\n" + "[PHR] = %s\n",
 						deviceName, happenedAction.getState(), expectedAction.getState(), preconditionString);
-				
+
 			} else if (happenedEvent instanceof Error) {
 				// CC2
 
-				String deviceName = dataSer.findEntityByEntityID(device).getDeviceName();
-				LogEntry expectedAction = getDeviceAction(expectedRule, device);
-				
+				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
+				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
+
 				pattern = String.format(
 						"[error] occurred so the [device] is negate([AER]).\n"
-						+ "[error] = %s\n"
-						+ "[device] = %s\n"
-						+ "[AER] = %s", ((Error) happenedEvent).getErrorName(), deviceName, expectedAction.getState());
+								+ "[error] = %s\n"
+								+ "[device] = %s\n"
+								+ "[AER] = %s",
+						((Error) happenedEvent).getErrorName(), deviceName, expectedAction.getState());
 			}
 		} else {
 			// CC3
-			
-			String deviceName = dataSer.findEntityByEntityID(device).getDeviceName();
-			LogEntry expectedAction = getDeviceAction(expectedRule, device);
+
+			String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
+			LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 			ArrayList<String> preconditionsExpected = new ArrayList<String>();
 			for (LogEntry condition : expectedRule.getConditions()) {
 				preconditionsExpected.add(condition.getName() + " is " + condition.getState());
@@ -715,16 +627,16 @@ public class ContrastiveExplanationService extends ExplanationService {
 			for (String precondition : preconditionsExpected) {
 				preconditionString += ", " + precondition;
 			}
-			// result: <Device name> is off and not <action ER> because <rule name> wasn't fired.
+			// result: <Device name> is off and not <action ER> because <rule name> wasn't
+			// fired.
 			pattern = String.format(
 					"The [device] is off and negate([AER]) because not all [PER].\n"
 							+ "[device] = %s\n"
 							+ "[AER] = %s\n"
 							+ "[PER] = %s\n",
 					deviceName, expectedAction.getState(), preconditionString);
-			//System.out.println("pattern created:\n" + pattern);
 		}
-		
+
 		System.out.println("pattern created:\n" + pattern);
 		return pattern;
 	}
@@ -740,10 +652,10 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 	// returns the LogEntry which is the action of the given rule which uses the
 	// given device
-	private LogEntry getDeviceAction(Rule rule, String device) {
+	private LogEntry getDeviceAction(Rule rule, String entityId) {
 		LogEntry deviceAction = null;
 		for (LogEntry action : rule.getActions()) {
-			if (action.getEntityId().equals(device)) {
+			if (action.getEntityId().equals(entityId)) {
 				deviceAction = action;
 			}
 		}

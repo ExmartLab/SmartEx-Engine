@@ -20,4 +20,4 @@
   deviceName: "robo_cleaner"
   
 - entityId: "light.meeting_room_status_light"
-  deviceName: "meeting room status light"
+  deviceName: "status_light"

@@ -17,7 +17,8 @@ import exengine.datamodel.LogEntry;
 import exengine.datamodel.Rule;
 
 /**
- * Service hub responsible for building and delivering <b>causal</b> explanations.
+ * Service hub responsible for building and delivering <b>causal</b>
+ * explanations.
  */
 @Service
 public class CausalExplanationService extends ExplanationService {
@@ -30,7 +31,8 @@ public class CausalExplanationService extends ExplanationService {
 	/**
 	 * Builds context-specific <b>causal</b> explanations for home assistant.
 	 * 
-	 * This function determines the <b>causal</b> path behind an explanandum and presents
+	 * This function determines the <b>causal</b> path behind an explanandum and
+	 * presents
 	 * an appropriate, context-dependent explanation. Refer to the paper for
 	 * details.
 	 * 
@@ -45,7 +47,8 @@ public class CausalExplanationService extends ExplanationService {
 	 */
 	public String getExplanation(int min, String userId, String device) {
 
-		LOGGER.debug("getExplanation called with arguments min: {}, user id: {}, device: {}", min, userId, device);
+		LOGGER.debug("getExplanation (causal) called with arguments min: {}, user id: {}, device: {}", min, userId,
+				device);
 
 		ArrayList<LogEntry> logEntries = getLogEntries(min);
 
