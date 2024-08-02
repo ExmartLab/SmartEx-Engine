@@ -13,7 +13,7 @@ import exengine.engineservice.CausalExplanationService;
 import exengine.engineservice.ContrastiveExplanationService;
 
 /**
- * REST controller for providing explanation demanding endpoints.
+ * REST controller for providing explanation demanding api endpoints.
  */
 @RestController
 public class ExplanationController {
