@@ -88,5 +88,23 @@
         "context_source": "state of media_player.lab_tv",
         "context_entity_id": "automation.sc2_multi_user_conflict",
         "context_entity_id_name": "Rule: Block TV Audio During Meeting (sc2)"
+    },
+    {
+        "when": "2023-08-02T09:07:26.920189+00:00",
+        "name": "Contact Sensor Meeting Room Opening",
+        "state": "off",
+        "entity_id": "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+    },
+    {
+        "when": "2022-08-02T09:07:26.932243+00:00",
+        "name": "Rule: Meeting Room Occupied",
+        "state": "null",
+        "entity_id": "automation.rule_meeting_room_occupied"
+    },
+    {
+        "when": "2022-08-02T09:07:26.933444+00:00",
+        "name": "Turn Meeting Room Status Light orange",
+        "state": "orange",
+        "entity_id": "light.meeting_room_status_light"
     }
 ]

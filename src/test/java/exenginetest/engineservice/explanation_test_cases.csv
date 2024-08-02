@@ -13,6 +13,4 @@ userid, device, expected_explanation
 2; robo_cleaner; Hi Bob, DEEBOT is tangled with something on the floor or might be stuck under furniture.
 3; robo_cleaner; Hi Chuck, If DEEBOT can not free itself, manually remove the obstacles and restart.
 2; robo_cleaner; Hi Bob, DEEBOT is tangled with something on the floor or might be stuck under furniture.
-5; unknown; Hi Freyja, tv_mute is active because Bob has set up a rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on" and currently a meeting in room 1 is going on and Lab TV is playing, so the rule has been fired.
-5; unknown; Hi Freyja, the rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on"has been fired.
 7; robo_cleaner; Hi Hanna, Error "No. 04: DEEBOT gets stuck while working and stops" happened. So DEEBOT is tangled with something on the floor or might be stuck under furniture. If DEEBOT can not free itself, manually remove the obstacles and restart.

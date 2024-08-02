@@ -115,21 +115,9 @@ public abstract class ExplanationService {
 		ArrayList<LogEntry> logEntries = null;
 
 		if (ExplainableEngineApplication.isDemo()) {
-			String filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS; // default
-			switch (ExplainableEngineApplication.getDemoScenario()) {
-				case 0:
-					filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS;
-					break;
-				case 1:
-					filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_1;
-					break;
-				case 2:
-					filename = ExplainableEngineApplication.FILE_NAME_DEMO_LOGS_2;
-					break;
-			}
 			try {
 				// getting demo logs (stored in a json file, stored in the resources folder)
-				logEntries = loadDemoEntries(filename);
+				logEntries = loadDemoEntries(ExplainableEngineApplication.FILE_NAME_DEMO_LOGS);
 			} catch (IOException | URISyntaxException e) {
 				LOGGER.error("Unable to parse demo logs: {}", e.getMessage(), e);
 			}
