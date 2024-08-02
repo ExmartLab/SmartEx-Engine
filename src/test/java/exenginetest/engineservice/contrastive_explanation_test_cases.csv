@@ -1,0 +1,2 @@
+userid, device, expected_explanation
+2; status_light; The [device] is off and negate([AER]) because not all [PER]. [device] = status_light [AER] = green [PER] = , No Motion in meeting room is clear, Contact Sensor Meeting Room Opening is on

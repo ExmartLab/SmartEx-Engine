@@ -118,9 +118,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 				i.remove(); // remove if rule doesn't have an action with device
 			}
 		}
-		for (Rule r : mostLikelyRuleCandidates) {
-			System.out.println(r.getRuleName());
-		}
 
 		LOGGER.debug("Using happened Event to determine expected Rule");
 
@@ -262,7 +259,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			expectedRule = mostLikelyRuleCandidates.get(0);
 		}
 
-		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId);
+		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId, device);
 
 		explanation = callNLP(pattern);
 
@@ -571,7 +568,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 		return alternatives.get(index);
 	}
 
-	private String patternCreation(Rule expectedRule, Object happenedEvent, String explaineeid, String entityId) {
+	private String patternCreation(Rule expectedRule, Object happenedEvent, String explaineeid, String entityId,
+			String device) {
 
 		String pattern = "";
 		if (happenedEvent != null) {
@@ -594,8 +592,8 @@ public class ContrastiveExplanationService extends ExplanationService {
 				}
 
 				pattern = String.format(
-						"The [device] is [AHR] and negate([AER]) because [PHR].\n" + "[device] = %s\n" + "[AHR] = %s\n"
-								+ "[AER] = %s\n" + "[PHR] = %s\n",
+						"The [device] is [AHR] and negate([AER]) because [PHR]. " + "[device] = %s " + "[AHR] = %s "
+								+ "[AER] = %s " + "[PHR] = %s",
 						deviceName, happenedAction.getState(), expectedAction.getState(), preconditionString);
 
 			} else if (happenedEvent instanceof Error) {
@@ -605,16 +603,15 @@ public class ContrastiveExplanationService extends ExplanationService {
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 
 				pattern = String.format(
-						"[error] occurred so the [device] is negate([AER]).\n"
-								+ "[error] = %s\n"
-								+ "[device] = %s\n"
+						"[error] occurred so the [device] is negate([AER]). "
+								+ "[error] = %s "
+								+ "[device] = %s "
 								+ "[AER] = %s",
 						((Error) happenedEvent).getErrorName(), deviceName, expectedAction.getState());
 			}
 		} else {
 			// CC3
 
-			String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
 			LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 			ArrayList<String> preconditionsExpected = new ArrayList<String>();
 			for (LogEntry condition : expectedRule.getConditions()) {
@@ -630,14 +627,14 @@ public class ContrastiveExplanationService extends ExplanationService {
 			// result: <Device name> is off and not <action ER> because <rule name> wasn't
 			// fired.
 			pattern = String.format(
-					"The [device] is off and negate([AER]) because not all [PER].\n"
-							+ "[device] = %s\n"
-							+ "[AER] = %s\n"
-							+ "[PER] = %s\n",
-					deviceName, expectedAction.getState(), preconditionString);
+					"The [device] is off and negate([AER]) because not all [PER]. "
+							+ "[device] = %s "
+							+ "[AER] = %s "
+							+ "[PER] = %s",
+					device, expectedAction.getState(), preconditionString);
 		}
 
-		System.out.println("pattern created:\n" + pattern);
+		System.out.println("pattern created: " + pattern);
 		return pattern;
 	}
 
@@ -698,7 +695,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 		StringBuilder result = new StringBuilder();
 		for (List<String> row : rows) {
-			result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+			result.append(String.format(format, row.toArray(new String[0]))).append(" ");
 		}
 		return result.toString();
 	}
