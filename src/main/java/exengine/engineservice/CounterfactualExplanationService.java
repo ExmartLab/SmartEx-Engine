@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,92 +57,136 @@ public class CounterfactualExplanationService extends ExplanationService {
     @Override
     public String getExplanation(int min, String userId, String device) {
 
-        LOGGER.debug("getExplanation (counterfactual) called with arguments min: {}, user id: {}, device: {}", min,    userId, device);
+        LOGGER.debug("getExplanation (counterfactual) called with arguments min: {}, user id: {}, device: {}", min, userId, device);
 
+        // default return value
+        String explanation = "found nothing to explain";
+
+        //LogEntry contains Strings  time, name, state, entityid and an ArrayList<String> other
         ArrayList<LogEntry> logEntries = getLogEntries(min);
-        System.out.println("LogEntries:" + logEntries);
 
-        User user = dataSer.findUserByUserId(userId);
+        //Determine the explanandum and all necessary states
+        LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
+        String stateCurrent = null;
+        if (explanandum != null) {
+            stateCurrent = explanandum.getState();
+        }
+        LOGGER.info("Found explanandum: {}", explanandum);
+        LOGGER.info("Found stateCurrent: {}", stateCurrent);
 
-        System.out.println("User:" + user);
 
-        if (user == null) {
-            return "invalid userId: this user does not exist";
+        LogEntry previous = getPreviousLogEntry(explanandum, logEntries);
+        String statePrevious = stateCurrent;
+        if (previous != null){
+            statePrevious = previous.getState();
+        }
+        LOGGER.info("Found previous: {}", previous);
+        LOGGER.info("Found statePrevious: {}", statePrevious);
+
+        LogEntry expected = null;
+        String stateExpected = null;    //action of the expectedRule from ContrastiveExplanationService
+
+        String entityId = "none";
+        ArrayList<Rule> rulesCurrent = null;
+        ArrayList<Rule> rulesPrevious = null;
+        ArrayList<Rule> rulesExpected = null;
+
+        if (explanandum != null) { // an event happened
+
+            entityId = explanandum.getEntityId();
+
+            List<Rule> dbRules = dataSer.findAllRules();
+            List<Error> dbErrors = dataSer.findAllErrors();
+            rulesCurrent = findCauseSer.findCandidateRules(explanandum, dbRules);  //rules with actions leading to state_current
+            rulesPrevious = findCauseSer.findCandidateRules(previous, dbRules);  //rules with actions leading to state_current
+            rulesExpected = findCauseSer.findCandidateRules(expected, dbRules);  //rules with actions leading to state_current
+
         }
 
-        // STEP 0: identify explanandum's LogEntry
-		LogEntry explanandum = getExplanandumsLogEntry(device, logEntries);
 
-		if (explanandum == null) {
-			return "Could not find explanandum in the logs";
-		}
 
-		// STEP 1: find causal path
-		List<Rule> dbRules = dataSer.findAllRules();
-		List<Error> dbErrors = dataSer.findAllErrors();
-		Object cause = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
 
-		if (cause == null) {
-			return "Could not find cause to explain";
-		}
 
-		// STEP 2: get final context from context service
-		Context context = conSer.getAllContext(cause, user);
 
-		if (context == null) {
-			return "Could not collect context";
-		}
-
-		// STEP 3: ask rule engine what explanation type to generate
-		View view = contextMappingSer.getExplanationView(context, cause);
-
-		if (view == null) {
-			return "Could not determine explanation view";
-		}
-
-		// STEP 4: generate the desired explanation
-		String explanation = transformFuncSer.transformExplanation(view, cause, context);
-
-		if (explanation == null) {
-			return "Could not transform explanation into natural language";
-		}
-
-		LOGGER.info("Explanation generated");
-		return explanation;
+        LOGGER.info("Explanation generated");
+        return "counterfactual explanation";
 
     }
 
+
     //Subtractive Method:
-    public String minSub(){
+    public String minSub() {
         return null;
     }
 
     //Additive Method:
-    public String minAdd(){
+    public String minAdd() {
+        return null;
+    }
+
+
+    public String makeFire() {
+        return null;
+    }
+
+    public String modify() {
+        return null;
+    }
+
+    public String findRoots() {
+        return null;
+    }
+
+    public String overrideOrRemove() {
+        return null;
+    }
+
+    public String topsis() {
+        return null;
+    }
+
+
+    /**
+     * Find the logEntry that changed the device to the state it had before the explanandum
+     *
+     * @param explanandum explanandum determined with getExplanandumsLogEntry
+     * @param logEntries  the list of Home Assistant logs
+     * @return the logEntry that changed the device to the state it had before the explanandum LogEntry
+     */
+    public LogEntry getPreviousLogEntry(LogEntry explanandum, ArrayList<LogEntry> logEntries) {
+
+        ArrayList<LogEntry> actions = dataSer.getAllActions();
+
+        String entityID = explanandum.getEntityId();
+        String name = explanandum.getName();
+        String state = explanandum.getState();
+        String time = explanandum.getTime();
+
+        logEntries.remove(explanandum);
+
+        //sort the logEntries s.t. the newest ones are the first
+        Collections.sort(logEntries, Collections.reverseOrder());
+
+        //similar to getExplanandumsLogEntry, find the newest logEntry that is before the explanandum LogEntry
+        //and has the same entityID as the explanandum but different state
+
+        for (LogEntry logEntry : logEntries) {
+            int timeComparison = explanandum.compareTo(logEntry);
+            LOGGER.info("timeComparison {}:" , timeComparison);
+            //logEntry is found if it happened before the explanandum, the entitiyID is the same and the state is differnet
+            /** TODO: Check that > 0 is the correct direction */
+            if (timeComparison > 0 && entityID == logEntry.getEntityId() && state != logEntry.getState()) {
+                return logEntry;
+            }
+        }
+        //no previous state found:
         return null;
     }
 
 
 
-    public String makeFire(){
-        return null;
-    }
 
-    public String modify(){
-        return null;
-    }
 
-    public String findRoots(){
-        return null;
-    }
-
-    public String overrideOrRemove(){
-        return null;
-    }
-
-    public String topsis(){
-        return null;
-    }
 
 
 
