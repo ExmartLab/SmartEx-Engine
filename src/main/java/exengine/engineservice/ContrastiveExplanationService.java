@@ -98,13 +98,22 @@ public class ContrastiveExplanationService extends ExplanationService {
 			LOGGER.debug("happened Event: null");
 
 		LOGGER.debug("Finding Candidates for Most Likely Rule");
+		ArrayList<Rule> candidateRules = getCandidateRules(entityId);
+		Rule expectedRule = getExpectedRule(explanandum, logEntries, candidateRules, happenedEvent, device, entityId, userId);
 
+		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId, device);
+
+		explanation = callNLP(pattern);
+		LOGGER.info("Explanation generated");
+		return explanation;
+	}
+
+	public ArrayList<Rule> getCandidateRules(String entityId){
 		/*
 		 * get rules that have actions with entityId (get all rules and remove those
 		 * that don't use entityId)
 		 */
-		ArrayList<Rule> candidateRules = new ArrayList<Rule>(dataSer.findAllRules()); // find all Rules
-
+		ArrayList<Rule> candidateRules = new ArrayList<Rule>(dataSer.findAllRules());
 		Iterator<Rule> i = candidateRules.iterator();
 		while (i.hasNext()) {
 			Rule rule = i.next();
@@ -118,11 +127,12 @@ public class ContrastiveExplanationService extends ExplanationService {
 				i.remove(); // remove if rule doesn't have an action with entityId
 			}
 		}
+		return candidateRules;
+	}
 
-		LOGGER.debug("Using happened Event to determine expected Rule");
 
+	public Rule getExpectedRule(LogEntry explanandum, ArrayList<LogEntry> logEntries, ArrayList<Rule> candidateRules, Object happenedEvent,String device, String entityId, String userId){
 		Rule expectedRule = null;
-
 		if (candidateRules.size() > 1) {
 			if (happenedEvent != null) { // explanandum & cause were found
 				if (happenedEvent instanceof Rule) { // CASE RULE HAPPENED (CC1)
@@ -212,7 +222,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 
 					if (newHappenedEvent == null) {
 						// case no rule happened before the error
-						return "found nothing to explain";
+						return null;
 					} else if (newHappenedEvent instanceof Rule) {
 						expectedRule = (Rule) newHappenedEvent;
 					}
@@ -254,15 +264,10 @@ public class ContrastiveExplanationService extends ExplanationService {
 			expectedRule = candidateRules.get(0);
 		} else {
 			LOGGER.debug("Could not generate contrastive explanation");
-			return explanation;
+			return null;
 		}
+		return expectedRule;
 
-		String pattern = patternCreation(expectedRule, happenedEvent, userId, entityId, device);
-
-		explanation = callNLP(pattern);
-
-		LOGGER.info("Explanation generated");
-		return explanation;
 	}
 
 	/**
@@ -461,7 +466,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		 */
 
 		// STEP 1
-		// check that lenghts of lists are same as dimensions of matrix
+		// check that lengths of lists are same as dimensions of matrix
 		// (size of alternatives and matrixColumns as reference)
 		if (weights.size() != matrixColumns.length || isBeneficial.size() != matrixColumns.length) {
 			LOGGER.error("dimensions of given parameters not correct");
