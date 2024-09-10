@@ -136,7 +136,7 @@ public class FindCauseService {
 	 * explanandum. A precondition is regarded as met if and only if the
 	 * <b>latest</b> occurrence of a specific entityId in the list of logs has the
 	 * same state as the precondition. This is to avoid that a precondition was met
-	 * once upon some time but is not met any more.
+	 * once upon some time but is not met anymore.
 	 * 
 	 * Further, this simple preconditions check assumes that all preconditions are
 	 * simply joint via OR. This corresponds precisely to the "Triggers" to Home
