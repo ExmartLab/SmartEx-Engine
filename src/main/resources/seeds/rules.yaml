@@ -18,6 +18,7 @@
     state: "off"
   ownerId: "1"
   ruleDescription: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"
+  priority: 1
 
 - name: "rule 2 (tv mute)"
   ruleId: "2"
@@ -39,6 +40,7 @@
     state: "null"
   ownerId: "2"
   ruleDescription: "Rule_2: mutes the TV if TV is playing while a meeting is going on"
+  priority: 2
 
 - name: "Meeting room not occupied"
   ruleId: "3"
@@ -60,6 +62,7 @@
     state: "green"
   ownerId: "1"
   ruleDescription: "Rule_3: turns the meeting room status light green if the room is not occupied"
+  priority: 3
 
 - name: "Meeting room occupied"
   ruleId: "4"
@@ -81,6 +84,7 @@
     state: "orange"
   ownerId: "1"
   ruleDescription: "Rule_4: turns the meeting room status light orange if the room is occupied"
+  priority: 4
 
 - name: "Rain at lunch"
   ruleId: "5"
@@ -102,6 +106,7 @@
     state: "blue"
   ownerId: "2"
   ruleDescription: "Rule_5: turns all lights blue if rain at lunch is expected"
+  priority: 5
 
 - name: "Sunny at lunch"
   ruleId: "6"
@@ -123,6 +128,7 @@
     state: "orange"
   ownerId: "2"
   ruleDescription: "Rule_5: turns all lights orange if rain at lunch is expected"
+  priority: 6
 
 - name: "Danger"
   ruleId: "7"
@@ -150,4 +156,5 @@
     state: "orange"
   ownerId: "1"
   ruleDescription: "Rule_7: turns the meeting room status light orange if danger occurs"
+  priority: 7
 

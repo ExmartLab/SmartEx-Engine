@@ -68,7 +68,7 @@ class ContextServiceTest {
 		// Given
 		String ruleId = "rule1";
 		String userId = "user1";
-		Rule rule = new Rule(null, ruleId, null, null, null, null, null);
+		Rule rule = new Rule(null, ruleId, null, null, null, null, null, 0);
 		User user = new User(name, 30, role, technicality, state, "London");
 		user.setId(userId);
 		User ruleOwner;

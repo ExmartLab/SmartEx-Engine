@@ -18,6 +18,8 @@ public class Rule {
 	private String ownerId;
 	private String ruleDescription;
 	private String ruleId;
+	private int priority;
+
 
 	/**
 	 * Constructs a new Rule object with the specified parameters.
@@ -32,9 +34,10 @@ public class Rule {
 	 *                        fired
 	 * @param ownerId         the ID of the rule's owner
 	 * @param ruleDescription the description of the rule
+	 * @param priority        the priority of the rule. The lower the number, the higher the priority
 	 */
 	public Rule(String ruleName, String ruleId, ArrayList<LogEntry> trigger, ArrayList<LogEntry> conditions,
-			ArrayList<LogEntry> actions, String ownerId, String ruleDescription) {
+				ArrayList<LogEntry> actions, String ownerId, String ruleDescription, int priority) {
 		setRuleName(ruleName);
 		setRuleId(ruleId);
 		setTrigger(trigger);
@@ -42,6 +45,7 @@ public class Rule {
 		setActions(actions);
 		setOwnerId(ownerId);
 		setRuleDescription(ruleDescription);
+		setPriority(priority);
 	}
 
 	/**
@@ -69,9 +73,9 @@ public class Rule {
 	 */
 	public ArrayList<LogEntry> getTrigger() {
 		if (trigger != null) {
-			return trigger;			
+			return trigger;
 		} else {
-			return new ArrayList<>();			
+			return new ArrayList<>();
 		}
 	}
 
@@ -140,7 +144,7 @@ public class Rule {
 
 	/**
 	 * Returns the description of the rule.
-	 * 
+	 *
 	 * @return the rule description
 	 */
 	public String getRuleDescription() {
@@ -149,7 +153,7 @@ public class Rule {
 
 	/**
 	 * Sets the description of the rule.
-	 * 
+	 *
 	 * @param ruleDescription the rule description to set
 	 */
 	public void setRuleDescription(String ruleDescription) {
@@ -158,7 +162,7 @@ public class Rule {
 
 	/**
 	 * Returns the ID of the rule.
-	 * 
+	 *
 	 * @return the rule ID
 	 */
 	public String getRuleId() {
@@ -167,10 +171,32 @@ public class Rule {
 
 	/**
 	 * Sets the ID of the rule.
-	 * 
+	 *
 	 * @param ruleId the rule ID to set
 	 */
 	public void setRuleId(String ruleId) {
 		this.ruleId = ruleId;
 	}
+
+
+	/**
+	 * Returns the priority of the rule.
+	 *
+	 * @return the priority
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * Sets the priority of the rule.
+	 *
+	 * @param priority the priority to set
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
 }
+
+

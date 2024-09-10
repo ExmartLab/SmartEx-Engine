@@ -164,6 +164,9 @@ public class DatabaseSeeder {
 			// conditions (type: ArrayList<String>)
 			ArrayList<LogEntry> conditions = tryToGetLogEntries(dataMap, "conditions");
 
+			//priority (type: int)
+			int priority = tryToGetInt("priority", dataMap);
+
 			/*
 			 * old version of seeding conditions as a list of strings not logEntries
 			 * ArrayList<LogEntry> conditions = new ArrayList<>(); if
@@ -180,7 +183,7 @@ public class DatabaseSeeder {
 			// ruleDescription (type: String)
 			String ruleDescription = tryToGet("ruleDescription", dataMap);
 
-			dataSer.saveNewRule(new Rule(name, ruleId, triggers, conditions, actions, ownerId, ruleDescription));
+			dataSer.saveNewRule(new Rule(name, ruleId, triggers, conditions, actions, ownerId, ruleDescription, priority));
 
 		}
 		LOGGER.info("Rules seeded to database");
@@ -263,6 +266,14 @@ public class DatabaseSeeder {
 			return dataMap.get(key).toString();
 		} else {
 			return "null";
+		}
+	}
+
+	int tryToGetInt(String key, Map<String, Object> dataMap) {
+		if (dataMap.containsKey(key)) {
+			return (int)dataMap.get(key);
+		} else {
+			return 0;
 		}
 	}
 

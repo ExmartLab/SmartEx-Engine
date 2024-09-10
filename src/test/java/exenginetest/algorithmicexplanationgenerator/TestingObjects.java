@@ -51,7 +51,7 @@ public class TestingObjects {
 		//
 		conditions.add(new LogEntry(null, "daily energy consumption is higher than the threshold", null, null, null));
 		dbRules.add(new Rule("rule 1 (coffee)", "1", triggers, conditions, actions, "1",
-				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"));
+				"Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached", 1));
 
 		triggers = new ArrayList<LogEntry>();
 		triggers.add(demoEntries.get(7));
@@ -61,7 +61,7 @@ public class TestingObjects {
 		conditions.add(new LogEntry(null, "a meeting in room 1 is going on", null, null, null));
 
 		dbRules.add(new Rule("rule 2 (tv mute)", "2", triggers, conditions, actions, "2",
-				"Rule_2: mutes the TV if TV is playing while a meeting is going on"));
+				"Rule_2: mutes the TV if TV is playing while a meeting is going on", 2));
 
 		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers:
 		triggers = new ArrayList<LogEntry>();
@@ -72,7 +72,7 @@ public class TestingObjects {
 		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 3 (constructed rule)", "3", triggers, conditions, actions, "2",
-				"Rule_3: a constructed rule for testing purposes"));
+				"Rule_3: a constructed rule for testing purposes", 3));
 
 		// synthetic rule (same action as "rule 2 (tv mute)" but different triggers, one
 		// of which is never satisfied in the demo log (to test that the actions of this
@@ -93,7 +93,7 @@ public class TestingObjects {
 		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 4 (constructed rule)", "4", triggers, conditions, actions, "4",
-				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed"));
+				"Rule_4: a constructed rule for testing purposes to verify that this rule's actions were never performed", 5));
 
 		// synthetic rule (same action as "rule 2 (tv mute)" but never triggered:
 		triggers = new ArrayList<LogEntry>();
@@ -104,7 +104,7 @@ public class TestingObjects {
 		conditions.add(new LogEntry(null, "a made up condition", null, null, null));
 
 		dbRules.add(new Rule("rule 5 (constructed rule)", "5", triggers, conditions, actions, "5",
-				"Rule_5: a constructed rule for testing purposes, never to be triggered"));
+				"Rule_5: a constructed rule for testing purposes, never to be triggered", 6));
 	}
 
 	private void populateErrors() {
