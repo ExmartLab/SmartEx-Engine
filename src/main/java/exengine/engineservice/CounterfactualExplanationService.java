@@ -325,7 +325,7 @@ public class CounterfactualExplanationService extends ExplanationService {
      */
     public LogEntry getPreviousLogEntry(LogEntry explanandum, ArrayList<LogEntry> logEntries) {
 
-        ArrayList<LogEntry> actions = dataSer.getAllActions();
+        //ArrayList<LogEntry> actions = dataSer.getAllActions();
 
         String entityID = explanandum.getEntityId();
         String name = explanandum.getName();
@@ -334,18 +334,23 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         logEntries.remove(explanandum);
 
+
         //sort the logEntries s.t. the newest ones are the first
         Collections.sort(logEntries, Collections.reverseOrder());
 
         //similar to getExplanandumsLogEntry, find the newest logEntry that is before the explanandum LogEntry
         //and has the same entityID as the explanandum but different state
+        LOGGER.info(explanandum.getEntityId());
+        LOGGER.info(explanandum.getState());
+
 
         for (LogEntry logEntry : logEntries) {
             int timeComparison = explanandum.compareTo(logEntry);
             //logEntry is found if it happened before the explanandum, the entitiyID is the same and the state is differnet
-            /** TODO: Check that > 0 is the correct direction */
             /**Todo: Use filter logentriesbytime?*/
-            if (timeComparison > 0 && entityID == logEntry.getEntityId() && state != logEntry.getState()) {
+            if (timeComparison > 0 && entityID.equals(logEntry.getEntityId()) && !state.equals(logEntry.getState())) {
+                LOGGER.info(logEntry.getEntityId());
+                LOGGER.info(logEntry.getState());
                 return logEntry;
             }
         }
