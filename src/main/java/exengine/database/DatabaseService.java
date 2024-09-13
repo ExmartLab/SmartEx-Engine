@@ -55,7 +55,7 @@ public class DatabaseService {
 		deleteAllUsers();
 		deleteAllEntities();
 		if (ExplainableEngineApplication.isDemo()) {
-			deleteAllOccurrencies();
+			deleteAllOccurrences();
 			LOGGER.info("Database was completely reset");
 		} else {
 			LOGGER.info("Database was reset, except for the Occurrencies table");
@@ -209,7 +209,7 @@ public class DatabaseService {
 	/**
 	 * Finds entity in the database by their entity ID.
 	 *
-	 * @param entity ID
+	 * @param entityId
 	 * @return entity
 	 */
 	public Entity findEntityByEntityID(String entityId) {
@@ -222,7 +222,7 @@ public class DatabaseService {
 	/**
 	 * Deletes all occurrences from the database.
 	 */
-	public void deleteAllOccurrencies() {
+	public void deleteAllOccurrences() {
 		occEntrRepo.deleteAll();
 	}
 

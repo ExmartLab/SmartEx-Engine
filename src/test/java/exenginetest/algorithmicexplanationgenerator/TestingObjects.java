@@ -105,6 +105,37 @@ public class TestingObjects {
 
 		dbRules.add(new Rule("rule 5 (constructed rule)", "5", triggers, conditions, actions, "5",
 				"Rule_5: a constructed rule for testing purposes, never to be triggered", 6));
+
+
+		/** Rules for testing Counterfactual Explanation Service:*/
+
+		//Rule to test hasTruePreconditions:
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(demoEntries.get(5));
+
+		dbRules.add(new Rule("rule for counterfactual testing 1 (constructed rule)", "6", null, conditions, actions, "2",
+				"Rule_9: a constructed rule for testing hasTruePreconditions", 7));
+
+
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(9));
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(demoEntries.get(5));
+		conditions.add(demoEntries.get(0));
+		dbRules.add(new Rule("rule for counterfactual testing 2 (constructed rule)", "7", null, conditions, actions, "2",
+				"Rule_10: a constructed rule for testing hasTruePreconditions", 8));
+
+
+
+
+
+
+
+
+
+
 	}
 
 	private void populateErrors() {
