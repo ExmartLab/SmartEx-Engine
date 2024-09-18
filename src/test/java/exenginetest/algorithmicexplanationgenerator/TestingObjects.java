@@ -127,6 +127,34 @@ public class TestingObjects {
 		dbRules.add(new Rule("rule for counterfactual testing 2 (constructed rule)", "7", null, conditions, actions, "2",
 				"Rule_10: a constructed rule for testing hasTruePreconditions", 8));
 
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(10));
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(demoEntries.get(5));
+		conditions.add(demoEntries.get(0));
+		dbRules.add(new Rule("rule for counterfactual testing 3 (constructed rule)", "8", null, conditions, actions, "2",
+				"Rule_11: a constructed rule for testing minAdd", 9));
+
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(10));
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(demoEntries.get(4));
+		conditions.add(demoEntries.get(0));
+		dbRules.add(new Rule("rule for counterfactual testing 4 (constructed rule)", "9", null, conditions, actions, "2",
+				"Rule_12: a constructed rule for testing minAdd", 10));
+
+
+		actions = new ArrayList<LogEntry>();
+		actions.add(demoEntries.get(7));
+		conditions = new ArrayList<LogEntry>();
+		conditions.add(demoEntries.get(4));
+		conditions.add(demoEntries.get(0));
+		conditions.add(demoEntries.get(6));
+		dbRules.add(new Rule("rule for counterfactual testing 5 (constructed rule)", "10", null, conditions, actions, "2",
+				"Rule_13: a constructed rule for testing makeFire", 11));
+
+
+
 
 
 
