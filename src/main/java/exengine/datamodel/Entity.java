@@ -9,15 +9,19 @@ public class Entity {
 	private String entityId;
 	private String deviceName;
 
+	private String controllability;
+
 	/**
-	 * Constructs a new Entity object with the specified parameters.
-	 *
-	 * @param entityId   the ID of the entity
-	 * @param deviceName the name of the associated device
-	 */
-	public Entity(String entityId, String deviceName) {
+     * Constructs a new Entity object with the specified parameters.
+     *
+     * @param entityId        the ID of the entity
+     * @param deviceName      the name of the associated device
+     * @param controllability
+     */
+	public Entity(String entityId, String deviceName, String controllability) {
 		setEntityId(entityId);
 		setDeviceName(deviceName);
+		setControllability(controllability);
 	}
 
 	/**
@@ -38,11 +42,7 @@ public class Entity {
 		this.entityId = entityId;
 	}
 
-	/**
-	 * Returns the name of the associated device.
-	 *
-	 * @return the name of the associated device
-	 */
+
 	public String getDeviceName() {
 		return deviceName;
 	}
@@ -54,6 +54,24 @@ public class Entity {
 	 */
 	public void setDeviceName(String deviceName) {
 		this.deviceName = deviceName;
+	}
+
+	/**
+	 * Returns the controllability of the associated device.
+	 *
+	 * @return the controllability of the associated device
+	 */
+	public String getControllability() {
+		return controllability;
+	}
+
+	/**
+	 * Sets the controllability of the associated device.
+	 *
+	 * @param controllability the name of the associated device
+	 */
+	public void setControllability(String controllability) {
+		this.controllability = controllability;
 	}
 
 }

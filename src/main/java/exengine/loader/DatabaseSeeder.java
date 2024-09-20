@@ -134,8 +134,9 @@ public class DatabaseSeeder {
 
 			String entityId = tryToGet("entityId", dataMap);
 			String deviceName = tryToGet("deviceName", dataMap);
+			String controllability = tryToGet("controllability", dataMap);
 
-			dataSer.saveNewEntity(new Entity(entityId, deviceName));
+			dataSer.saveNewEntity(new Entity(entityId, deviceName, controllability));
 		}
 		LOGGER.info("Entities seeded to database");
 	}

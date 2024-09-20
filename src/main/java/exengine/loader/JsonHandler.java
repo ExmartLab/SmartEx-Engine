@@ -60,6 +60,7 @@ public class JsonHandler {
 			String name = null;
 			String state = null;
 			String entityId = null;
+			String controllability = null;
 			ArrayList<String> other = null;
 
 			Iterator<String> fieldNames = node.fieldNames();

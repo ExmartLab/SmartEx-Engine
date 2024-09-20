@@ -1,20 +1,47 @@
 - entityId: "sensor.lab_fan_current_consumption"
   deviceName: "lab_fan"
-  
+  controllability: "actionable"
+
 - entityId: "switch.lab_fan"
   deviceName: "lab_fan"
-  
+  controllability: "actionable"
+
 - entityId: "sensor.door_power"
   deviceName: "lab_door"
-  
+  controllability: "actionable"
+
 - entityId: "switch.smart_plug_social_room_coffee"
   deviceName: "coffee_machine"
-  
+  controllability: "actionable"
+
 - entityId: "scene.tv_playing"
   deviceName: "tv"
-  
+  controllability: "actionable"
+
 - entityId: "sensor.deebot_last_error"
   deviceName: "robo_cleaner"
-  
+  controllability: "non-mutable"
+
 - entityId: "vacuum.deebot"
   deviceName: "robo_cleaner"
+  controllability: "actionable"
+
+- entityId: "light.meeting_room_status_light"
+  deviceName: "status_light"
+  controllability: "mutable"
+
+- entityId: "status.lamp"
+  deviceName: "lamp"
+  controllability: "mutable"
+
+- entityId: "color.lamp"
+  deviceName: "lamp"
+  controllability: "mutable"
+
+- entityId: "status.window"
+  deviceName: "window"
+  controllability: "mutable"
+
+- entityId: "status.fan"
+  deviceName: "fan"
+  controllability: "mutable"

@@ -40,7 +40,7 @@ class ExplanationContextMappingServiceTest {
 	 * working correctly.
 	 */
 	@ParameterizedTest
-	@CsvFileSource(resources = "view_test_cases.csv", numLinesToSkip = 1)
+	@CsvFileSource(resources = "/view_test_cases.csv", numLinesToSkip = 1)
 	void testGetExplanationView(String causeType, String state, String occurrence, String technicality, String role,
 			String expected_view) {
 
