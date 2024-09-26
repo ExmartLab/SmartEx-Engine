@@ -51,8 +51,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 	final Boolean OCCURRENCE_BENEFICIAL = true;
 
 	/**
-	 * Builds context-specific <b>contrastive</b> explanations for home assistant.
-	 * 
+	 * Builds context-specific <b>contrastive</b> explanations for home assistant.*
 	 * 
 	 * @param min    Representing the number of minutes taken into account for
 	 *               analyzing past events, starting from the call of the method
@@ -202,6 +201,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 						LOGGER.error("Error in TOPSIS Calculation");
 						return null;
 					}
+					LOGGER.debug("topsis determined most likely rule: {}", expectedRule.getRuleName());
 
 				} else { // CASE ERROR HAPPENED (CC2)
 
@@ -258,6 +258,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 					LOGGER.error("Error in TOPSIS Calculation");
 					return null;
 				}
+				LOGGER.debug("topsis determined most likely rule: {}", expectedRule.getRuleName());
 			}
 		} else if (candidateRules.size() == 1) {
 			// if only one Rule refers to the entityId in question, it is the expected Rule
@@ -269,6 +270,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 		return expectedRule;
 
 	}
+
 
 	/**
 	 * Calculates the ownership of a list of rules for a given user.
@@ -458,7 +460,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 	 * @return the alternative with the highest TOPSIS score
 	 */
 	@SafeVarargs
-	private static Rule topsis(ArrayList<Rule> alternatives, ArrayList<Double> weights, ArrayList<Boolean> isBeneficial,
+	public static <T> T topsis(ArrayList<T> alternatives, ArrayList<Double> weights, ArrayList<Boolean> isBeneficial,
 			ArrayList<Double>... matrixColumns) {
 
 		/*
@@ -566,8 +568,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 		Double max = Collections.max(p_i);
 		int index = p_i.indexOf(max);
 
-		LOGGER.debug("topsis determined most likely rule: {}", alternatives.get(index).getRuleName());
-
 		return alternatives.get(index);
 	}
 
@@ -579,6 +579,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			if (happenedEvent instanceof Rule) { // CC1
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
+				System.out.println("findEntityByEntityId worked. ENtity found: " + deviceName);
 				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, entityId);
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 				ArrayList<String> preconditions = new ArrayList<String>();
@@ -601,6 +602,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			} else if (happenedEvent instanceof Error) { // CC2
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
+				System.out.println("findEntityByEntityId worked. ENtity found: " + deviceName);
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 
 				pattern = String.format(
@@ -673,7 +675,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 	 * @param list the list to remove duplicates from
 	 * @return the list with duplicates removed
 	 */
-	private <T> ArrayList<T> removeDuplicates(ArrayList<T> list) {
+	public <T> ArrayList<T> removeDuplicates(ArrayList<T> list) {
 
 		Set<T> set = new LinkedHashSet<>();
 		set.addAll(list);

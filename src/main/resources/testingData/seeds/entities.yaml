@@ -26,22 +26,26 @@
   deviceName: "robo_cleaner"
   controllability: "actionable"
 
-- entityId: "light.meeting_room_status_light"
-  deviceName: "status_light"
-  controllability: "mutable"
-
 - entityId: "status.lamp"
   deviceName: "lamp"
-  controllability: "mutable"
+  controllability: "actionable"
 
 - entityId: "color.lamp"
   deviceName: "lamp"
-  controllability: "mutable"
+  controllability: "actionable"
 
 - entityId: "status.window"
   deviceName: "window"
-  controllability: "mutable"
+  controllability: "actionable"
 
 - entityId: "status.fan"
   deviceName: "fan"
-  controllability: "mutable"
+  controllability: "actionable"
+
+- entityId: "setting.aircon"
+  deviceName: "air conditioning"
+  controllability: "actionable"
+
+- entityId: "state.temperature"
+  deviceName: "temperature"
+  controllability: "non-mutable"

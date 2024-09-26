@@ -154,7 +154,6 @@ public class FindCauseService {
 	 *       this.
 	 */
 	public boolean preconditionsApply(LogEntry explanandum, Rule rule, ArrayList<LogEntry> logEntries) {
-
 		// 1. Step: Filter out log entries that occurred after the explanandum
 		LocalDateTime startTime = LocalDateTime.MIN;
 		LocalDateTime endTime = explanandum.getLocalDateTime(); // does this include the upper boundary? -> Yes
@@ -169,6 +168,7 @@ public class FindCauseService {
 				iterator.remove();
 			}
 		}
+
 
 		// 3. Step: Check if at least one precondition was satisfied
 		for (LogEntry trigger : rule.getTrigger()) {

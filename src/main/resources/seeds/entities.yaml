@@ -28,4 +28,29 @@
   
 - entityId: "light.meeting_room_status_light"
   deviceName: "status_light"
-  controllability: "mutable"
+  controllability: "actionable"
+
+- entityId: "status.lamp"
+  deviceName: "lamp"
+  controllability: "actionable"
+
+- entityId: "color.lamp"
+  deviceName: "lamp"
+  controllability: "actionable"
+
+- entityId: "status.window"
+  deviceName: "window"
+  controllability: "actionable"
+
+- entityId: "status.fan"
+  deviceName: "fan"
+  controllability: "actionable"
+
+- entityId: "setting.aircon"
+  deviceName: "air conditioning"
+  controllability: "actionable"
+
+- entityId: "state.temperature"
+  deviceName: "temperature"
+  controllability: "non-mutable"
+

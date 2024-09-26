@@ -28,7 +28,7 @@ public class CounterfactualExplanationTest {
 
     @Disabled
     @ParameterizedTest
-    @CsvFileSource(resources = "counterfactual_explanation_test_cases.csv", numLinesToSkip = 1, delimiter = ';')
+    @CsvFileSource(resources = "/counterfactual_explanation_test_cases.csv", numLinesToSkip = 1, delimiter = ';')
     void integrationTestGetExplanation(String userId, String device, String expectedExplanation) {
         // When
         String explanation = underTest.getExplanation(30, userId, device);
