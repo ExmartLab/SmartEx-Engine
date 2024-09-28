@@ -95,6 +95,18 @@
         "entity_id": "scene.tv_brightness"
     },
     {
+        "when": "2022-08-02T09:07:26.933444+00:00",
+        "name": "Turn Meeting Room Status Light orange",
+        "state": "orange",
+        "entity_id": "light.meeting_room_status_light"
+    },
+    {
+        "when": "2022-08-03T09:07:26.920189+00:00",
+        "name": "Contact Sensor Meeting Room Opening",
+        "state": "off",
+        "entity_id": "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+    },
+    {
         "when": "2022-10-01T09:07:30.920189+00:00",
         "name": "Lamp Office turning off",
         "state": "off",
@@ -102,7 +114,7 @@
     },
     {
         "when": "2022-10-01T09:07:31.920189+00:00",
-        "name": "Lamp Office turning off",
+        "name": "Lamp Office color is null",
         "state": "null",
         "entity_id": "color.lamp"
     },
