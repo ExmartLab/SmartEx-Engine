@@ -119,7 +119,7 @@ public class TestingObjects {
 		actions.add(demoEntries.get(24));
 
 		dbRules.add(new Rule("rule for counterfactual testing 1 (index 5) (constructed rule)", "6", triggers, conditions, actions, "2",
-				"Rule_9: a constructed rule for testing with true preconditions and true triggers if the explanandum is after the demoEntry with index 21", 7));
+				"Rule_9: a constructed rule for testing with true preconditions and true triggers if the explanandum is after the demoEntry with index 21", 10));
 
 		//get this rule by dbRules.get(6)
 		conditions = new ArrayList<LogEntry>();
@@ -131,7 +131,7 @@ public class TestingObjects {
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(18));
 		dbRules.add(new Rule("rule for counterfactual testing 2 (index 6) (constructed rule)", "7", null, conditions, actions, "2",
-				"Rule_10: a constructed rule for testing with false preconditions but true triggers if the explanandum is after the demoEntry with index 13", 8));
+				"Rule_10: a constructed rule for testing with false preconditions but true triggers if the explanandum is after the demoEntry with index 13", 9));
 
 		//get this rule by dbRules.get(7)
 		//fired by dbRule.get(5)
@@ -141,7 +141,7 @@ public class TestingObjects {
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(25));
 		dbRules.add(new Rule("rule for counterfactual testing 3 (index 7) (constructed rule)", "8", null, conditions, actions, "2",
-				"Rule_11: a constructed rule for testing which is fired by the rule with index 5", 9));
+				"Rule_11: a constructed rule for testing which is fired by the rule with index 5", 8));
 
 		//get this rule by dbRules.get(8)
 		conditions = new ArrayList<LogEntry>();
@@ -149,7 +149,7 @@ public class TestingObjects {
 		actions = new ArrayList<LogEntry>();
 		actions.add(demoEntries.get(18));
 		dbRules.add(new Rule("rule for counterfactual testing 4 (index 8) (constructed rule)", "9", null, conditions, actions, "2",
-				"Rule_12: a constructed rule which has the same action as the rule with index 6", 10));
+				"Rule_12: a constructed rule which has the same action as the rule with index 6", 7));
 
 
 		//get this rule by dbRules.get(9)

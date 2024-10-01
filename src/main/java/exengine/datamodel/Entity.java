@@ -8,7 +8,6 @@ public class Entity {
 
 	private String entityId;
 	private String deviceName;
-
 	private String controllability;
 
 	/**

@@ -70,7 +70,7 @@ public class CounterfactualExplanationService extends ExplanationService {
     public String getExplanation(int min, String userId, String device) {
         LOGGER.debug("getExplanation (counterfactual) called with arguments min: {}, user id: {}, device: {}", min, userId, device);
 
-        ArrayList<LogEntry> logEntries = getLogEntries(min);
+        ArrayList<LogEntry> logEntries = new ArrayList<>(getLogEntries(min));
         List<Rule> dbRules = dataSer.findAllRules();
         List<Error> dbErrors = dataSer.findAllErrors();
 
@@ -97,7 +97,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         if (expectedRule == null) {
             return "Error, the foil could not be found.";
         }
-        ArrayList<LogEntry> expectedCandidates = expectedRule.getActions();
+        ArrayList<LogEntry> expectedCandidates = new ArrayList<>(expectedRule.getActions());
         for (LogEntry logEntry : expectedCandidates) {
             if (logEntry.getEntityId().equals(entityId)) {    //it is the action of the rule we want
                 expected = logEntry;
@@ -106,7 +106,7 @@ public class CounterfactualExplanationService extends ExplanationService {
 
 
         //Determine rules with currently true preconditions:
-        ArrayList<LogEntry> currentState = getCurrentState(logEntries);
+        ArrayList<LogEntry> currentState = new ArrayList<>(getCurrentState(logEntries));
 
         ArrayList<Rule> rulesCurrent = findCauseSer.findCandidateRules(explanandum, dbRules);  //rules with actions leading to current state
         ArrayList<Rule> rulesPrevious = findCauseSer.findCandidateRules(previous, dbRules);  //rules with actions leading to previous state
@@ -133,7 +133,7 @@ public class CounterfactualExplanationService extends ExplanationService {
                 firingNecessary = false;
             }
             rulesCurrent.addAll(rulesPrevious);
-            minPreconditions = overrideOrRemove(rulesCurrent, explanandum, expected, firingNecessary, logEntries);
+            minPreconditions.addAll(overrideOrRemove(rulesCurrent, explanandum, expected, firingNecessary, logEntries));
         } else {
             if (!rulesExpected.isEmpty()) {
                 Rule dummy = new Rule("dummy", null, null, null, null, null, null, 0);
@@ -149,28 +149,28 @@ public class CounterfactualExplanationService extends ExplanationService {
     }
 
 
-    public String generateCFE(ArrayList<ArrayList<LogEntry>> minPreconditions,LogEntry explanandum, LogEntry expected) {
-        String explanation = expected.getName()  + " would have occurred instead of " + explanandum.getName() + " if in the past ";
+    public String generateCFE(ArrayList<ArrayList<LogEntry>> minPreconditions, LogEntry explanandum, LogEntry expected) {
+        String explanation = expected.getName() + " would have occurred instead of " + explanandum.getName() + " if in the past ";
         ArrayList<LogEntry> addPreconditions = minPreconditions.get(0);
         ArrayList<LogEntry> subPreconditions = minPreconditions.get(1);
 
         //Todo: remove oxford comma if length is <=2
         //add additive preconditions to explanation:
-        for (int i = 0; i < addPreconditions.size()-1; i++){
+        for (int i = 0; i < addPreconditions.size() - 1; i++) {
             explanation = explanation.concat(addPreconditions.get(i).getName());
             explanation = explanation.concat(", ");
         }
         explanation = explanation.concat("and ");
-        explanation = explanation.concat(addPreconditions.get(addPreconditions.size()-1).getName());
-        explanation = explanation.concat( " had happened and ");
+        explanation = explanation.concat(addPreconditions.get(addPreconditions.size() - 1).getName());
+        explanation = explanation.concat(" had happened and ");
 
         //add subtractive preconditions to explanation:
-        for (int i = 0; i < subPreconditions.size()-1; i++){
+        for (int i = 0; i < subPreconditions.size() - 1; i++) {
             explanation = explanation.concat(subPreconditions.get(i).getName());
             explanation = explanation.concat(", ");
         }
         explanation = explanation.concat("and ");
-        explanation = explanation.concat(addPreconditions.get(addPreconditions.size()-1).getName());
+        explanation = explanation.concat(addPreconditions.get(addPreconditions.size() - 1).getName());
         explanation = explanation.concat("had not happened.");
 
         //Capitalize only the first letter:
@@ -185,13 +185,14 @@ public class CounterfactualExplanationService extends ExplanationService {
      */
     public ArrayList<LogEntry> minSub(Rule ruleToReverse, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         ArrayList<LogEntry> toReverse = new ArrayList<>();
-        ArrayList<LogEntry> preconditions = ruleToReverse.getConditions();
+        ArrayList<LogEntry> preconditions = new ArrayList<>(ruleToReverse.getConditions());
         preconditions.addAll(ruleToReverse.getTrigger());
         ArrayList<LogEntry> actionablePreconditions = new ArrayList<>();
         ArrayList<LogEntry> mutablePreconditions = new ArrayList<>();
         ArrayList<LogEntry> nonMutablePreconditions = new ArrayList<>();
 
         for (LogEntry precondition : preconditions) {
+            System.out.println("a precondtion of rule " + ruleToReverse.getRuleName() + " is " + precondition.getName());
             String controllability = getControllabilityByEntityId(precondition.getEntityId());
             switch (controllability) {
                 case "actionable" -> actionablePreconditions.add(precondition);
@@ -222,7 +223,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         noDuplicates(toReverse);
         ArrayList<ArrayList<LogEntry>> minCandidates = new ArrayList<>();
         for (LogEntry precondition : toReverse) {
-                minCandidates.add(modify(precondition, explanandum, logEntries));
+            minCandidates.add(modify(precondition, explanandum, logEntries));
         }
         noDuplicates(minCandidates);
         return minComputation(minCandidates, explanandum, logEntries);
@@ -241,17 +242,16 @@ public class CounterfactualExplanationService extends ExplanationService {
     /**
      * Additive Method:
      */
-    public ArrayList<LogEntry> minAdd(Rule ruleToOverride, LogEntry explanandum, LogEntry expected, ArrayList<LogEntry> logEntries) {
-        List<Rule> dbRules = dataSer.findAllRules();
-        ArrayList<Rule> candidateRules = findCauseSer.findCandidateRules(expected, dbRules);
-        Iterator<Rule> i = candidateRules.iterator();
+    public ArrayList<LogEntry> minAdd(Rule ruleToOverride, LogEntry explanandum, LogEntry toAchieve, ArrayList<LogEntry> logEntries) {
+        ArrayList<Rule> dbRules = new ArrayList<>(dataSer.findAllRules());
+        ArrayList<Rule> candidateRules = findCauseSer.findCandidateRules(toAchieve, dbRules);
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
-        while (i.hasNext()) {
-            Rule r = i.next();
-            System.out.println("candidate Rule for additive: " + r.getRuleName());
-            ArrayList<LogEntry> candidate = makeFire(r, explanandum, logEntries);
-            if (r.getPriority() > ruleToOverride.getPriority() && candidate.size() <= 3) {
-                candidates.add(candidate);
+        if (!candidateRules.isEmpty()) {
+            for (Rule r : candidateRules) {
+                ArrayList<LogEntry> candidate = new ArrayList<>(makeFire(r, explanandum, logEntries));
+                if (r.getPriority() > ruleToOverride.getPriority() && candidate.size() <= 3) {
+                    candidates.add(candidate);
+                }
             }
         }
         if (candidates.isEmpty()) {
@@ -274,11 +274,10 @@ public class CounterfactualExplanationService extends ExplanationService {
      */
     public ArrayList<LogEntry> makeFire(Rule r, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         //System.out.println("MakeFire entered with rule" + r.getRuleName() + ". It has id: " + r.getRuleId());
-        ArrayList<LogEntry> currentStates = getCurrentState(logEntries);
-        ArrayList<LogEntry> preconditions = r.getConditions();
-        ArrayList<LogEntry> triggers = r.getTrigger();
+        ArrayList<LogEntry> currentStates = new ArrayList<>(getCurrentState(logEntries));
+        ArrayList<LogEntry> preconditions = new ArrayList<>(r.getConditions());
+        ArrayList<LogEntry> triggers = new ArrayList<>(r.getTrigger());
         Iterator<LogEntry> i = preconditions.iterator();
-
         while (i.hasNext()) {
             LogEntry p = i.next();
             if (p.getEntityId() == null || p.getState() == null) {   //p is not a valid precondition
@@ -303,7 +302,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         ArrayList<LogEntry> updatedPreconditions = new ArrayList<>();
         ArrayList<LogEntry> updatedTriggers = new ArrayList<>();
         for (LogEntry c : preconditions) {
-            if (modify(c, explanandum, logEntries) != null){
+            if (modify(c, explanandum, logEntries) != null) {
                 updatedPreconditions.addAll(modify(c, explanandum, logEntries));
             }
         }
@@ -326,8 +325,8 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @return Minimal set of LogEntries with states that have to be changed to the mentioned state to make the logEntry precondition true
      */
     public ArrayList<LogEntry> modify(LogEntry precondition, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
-        System.out.println("method modify called with precondition: " + precondition.getName());
-        List<Rule> dbRules = dataSer.findAllRules();
+        //System.out.println("method modify called with precondition: " + precondition.getName());
+        ArrayList<Rule> dbRules = new ArrayList<>(dataSer.findAllRules());
         ArrayList<Rule> rulesChangingPrecondition = new ArrayList<>();
         for (Rule r : dbRules) {
             if (r.getActions().contains(precondition)) {   //there exists an action of r s.t. state and entityID of this action are the same as the ones of precondition,
@@ -341,8 +340,8 @@ public class CounterfactualExplanationService extends ExplanationService {
         minCandidates.add(preconditionAsArray);
         for (Rule r : rulesChangingPrecondition) {
             //System.out.println("Candidate rule in modify found:" + r.getRuleName());
-           // System.out.println("With the rule the following is added to mincandidates:" + makeFire(r, explanandum, logEntries));
-           minCandidates.add(makeFire(r, explanandum, logEntries));
+            // System.out.println("With the rule the following is added to mincandidates:" + makeFire(r, explanandum, logEntries));
+            minCandidates.add(makeFire(r, explanandum, logEntries));
 
         }
         noDuplicates(minCandidates);
@@ -358,11 +357,11 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @return all preconditions that can be directly manipulated to make precondition c false (including c if c can be directly manipulated)
      */
     public ArrayList<LogEntry> findRoots(LogEntry c, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
-        System.out.println("Find roots for the following precondition calculated: " + c.getName());
+        //System.out.println("Find roots for the following precondition calculated: " + c.getName());
 
-        List<Rule> dbRules = dataSer.findAllRules();
-        ArrayList<LogEntry> currentState = getCurrentState(logEntries);
-        if (!currentState.contains(c)){      //c is already false, nothing has to be changed
+        ArrayList<Rule> dbRules = new ArrayList<>(dataSer.findAllRules());
+        ArrayList<LogEntry> currentState = new ArrayList<>(getCurrentState(logEntries));
+        if (!currentState.contains(c)) {      //c is already false, nothing has to be changed
             return new ArrayList<>();
         }
 
@@ -370,6 +369,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         //determine Rules that prevent us from directly changing c:
         ArrayList<Rule> activeRules = findCauseSer.findCandidateRules(c, dbRules);   //Rules that lead to c being true
         TruePreconditions(activeRules, explanandum, currentState, logEntries);
+        //System.out.println("The active rules for precondition" + c.getName() + " are " + activeRules);
 
         ArrayList<LogEntry> changeablePreconditions = new ArrayList<>();
 
@@ -377,46 +377,86 @@ public class CounterfactualExplanationService extends ExplanationService {
         //Todo: go through test again
         //Todo: Add this check to all methods
 
-        if (activeRules == null || activeRules.isEmpty()){  //we can directly change c
+        if (activeRules== null || activeRules.isEmpty()) {  //we can directly change c
             changeablePreconditions.add(c);
-        }else {
+        } else {
             for (Rule r : activeRules) {
-                ArrayList<LogEntry> preconditions = r.getConditions();
+                ArrayList<LogEntry> preconditions = new ArrayList<>(r.getConditions());
                 preconditions.addAll(r.getTrigger());
+                //System.out.println("preconditions of active rule:" + r.getRuleName() + " are " + preconditions);
                 for (LogEntry precondition : preconditions) {
-                   ArrayList<LogEntry> roots = findRoots(precondition, explanandum, logEntries);
+                    ArrayList<LogEntry> roots = new ArrayList<>(findRoots(precondition, explanandum, logEntries));
                     changeablePreconditions.addAll(roots);
                 }
             }
         }
         noDuplicates(changeablePreconditions);
+       // System.out.println(" The roots for  preconditions" + c.getName() + " are " + changeablePreconditions);
         return changeablePreconditions;
 
     }
 
     public ArrayList<ArrayList<LogEntry>> overrideOrRemove(ArrayList<Rule> rules, LogEntry explanandum, LogEntry expected, Boolean firingNecessary, ArrayList<LogEntry> logEntries) {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
+        ArrayList<LogEntry> subCandidates = new ArrayList<>();
+        ArrayList<LogEntry> addCandidates = new ArrayList<>();
+        ArrayList<Rule> rulesSorted = new ArrayList<>(rules);
         // Sort the ArrayList by priority in descending order:
-        Collections.sort(rules, (r1, r2) -> {
+        rulesSorted.sort((r1, r2) -> {
             // Sort in descending order
             return Integer.compare(r2.getPriority(), r1.getPriority());
         });
-        for (int i = 0; i < rules.size(); i++) {
-            Rule r = rules.get(i);
+        for (int i = 0; i < rulesSorted.size(); i++) {
+            Rule r = rulesSorted.get(i);
             ArrayList<LogEntry> candidate = new ArrayList<>();
+
+            //subtractive part:
             if (i != 0) {    //r has not the highest priority, i.e. there is a subtractive part
-                List<Rule> rulesSublist = rules.subList(0, i - 1);
-                ArrayList<Rule> rulesHigherPriority = new ArrayList<>(rulesSublist);
-                candidate = minSubAll(rulesHigherPriority, explanandum, logEntries);
+                ArrayList<Rule> rulesHigherPriority = new ArrayList<>(rulesSorted.subList(0, i - 1));
+                ArrayList<LogEntry> subtracting = new ArrayList<>(minSubAll(rulesHigherPriority, explanandum, logEntries));
+                System.out.println("the subtractive part is:" + subtracting);
+                candidate.addAll(subtracting);
+                subCandidates.addAll(candidate);
             }
-            candidate.addAll(minAdd(r, explanandum, expected, logEntries));
-            candidates.add(candidate);
+
+            //additive part:
+            ArrayList<LogEntry> overriding = minAdd(r, explanandum, expected, logEntries);
+            System.out.println("the additive part is:" + overriding);
+            if (overriding!= null && !overriding.isEmpty()) {
+                candidate.addAll(overriding);
+                addCandidates.addAll(overriding);
+            }
+
+           candidates.add(candidate);
         }
+
+        //removing all rules and not firing any:
         if (!firingNecessary) {
-            candidates.add(minSubAll(rules, explanandum, logEntries));
+            ArrayList<LogEntry> subtractingAll = minSubAll(rulesSorted, explanandum, logEntries);
+            System.out.println("The all subtractive part is:" + subtractingAll);
+            candidates.add(subtractingAll);
+            subCandidates.addAll(subtractingAll);
         }
-        return null;
-        //return minComputation(candidates, explanandum, logEntries);
+
+        //minimal computation:
+        ArrayList<LogEntry> minTogether = minComputation(candidates, explanandum, logEntries);
+
+        //determine which were additive or subtractive:
+        ArrayList<LogEntry> minAdd = new ArrayList<>();
+        ArrayList<LogEntry> minSub = new ArrayList<>();
+        for (LogEntry entry : minTogether) {
+            if (addCandidates.contains(entry)) {
+                minAdd.add(entry);
+            }
+            if (subCandidates.contains(entry)) {
+                minSub.add(entry);
+            }
+        }
+        ArrayList<ArrayList<LogEntry>> minCombined = new ArrayList<>();
+        minCombined.add(minAdd);
+        minCombined.add(minSub);
+
+        return minCombined;
     }
 
     public ArrayList<LogEntry> minComputation(ArrayList<ArrayList<LogEntry>> candidates, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
@@ -424,88 +464,87 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         //dummy return:
         /**ArrayList<LogEntry> dummy = new ArrayList<>();
-        for (ArrayList<LogEntry> candidate : candidates) {
-            if (!candidate.isEmpty()) {
-                dummy.add(candidate.get(0));
-            }
-        }
-        System.out.println("dummy has been caluclated (should be the first entry of every candidate:" + dummy + " the first entry has name + " + dummy.get(0).getEntityId() + dummy.get(0).getState());
-        return dummy;   //first entry of every option
+         for (ArrayList<LogEntry> candidate : candidates) {
+         if (!candidate.isEmpty()) {
+         dummy.add(candidate.get(0));
+         }
+         }
+         System.out.println("dummy has been caluclated (should be the first entry of every candidate:" + dummy + " the first entry has name + " + dummy.get(0).getEntityId() + dummy.get(0).getState());
+         return dummy;   //first entry of every option
 
-      /**  //check for actionability:
-        noDuplicates(candidates);
+         /**  //check for actionability:
+         noDuplicates(candidates);
          ArrayList<ArrayList<LogEntry>> actionableCandidates = new ArrayList<>();
          for (ArrayList<LogEntry> candidate : candidates){
-             ArrayList<LogEntry> actionableCandidate = (ArrayList<LogEntry>) candidate.clone();
-             actionableCandidates.add(actionableCandidate);
-             for (LogEntry c: candidate){
-                 if ( !getControllabilityByEntityId(c.getEntityId()).equals("actionable")){ //Todo: Remove all rules with null entityID
-                     actionableCandidates.remove(actionableCandidate);
-                 }
-             }
+         ArrayList<LogEntry> actionableCandidate = new ArrayList(candidate);
+         actionableCandidates.add(actionableCandidate);
+         for (LogEntry c: candidate){
+         if ( !getControllabilityByEntityId(c.getEntityId()).equals("actionable")){ //Todo: Remove all rules with null entityID
+         actionableCandidates.remove(actionableCandidate);
+         }
+         }
          }
 
          if (!actionableCandidates.isEmpty()){
-             candidates = actionableCandidates;
+         candidates = actionableCandidates;
          }
 
-        //calculate properties
+         //calculate properties
          ArrayList<Double> abnormality = calculateAbnormality(candidates, logEntries);
          ArrayList<Double> temporality = calculateAbnormality(candidates, logEntries);
          ArrayList<Double> proximity = calculateProximity(candidates, explanandum,logEntries);
          ArrayList<Double> sparsity = calculateSparsity(candidates);
 
 
-        ArrayList<Double> weights = new ArrayList<Double>();
-        weights.add(ABNORMALITY_WEIGHT);
-        weights.add(TEMPORALITY_WEIGHT);
-        weights.add(PROXIMITY_WEIGHT);
-        weights.add(SPARSITY_WEIGHT);
+         ArrayList<Double> weights = new ArrayList<Double>();
+         weights.add(ABNORMALITY_WEIGHT);
+         weights.add(TEMPORALITY_WEIGHT);
+         weights.add(PROXIMITY_WEIGHT);
+         weights.add(SPARSITY_WEIGHT);
 
-        ArrayList<Boolean> isBeneficial = new ArrayList<>();
-        isBeneficial.add(ABNORMALITY_BENEFICIAL);
-        isBeneficial.add(TEMPORALITY_BENEFICIAL);
-        isBeneficial.add(PROXIMITY_BENEFICIAL);
-        isBeneficial.add(SPARSITY_BENEFICIAL);
+         ArrayList<Boolean> isBeneficial = new ArrayList<>();
+         isBeneficial.add(ABNORMALITY_BENEFICIAL);
+         isBeneficial.add(TEMPORALITY_BENEFICIAL);
+         isBeneficial.add(PROXIMITY_BENEFICIAL);
+         isBeneficial.add(SPARSITY_BENEFICIAL);
 
-        ArrayList<LogEntry> minimum = ContrastiveExplanationService.topsis(candidates, weights, isBeneficial, abnormality, temporality,
-                proximity, sparsity);
+         ArrayList<LogEntry> minimum = ContrastiveExplanationService.topsis(candidates, weights, isBeneficial, abnormality, temporality,
+         proximity, sparsity);
 
-        if (minimum == null) {
-            LOGGER.error("Error in TOPSIS Calculation");
-            return null;
-        }
-
-
+         if (minimum == null) {
+         LOGGER.error("Error in TOPSIS Calculation");
+         return null;
+         }
 
 
-        /* noDuplicates(candidates);
-        ArrayList<ArrayList<LogEntry>> actionableCandidates = candidates;
-        ArrayList<Double> abnormality = new ArrayList<>(candidates.size());
-        ArrayList<Double> temporality = new ArrayList<>(candidates.size());
-        ArrayList<Double> sparsity = new ArrayList<>(candidates.size());
-        ArrayList<Double> proximity = new ArrayList<>(candidates.size());
-        System.out.println(candidates.size());
-        for (int i = 0; i < candidates.size(); i++){
-        ArrayList<LogEntry> setOfPreconditions = candidates.get(i);
-        double A = 0.0;
-        double T = 0.0 ;
-        double size = (double)setOfPreconditions.size();
-        for (LogEntry precondition : setOfPreconditions){
-        //TODO: Implement actionability
-        A += calculateAbnormality(precondition, logEntries);
-        T +=  calculateTemporality(precondition, explanandum, logEntries);
-        }
-        abnormality.set(i,  A / size);
-        temporality.set(i, T / size);
-        sparsity.set(i, size);
-        proximity.set( i, calculateProximity(setOfPreconditions, explanandum, logEntries));
-        }
 
-        ArrayList<LogEntry> minimal = candidates.get(candidates.size()-1);
-        // System.out.println("The preconditions that are chosen  to be minimal with topsis are: "+  minimal);
-        return minimal;*/
 
+         /* noDuplicates(candidates);
+         ArrayList<ArrayList<LogEntry>> actionableCandidates = candidates;
+         ArrayList<Double> abnormality = new ArrayList<>(candidates.size());
+         ArrayList<Double> temporality = new ArrayList<>(candidates.size());
+         ArrayList<Double> sparsity = new ArrayList<>(candidates.size());
+         ArrayList<Double> proximity = new ArrayList<>(candidates.size());
+         System.out.println(candidates.size());
+         for (int i = 0; i < candidates.size(); i++){
+         ArrayList<LogEntry> setOfPreconditions = candidates.get(i);
+         double A = 0.0;
+         double T = 0.0 ;
+         double size = (double)setOfPreconditions.size();
+         for (LogEntry precondition : setOfPreconditions){
+         //TODO: Implement actionability
+         A += calculateAbnormality(precondition, logEntries);
+         T +=  calculateTemporality(precondition, explanandum, logEntries);
+         }
+         abnormality.set(i,  A / size);
+         temporality.set(i, T / size);
+         sparsity.set(i, size);
+         proximity.set( i, calculateProximity(setOfPreconditions, explanandum, logEntries));
+         }
+
+         ArrayList<LogEntry> minimal = candidates.get(candidates.size()-1);
+         // System.out.println("The preconditions that are chosen  to be minimal with topsis are: "+  minimal);
+         return minimal;*/
 
 
     }
@@ -549,14 +588,14 @@ public class CounterfactualExplanationService extends ExplanationService {
     public ArrayList<Double> calculateTemporality(ArrayList<ArrayList<LogEntry>> candidates, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         ArrayList<Double> temporality = new ArrayList<>();
 
-        for (ArrayList<LogEntry> candidate : candidates){
+        for (ArrayList<LogEntry> candidate : candidates) {
             double sum = 0.0;
-            for (LogEntry c : candidate){
+            for (LogEntry c : candidate) {
                 LogEntry newest = c;
                 for (LogEntry logEntry : logEntries) {
                     int timeComparisonExp_1 = newest.compareTo(explanandum);
                     int timeComparisonExp_2 = logEntry.compareTo(explanandum);
-                    if (newest.equals(logEntry) && timeComparisonExp_1 >0 && timeComparisonExp_2 < 0){    //logEntry is identical to c, occurred before explanandum and newest occurred after explanandum
+                    if (newest.equals(logEntry) && timeComparisonExp_1 > 0 && timeComparisonExp_2 < 0) {    //logEntry is identical to c, occurred before explanandum and newest occurred after explanandum
                         newest = logEntry;
                     }
                     int timeComparisonLog = newest.compareTo(logEntry);
@@ -565,14 +604,14 @@ public class CounterfactualExplanationService extends ExplanationService {
                         System.out.println("Newer LogEntry detected.");
                     }
                 }
-                if (newest.compareTo(explanandum) >0){  //no identical logEntry before explanandum found
+                if (newest.compareTo(explanandum) > 0) {  //no identical logEntry before explanandum found
                     LOGGER.info("For LogEntry " + newest.getEntityId() + " with state " + newest.getState() + " no entry before the explanandum could be found. The temporality has been set to max.");
                     sum = Integer.MAX_VALUE;
                     break;
                 } else {
                     LocalDateTime current = explanandum.getLocalDateTime();
                     LocalDateTime last = newest.getLocalDateTime();
-                  //  System.out.println("Time difference calculated for LogEntry" + newest.getEntityId() + newest.getState() + ". It is :" + (double) last.until(current, SECONDS));
+                    //  System.out.println("Time difference calculated for LogEntry" + newest.getEntityId() + newest.getState() + ". It is :" + (double) last.until(current, SECONDS));
                     sum += (double) last.until(current, SECONDS);
                 }
             }
@@ -598,25 +637,25 @@ public class CounterfactualExplanationService extends ExplanationService {
         ArrayList<LogEntry> additional = new ArrayList<>();
 
         //update the current state if the candidates were true:  (we can assume candidates do not contain duplicate entityIDs)
-        for (ArrayList<LogEntry> candidate : candidates){
-            ArrayList<LogEntry> changes = (ArrayList<LogEntry>) candidate.clone();
+        for (ArrayList<LogEntry> candidate : candidates) {
+            ArrayList<LogEntry> changes = new ArrayList<>(candidate);
             System.out.println("Initial changes which just includes candidate:" + changes);
-            ArrayList<LogEntry> updatedState = (ArrayList<LogEntry>) currentState.clone();
-            ArrayList<Rule> active = new ArrayList<>();
-            do{
+            ArrayList<LogEntry> updatedState = new ArrayList<>(currentState);
+            ArrayList<Rule> active;
+            do {
 
                 //Find active rules and their actions:
-                active = (ArrayList<Rule>) rules.clone();
+                active = new ArrayList<>(rules);
                 TruePreconditions(active, explanandum, updatedState, logEntries);
 
                 additional.clear();
-                for (Rule r: active){
+                for (Rule r : active) {
                     rules.remove(r);
                     ArrayList<LogEntry> actions = r.getActions();
-                    for (LogEntry action: actions){
-                        for (int i = 0; i< changes.size(); i++){
+                    for (LogEntry action : actions) {
+                        for (int i = 0; i < changes.size(); i++) {
                             LogEntry change = changes.get(i);
-                            if (change.getEntityId().equals(action.getEntityId())){
+                            if (change.getEntityId().equals(action.getEntityId())) {
                                 changes.remove(change);
                                 changes.add(action);
                                 additional.remove(change);
@@ -629,10 +668,10 @@ public class CounterfactualExplanationService extends ExplanationService {
                 }
 
                 //update current situation with the changes in changes:
-                for (int i = 0; i< updatedState.size(); i++) {      //go through all entries in updatedState
+                for (int i = 0; i < updatedState.size(); i++) {      //go through all entries in updatedState
                     String entityId = updatedState.get(i).getEntityId();
                     for (LogEntry c : changes) {                  //go through all entries in candidate
-                        if (entityId.equals(c.getEntityId())){  //if they are concerned with the sam entityId update updated state
+                        if (entityId.equals(c.getEntityId())) {  //if they are concerned with the sam entityId update updated state
                             // System.out.println("before update in if: " + updatedState.get(i).getEntityId() + updatedState.get(i).getState());
                             updatedState.set(i, c);
                             //System.out.println("if reached:" + updatedState.get(i).getEntityId() + updatedState.get(i).getState());
@@ -642,23 +681,22 @@ public class CounterfactualExplanationService extends ExplanationService {
 
 
                 //System.out.println("Changes directly before the while loop:" + changes);
-               // System.out.println("Entries of changes: " + changes.get(0).getEntityId() + changes.get(0).getState());
-               // System.out.println("Entries of changes: " + changes.get(1).getEntityId() + changes.get(1).getState());
-              //  System.out.println("Entries of changes: " + changes.get(2).getEntityId() + changes.get(2).getState());
+                // System.out.println("Entries of changes: " + changes.get(0).getEntityId() + changes.get(0).getState());
+                // System.out.println("Entries of changes: " + changes.get(1).getEntityId() + changes.get(1).getState());
+                //  System.out.println("Entries of changes: " + changes.get(2).getEntityId() + changes.get(2).getState());
 
 
             } while (!additional.isEmpty());
-            for (int i = 0; i < changes.size(); i++){
-                System.out.println("Changes entry:" + changes.get(i).getEntityId() + changes.get(i).getState());
+            for (LogEntry change : changes) {
+                System.out.println("Changes entry:" + change.getEntityId() + change.getState());
             }
-            proximity.add((double)changes.size());
+            proximity.add((double) changes.size());
         }
         return proximity;
-        }
+    }
 
     //Todo: calculate changes and then based on priority remove some and then abgleichen mit current state
     //Todo: Check which way around the logEntries are given, the ones to change how they are currently or how they should be?
-
 
 
     /**
@@ -671,11 +709,11 @@ public class CounterfactualExplanationService extends ExplanationService {
     public LogEntry getPreviousLogEntry(LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         String entityID = explanandum.getEntityId();
         String state = explanandum.getState();
+        ArrayList<LogEntry> logEntriesSorted = new ArrayList<>(logEntries);
+        logEntriesSorted.sort(Collections.reverseOrder());
+        logEntriesSorted.remove(explanandum);
 
-        logEntries.remove(explanandum);
-        logEntries.sort(Collections.reverseOrder());
-
-        for (LogEntry logEntry : logEntries) {
+        for (LogEntry logEntry : logEntriesSorted) {
             int timeComparison = explanandum.compareTo(logEntry);
             if (timeComparison > 0 && entityID.equals(logEntry.getEntityId()) && !state.equals(logEntry.getState())) {
                 return logEntry;
@@ -694,7 +732,7 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @return truePreconditions
      */
     public Boolean hasTruePreconditions(Rule r, LogEntry explanandum, ArrayList<LogEntry> currentState, ArrayList<LogEntry> logEntries) {
-        Boolean truePreconditions = findCauseSer.preconditionsApply(explanandum, r, logEntries);
+        boolean truePreconditions = findCauseSer.preconditionsApply(explanandum, r, logEntries);
         ArrayList<LogEntry> conditions = r.getConditions();
         for (LogEntry condition : conditions) {
             if (condition.getEntityId() != null && !currentState.contains(condition)) { //condition does not have the same state and entityid as one of the elements in currentstate, i.e. the state is different and does not have entityId null which makes it an invalid condition
@@ -712,13 +750,13 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @param logEntries  All considered logEntries
      */
     public void TruePreconditions(ArrayList<Rule> rules, LogEntry explanandum, ArrayList<LogEntry> currentState, ArrayList<LogEntry> logEntries) {
-        if (rules != null){
-        for (int i = 0; i < rules.size(); i++){
-            Rule rule = rules.get(i);
-            if (!hasTruePreconditions(rule, explanandum, currentState, logEntries)) {
-                rules.remove(rule);
+        if (rules != null) {
+            for (int i = 0; i < rules.size(); i++) {
+                Rule rule = rules.get(i);
+                if (!hasTruePreconditions(rule, explanandum, currentState, logEntries)) {
+                    rules.remove(rule);
+                }
             }
-        }
         }
     }
 
@@ -726,16 +764,17 @@ public class CounterfactualExplanationService extends ExplanationService {
     public ArrayList<LogEntry> getCurrentState(ArrayList<LogEntry> logEntries) {
         //logEntries are already given in reverse order, i.e. from newest to oldest
         //add logEntry to new List if this entityID has not occurred before
-        logEntries.sort(Collections.reverseOrder());
+        ArrayList<LogEntry> logEntriesSorted = new ArrayList<>(logEntries);
+        logEntriesSorted.sort(Collections.reverseOrder());
         ArrayList<LogEntry> currentState = new ArrayList<>();
         ArrayList<String> notYetConsideredIDs = new ArrayList<>();
-        for (LogEntry entry : logEntries) { //collect all entityIds
+        for (LogEntry entry : logEntriesSorted) { //collect all entityIds
             String id = entry.getEntityId();
             if (!notYetConsideredIDs.contains(id)) {
                 notYetConsideredIDs.add(id);
             }
         }
-        for (LogEntry entry : logEntries) {
+        for (LogEntry entry : logEntriesSorted) {
             String id = entry.getEntityId();
             if (notYetConsideredIDs.contains(id)) {
                 currentState.add(entry);
@@ -758,16 +797,11 @@ public class CounterfactualExplanationService extends ExplanationService {
     }
 
 
-
     public <T> void noDuplicates(ArrayList<T> list) {
-        Set<T> set = new LinkedHashSet<>();
-        set.addAll(list);
+        Set<T> set = new LinkedHashSet<>(list);
         list.clear();
         list.addAll(set);
     }
-
-
-
 
 
 }
