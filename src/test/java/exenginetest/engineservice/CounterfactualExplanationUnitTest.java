@@ -192,6 +192,7 @@ public class CounterfactualExplanationUnitTest {
 
         // Mocks
         Mockito.when(dataSer.findAllRules()).thenReturn(consideredRules);
+        Mockito.when(findCauseSer.preconditionsApply(any(), any(), any())).thenReturn(true);
         Mockito.when(underTest.minComputation(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenAnswer(invocation -> {
                     ArrayList<ArrayList<LogEntry>> candidates = invocation.getArgument(0);
@@ -564,8 +565,8 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> min = underTest.overrideOrRemove(rules, logEntries.get(25), logEntries.get(18), false, logEntries);
 
         // Then
-        Assertions.assertEquals(expectedMinSub, minSub);
-        Assertions.assertEquals(expectedMin, min);
+        Assertions.assertEquals(expectedMinSub, minSub, "Should be equal because " + dbRules.get(5).getRuleName() + " cannot be overridden and only directly reversed.");
+        Assertions.assertEquals(expectedMin, min, "Should be equal because " + dbRules.get(7).getRuleName() + " can be overridden by " + dbRules.get(6).getRuleName() + " and reversed by reversing rule " + dbRules.get(7).getRuleName());
 
 
     }
@@ -582,7 +583,7 @@ public class CounterfactualExplanationUnitTest {
         candidate_1.add(logEntries.get(14));
         candidate_1.add(logEntries.get(18));
         candidate_2.add(logEntries.get(15));
-        candidate_2.add(logEntries.get(16));
+        candidate_2.add(logEntries.get(20));
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
@@ -595,14 +596,13 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<Double> sparsity = underTest.calculateSparsity(candidates);
 
         // Then
-        Assertions.assertEquals(expected, sparsity);
+        Assertions.assertEquals(expected, sparsity, "Should be equal because the first set contains 3 and the second set contains 3 entries.");
     }
 
     @Test
-    @Disabled
     void testCalculateAbnormality() {
 
-        //Given
+        // Given
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
@@ -611,24 +611,23 @@ public class CounterfactualExplanationUnitTest {
         candidate_1.add(logEntries.get(14));
         candidate_1.add(logEntries.get(18));
         candidate_2.add(logEntries.get(15));
-        candidate_2.add(logEntries.get(16));
+        candidate_2.add(logEntries.get(20));
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
         // Expected
         ArrayList<Double> expected = new ArrayList<>();
-        expected.add(36.11111111111111);
         expected.add(41.666666666666664);
+        expected.add(29.166666666666664);
 
         // When
         ArrayList<Double> abnormality = underTest.calculateAbnormality(candidates, logEntries);
 
         // Then
-        Assertions.assertEquals(expected, abnormality);
+        Assertions.assertEquals(expected, abnormality, "Should be equal because for the first entry status.lamp has 2 states, color.lamp has 3 states and status.fan has 2 states. For the second entry setting.aircon has 3 states and color.lamp has 4 states." );
     }
 
     @Test
-    @Disabled
     void testCalculateTemporality() {
 
         // Given
@@ -636,28 +635,26 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
         ArrayList<LogEntry> candidate_2 = new ArrayList<>();
-        candidate_1.add(logEntries.get(12));
+        candidate_1.add(logEntries.get(13));
         candidate_1.add(logEntries.get(14));
         candidate_1.add(logEntries.get(19));
         candidate_2.add(logEntries.get(15));
-        candidate_2.add(logEntries.get(16));
-        candidate_2.add(logEntries.get(23));
+        candidate_2.add(logEntries.get(24));
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
         ArrayList<Double> expected = new ArrayList<>();
-        expected.add(15.0);
-        expected.add(13.333333333333334);
+        expected.add(17.333333333333332);
+        expected.add((double) Integer.MAX_VALUE /2);
 
         // When
-        ArrayList<Double> abnormality = underTest.calculateTemporality(candidates, logEntries.get(22), logEntries);
+        ArrayList<Double> abnormality = underTest.calculateTemporality(candidates, logEntries.get(23), logEntries);
 
         // Then
-        Assertions.assertEquals(expected, abnormality);
+        Assertions.assertEquals(expected, abnormality, "Should be equal because " + logEntries.get(19) + " has an identical logEntry later and " + logEntries.get(24) + " is after the explanandum.");
     }
 
     @Test
-    @Disabled
     void testCalculateProximity() {
 
         // Given
@@ -668,21 +665,16 @@ public class CounterfactualExplanationUnitTest {
         }
         ArrayList<Rule> dbRules = testingObjects.getDBRules();
         ArrayList<Rule> consideredRules = new ArrayList<>();
-        consideredRules.add(dbRules.get(5));
-        consideredRules.add(dbRules.get(6));
-        consideredRules.add(dbRules.get(7));
-        consideredRules.add(dbRules.get(8));
-
-        LogEntry explanandum = logEntries.get(22);
+        for (int i = 5; i< dbRules.size(); i++){
+            consideredRules.add(dbRules.get(i));
+        }
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
-        //ArrayList<LogEntry> candidate_2 = new ArrayList<>();
-        candidate_1.add(logEntries.get(12));
-        candidate_1.add(logEntries.get(14));
-        // candidate_2.add(logEntries.get(15));
-        //candidate_2.add(logEntries.get(16));
+        ArrayList<LogEntry> candidate_2 = new ArrayList<>();
+        candidate_1.add(logEntries.get(26));
+        candidate_2.add(logEntries.get(21));
         candidates.add(candidate_1);
-        //candidates.add(candidate_2);
+        candidates.add(candidate_2);
 
         // Mocks
         Mockito.when(dataSer.findAllRules()).thenReturn(consideredRules);
@@ -690,10 +682,11 @@ public class CounterfactualExplanationUnitTest {
 
         // Expected
         ArrayList<Double> expected = new ArrayList<>();
-        expected.add(5.0);
+        expected.add(1.0);
+        expected.add(3.0);
 
         // When
-        ArrayList<Double> proximity = underTest.calculateProximity(candidates, explanandum, consideredLogEntries);
+        ArrayList<Double> proximity = underTest.calculateProximity(candidates, logEntries.get(28), consideredLogEntries);
 
         // Then
         Assertions.assertEquals(expected, proximity);

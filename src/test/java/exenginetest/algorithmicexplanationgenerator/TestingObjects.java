@@ -158,7 +158,7 @@ public class TestingObjects {
 		actions.add(demoEntries.get(20));
 		conditions = new ArrayList<LogEntry>();
 		conditions.add(demoEntries.get(21));
-		dbRules.add(new Rule("rule for counterfactual testing 5 (constructed rule)", "10", null, conditions, actions, "2",
+		dbRules.add(new Rule("rule for counterfactual testing 5 (index 9) (constructed rule)", "10", null, conditions, actions, "2",
 				"Rule_13: a constructed rule which can make the rule with index 6 fire", 11));
 
 

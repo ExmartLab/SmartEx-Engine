@@ -52,7 +52,6 @@ public class CounterfactualExplanationService extends ExplanationService {
     final Boolean SPARSITY_BENEFICIAL = false;
 
 
-
     /**
      * * Include explanation of CounterfactualExplanationService here
      *
@@ -180,8 +179,15 @@ public class CounterfactualExplanationService extends ExplanationService {
         return explanation;
     }
 
+    // Subtractive Methods:
+
     /**
-     * Subtractive Methods:
+     * Finds the minimal set of LogEntries to change s.t.  ruleToReverse does not have true preconditions anymore.
+     *
+     * @param ruleToReverse the rule that is to be reversed
+     * @param explanandum   the action that is to be explained
+     * @param logEntries    the list of Home Assistant logs
+     * @return the minimal set of LogEntries s.t. reversing them prevents ruleToReverse from being active
      */
     public ArrayList<LogEntry> minSub(Rule ruleToReverse, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         ArrayList<LogEntry> toReverse = new ArrayList<>();
@@ -191,8 +197,8 @@ public class CounterfactualExplanationService extends ExplanationService {
         ArrayList<LogEntry> mutablePreconditions = new ArrayList<>();
         ArrayList<LogEntry> nonMutablePreconditions = new ArrayList<>();
 
+        // Sort by controllability
         for (LogEntry precondition : preconditions) {
-            System.out.println("a precondtion of rule " + ruleToReverse.getRuleName() + " is " + precondition.getName());
             String controllability = getControllabilityByEntityId(precondition.getEntityId());
             switch (controllability) {
                 case "actionable" -> actionablePreconditions.add(precondition);
@@ -200,35 +206,50 @@ public class CounterfactualExplanationService extends ExplanationService {
                 case "non-mutable" -> nonMutablePreconditions.add(precondition);
                 default -> {
                     LOGGER.error("Error, an entity has invalid controllability");
-                    return null;
+                    return null;        //Todo: Check what happens in this case
                 }
             }
         }
 
-        //actionable preconditions can be added directly or all of their find roots options:
+        // actionable preconditions
         for (LogEntry precondition : actionablePreconditions) {
-            toReverse.addAll(findRoots(precondition, explanandum, logEntries));
+            toReverse.addAll(new ArrayList<>(findRoots(precondition, explanandum, logEntries)));
         }
 
-        //only add mutable but non-actionable ones if we can find a rule that we can fire:
+        // mutable but non-actionable preconditions
         for (LogEntry precondition : mutablePreconditions) {
-            toReverse.addAll(findRoots(precondition, explanandum, logEntries));
-            toReverse.remove(precondition); //precondition cannot be directly manipulated
+            toReverse.addAll(new ArrayList<>(findRoots(precondition, explanandum, logEntries)));
+            toReverse.remove(precondition); // precondition cannot be directly manipulated
         }
+
+        // consider non-mutable preconditions if there are no other ones
         if (toReverse.isEmpty()) {
             toReverse.addAll(nonMutablePreconditions);
             LOGGER.info("There are no mutable preconditions. Proceed with non-mutable ones");
         }
 
         noDuplicates(toReverse);
+
+        // findRoots considers rules with true preconditions
+        // but the manipulation can use a rule that that does not have true preconditions
         ArrayList<ArrayList<LogEntry>> minCandidates = new ArrayList<>();
         for (LogEntry precondition : toReverse) {
             minCandidates.add(modify(precondition, explanandum, logEntries));
         }
+
         noDuplicates(minCandidates);
         return minComputation(minCandidates, explanandum, logEntries);
     }
 
+    /**
+     * Finds the minimal set of LogEntries to change s.t. all rules in rulesToReverse do not have true
+     * preconditions anymore.
+     *
+     * @param rulesToReverse the rules that are to be reversed
+     * @param explanandum    the action that is to be explained
+     * @param logEntries     the list of Home Assistant logs
+     * @return the minimal set of LogEntries s.t. reversing them prevents all rules in rulesToReverse from being active
+     */
     public ArrayList<LogEntry> minSubAll(ArrayList<Rule> rulesToReverse, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
         ArrayList<LogEntry> conditions = new ArrayList<>();
         for (Rule r : rulesToReverse) {
@@ -239,48 +260,70 @@ public class CounterfactualExplanationService extends ExplanationService {
     }
 
 
+    //Additive Method:
+
     /**
-     * Additive Method:
+     * Finds minimal set of LogEntries that need to true so that a rule is fired that overrides ruleToOverride.
+     *
+     * @param ruleToOverride the rule that is to be overridden
+     * @param explanandum    the action of the device to be explained
+     * @param toAchieve      the state of the device that is to be achieved
+     * @param logEntries     the list of Home Assistant logs
+     * @return minimal set of LogEntries s.t. if the System had these states of the devices ruleToOverride would be
+     * overridden by another rule.
      */
     public ArrayList<LogEntry> minAdd(Rule ruleToOverride, LogEntry explanandum, LogEntry toAchieve, ArrayList<LogEntry> logEntries) {
         ArrayList<Rule> dbRules = new ArrayList<>(dataSer.findAllRules());
+
+        // Find rules that lead to the desired state
         ArrayList<Rule> candidateRules = findCauseSer.findCandidateRules(toAchieve, dbRules);
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
-        if (!candidateRules.isEmpty()) {
+
+        if (candidateRules != null && !candidateRules.isEmpty()) {
             for (Rule r : candidateRules) {
+
+                // Find minimal way to make r fire
                 ArrayList<LogEntry> candidate = new ArrayList<>(makeFire(r, explanandum, logEntries));
+
+                // only consider rules that override ruleToOverride and don't need too many changes
                 if (r.getPriority() > ruleToOverride.getPriority() && candidate.size() <= 3) {
                     candidates.add(candidate);
                 }
             }
         }
+
         if (candidates.isEmpty()) {
             LOGGER.info("No additive explanation available. No rule that could fire found.");
-            return null;
+            return null;    //Todo: check what happens in this case, add to minComputation?
         }
         noDuplicates(candidates);
         return minComputation(candidates, explanandum, logEntries);
     }
 
 
-    //Auxilary Methods:
+    //Auxiliary Methods:
 
     /**
-     * Determines the states and EntityIds that need to be changed to make rule r fire
+     * Determines the states and EntityIds that need to be changed to make rule r have true preconditions
+     * (conditions and triggers).
      *
-     * @param r          Rule that has to be fired
-     * @param logEntries List of all relevant Logentries
-     * @return List of LogEntries which contain the states the system has to have to make r fire
+     * @param r           the rule that should have true preconditions
+     * @param explanandum the action of the device that is to be explained
+     * @param logEntries  the list of Home Assistant logs
+     * @return the list of LogEntries which contain the states the system has to have to make r have true preconditions
      */
     public ArrayList<LogEntry> makeFire(Rule r, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
-        //System.out.println("MakeFire entered with rule" + r.getRuleName() + ". It has id: " + r.getRuleId());
+
         ArrayList<LogEntry> currentStates = new ArrayList<>(getCurrentState(logEntries));
-        ArrayList<LogEntry> preconditions = new ArrayList<>(r.getConditions());
+        ArrayList<LogEntry> conditions = new ArrayList<>(r.getConditions());
         ArrayList<LogEntry> triggers = new ArrayList<>(r.getTrigger());
-        Iterator<LogEntry> i = preconditions.iterator();
+
+        // find false conditions of r
+        Iterator<LogEntry> i = conditions.iterator();
         while (i.hasNext()) {
             LogEntry p = i.next();
-            if (p.getEntityId() == null || p.getState() == null) {   //p is not a valid precondition
+            // remove invalid conditions
+            if (p.getEntityId() == null || p.getState() == null) {
                 i.remove();
             } else {
                 for (LogEntry state : currentStates) {
@@ -290,32 +333,45 @@ public class CounterfactualExplanationService extends ExplanationService {
                 }
             }
         }
-        Iterator<LogEntry> j = triggers.iterator();
-        while (j.hasNext()) {
-            LogEntry t = j.next();
-            for (LogEntry state : currentStates) {
-                if (t.equals(state)) {  //check if the preconditions are already true
-                    j.remove();
+
+        // check if it is more minimal to fire a rule instead of manipulating the condition directly
+        ArrayList<LogEntry> modifiedConditions = new ArrayList<>();
+        for (LogEntry condition : conditions) {
+            ArrayList<LogEntry> modifiedCondition = modify(condition, explanandum, logEntries);
+            if (modifiedCondition != null && !modifiedCondition.isEmpty()) {
+                modifiedConditions.addAll(modifiedCondition);
+            }
+        }
+
+        ArrayList<LogEntry> minPreconditions = new ArrayList<>(modifiedConditions);
+
+
+        // find false triggers of r
+        boolean hasTrueTrigger = findCauseSer.preconditionsApply(explanandum, r, logEntries);
+
+        // all triggers are false, if one is true we don't need to change the triggers
+        if (!hasTrueTrigger) {
+            ArrayList<ArrayList<LogEntry>> triggerCandidates = new ArrayList<>();
+            for (LogEntry t : triggers) {
+                // remove invalid triggers
+                if (t.getEntityId() == null || t.getState() == null) {
+                    i.remove();
+                }
+                ArrayList<LogEntry> triggerCandidate = modify(t, explanandum, logEntries);
+                if (triggerCandidate != null && !triggerCandidate.isEmpty()) {
+                    triggerCandidates.add(triggerCandidate);
                 }
             }
+            // find minimum trigger:
+            noDuplicates(triggerCandidates);
+            ArrayList<LogEntry> minTrigger = minComputation(triggerCandidates, explanandum, logEntries);
+            minPreconditions.addAll(minTrigger);
         }
-        ArrayList<LogEntry> updatedPreconditions = new ArrayList<>();
-        ArrayList<LogEntry> updatedTriggers = new ArrayList<>();
-        for (LogEntry c : preconditions) {
-            if (modify(c, explanandum, logEntries) != null) {
-                updatedPreconditions.addAll(modify(c, explanandum, logEntries));
-            }
-        }
-        for (LogEntry t : triggers) {
-            updatedTriggers.addAll(modify(t, explanandum, logEntries));
-        }
-        //do not change r, just save the updated ones elsewhere, we do not want to change r forever in the system
-        //r.setConditions(updatedPreconditions);
-        //r.setTrigger(updatedTriggers);
         //todo: remove duplicates in all methods
-        updatedPreconditions.addAll(updatedTriggers);
-        noDuplicates(updatedPreconditions);
-        return updatedPreconditions;
+
+
+        noDuplicates(minPreconditions);
+        return minPreconditions;
     }
 
     /**
@@ -377,7 +433,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         //Todo: go through test again
         //Todo: Add this check to all methods
 
-        if (activeRules== null || activeRules.isEmpty()) {  //we can directly change c
+        if (activeRules == null || activeRules.isEmpty()) {  //we can directly change c
             changeablePreconditions.add(c);
         } else {
             for (Rule r : activeRules) {
@@ -391,7 +447,7 @@ public class CounterfactualExplanationService extends ExplanationService {
             }
         }
         noDuplicates(changeablePreconditions);
-       // System.out.println(" The roots for  preconditions" + c.getName() + " are " + changeablePreconditions);
+        // System.out.println(" The roots for  preconditions" + c.getName() + " are " + changeablePreconditions);
         return changeablePreconditions;
 
     }
@@ -422,12 +478,12 @@ public class CounterfactualExplanationService extends ExplanationService {
             //additive part:
             ArrayList<LogEntry> overriding = minAdd(r, explanandum, expected, logEntries);
             System.out.println("the additive part is:" + overriding);
-            if (overriding!= null && !overriding.isEmpty()) {
+            if (overriding != null && !overriding.isEmpty()) {
                 candidate.addAll(overriding);
                 addCandidates.addAll(overriding);
             }
 
-           candidates.add(candidate);
+            candidates.add(candidate);
         }
 
         //removing all rules and not firing any:
@@ -576,7 +632,9 @@ public class CounterfactualExplanationService extends ExplanationService {
                     }
                 }
                 sum += identical / all * 100;
+
             }
+            System.out.println("Sum " + sum);
             Double average = sum / candidate.size();
 
             abnormality.add(average);
@@ -623,80 +681,99 @@ public class CounterfactualExplanationService extends ExplanationService {
 
     public ArrayList<Double> calculateProximity(ArrayList<ArrayList<LogEntry>> candidates, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
 
-        //Todo: remove, not necessary, just for safety
-        //noDuplicates(candidates);
-
-        //get state before changes:
-        ArrayList<LogEntry> currentState = getCurrentState(logEntries);
-
-        //get all rules:
-        List<Rule> dbRules = dataSer.findAllRules();
-        ArrayList<Rule> rules = new ArrayList<>(dbRules);
 
         ArrayList<Double> proximity = new ArrayList<>();
-        ArrayList<LogEntry> additional = new ArrayList<>();
 
-        //update the current state if the candidates were true:  (we can assume candidates do not contain duplicate entityIDs)
+
         for (ArrayList<LogEntry> candidate : candidates) {
-            ArrayList<LogEntry> changes = new ArrayList<>(candidate);
-            System.out.println("Initial changes which just includes candidate:" + changes);
-            ArrayList<LogEntry> updatedState = new ArrayList<>(currentState);
-            ArrayList<Rule> active;
-            do {
 
-                //Find active rules and their actions:
-                active = new ArrayList<>(rules);
-                TruePreconditions(active, explanandum, updatedState, logEntries);
 
-                additional.clear();
-                for (Rule r : active) {
-                    rules.remove(r);
-                    ArrayList<LogEntry> actions = r.getActions();
-                    for (LogEntry action : actions) {
-                        for (int i = 0; i < changes.size(); i++) {
-                            LogEntry change = changes.get(i);
-                            if (change.getEntityId().equals(action.getEntityId())) {
-                                changes.remove(change);
-                                changes.add(action);
-                                additional.remove(change);
-                                additional.add(action);
-                            }
-                        }
+            ArrayList<Rule> rules = new ArrayList<>(dataSer.findAllRules());
 
-                    }
-                    System.out.println("Active Rule has ruleId (remember to subtract 1 to get the index): " + r.getRuleId());
-                }
 
-                //update current situation with the changes in changes:
-                for (int i = 0; i < updatedState.size(); i++) {      //go through all entries in updatedState
-                    String entityId = updatedState.get(i).getEntityId();
-                    for (LogEntry c : changes) {                  //go through all entries in candidate
-                        if (entityId.equals(c.getEntityId())) {  //if they are concerned with the sam entityId update updated state
-                            // System.out.println("before update in if: " + updatedState.get(i).getEntityId() + updatedState.get(i).getState());
-                            updatedState.set(i, c);
-                            //System.out.println("if reached:" + updatedState.get(i).getEntityId() + updatedState.get(i).getState());
-                        }
-                    }
+            // state of the system before the manipulations of this iteration are included
+            ArrayList<LogEntry> stateCurrent = new ArrayList<>(getCurrentState(logEntries));
+
+            // state of the system after the manipulations of this iteration are included
+            ArrayList<LogEntry> stateAfter = new ArrayList<>(getCurrentState(logEntries));
+
+            // all changes that are added in this iteration
+            ArrayList<LogEntry> changesIteration = new ArrayList<>(candidate);
+
+            // all changes over all iterations
+            ArrayList<LogEntry> allChanges = new ArrayList<>(candidate);
+
+            // iteration counter to ensure we don't end up in an infinite loop
+            int l = 0;
+            boolean somethingChanged = true;
+
+            while (somethingChanged && l < 15) {
+
+                // all active rules at the state of stateBefore
+                ArrayList<Rule> activeRules = new ArrayList<>(rules);
+                TruePreconditions(activeRules, explanandum, stateCurrent, logEntries);
+
+                activeRules = removeOverridden(activeRules, logEntries);
+
+
+                for (Rule r : activeRules) {
+                    System.out.println(" the following rule is active: " + r.getRuleName());
                 }
 
 
-                //System.out.println("Changes directly before the while loop:" + changes);
-                // System.out.println("Entries of changes: " + changes.get(0).getEntityId() + changes.get(0).getState());
-                // System.out.println("Entries of changes: " + changes.get(1).getEntityId() + changes.get(1).getState());
-                //  System.out.println("Entries of changes: " + changes.get(2).getEntityId() + changes.get(2).getState());
+                // collect all changes to the system from the active rules in the changesIteration array
+                for (Rule r : activeRules) {
+                    changesIteration.addAll(r.getActions());
+                }
+                noDuplicates(changesIteration);
+                System.out.println("ChangesInteraction contains:" + changesIteration);
 
+                //remove entry if it is already in stateBefore
+                Iterator<LogEntry> i = changesIteration.iterator();
+                while (i.hasNext()) {
+                    LogEntry changeIteration = i.next();
+                    if (stateCurrent.contains(changeIteration)) {
+                        i.remove();
+                        System.out.println("change is removed because it is already in the current state" + changeIteration.getName());
+                    }
+                }
 
-            } while (!additional.isEmpty());
-            for (LogEntry change : changes) {
-                System.out.println("Changes entry:" + change.getEntityId() + change.getState());
+                for (LogEntry change : changesIteration) {
+                    System.out.println(" the following change is added:" + change.getName());
+                }
+                allChanges.addAll(changesIteration);
+
+                // update current state
+                for (LogEntry changeIteration : changesIteration) {
+                    Iterator<LogEntry> j = stateCurrent.iterator();
+                    ArrayList<LogEntry> toAdd = new ArrayList<>();
+                    while (j.hasNext()) {
+                        LogEntry current = j.next();
+                        if (current.getEntityId().equals(changeIteration.getEntityId())) {
+                            //remove current, add action to changes between manipulated and current state
+                            //add action
+                            j.remove();
+                            System.out.println("the following entry is removed from current state " + current.getName());
+                            System.out.println("the following entry is added to current state " + changeIteration.getName());
+                            toAdd.add(changeIteration);
+                        }
+                    }
+                    stateCurrent.addAll(toAdd);
+                }
+
+                somethingChanged = !changesIteration.isEmpty();
+                changesIteration.clear();
+                l++;
             }
-            proximity.add((double) changes.size());
+
+            noDuplicates(allChanges);
+            proximity.add((double) allChanges.size());
         }
         return proximity;
     }
 
-    //Todo: calculate changes and then based on priority remove some and then abgleichen mit current state
-    //Todo: Check which way around the logEntries are given, the ones to change how they are currently or how they should be?
+//Todo: calculate changes and then based on priority remove some and then abgleichen mit current state
+//Todo: Check which way around the logEntries are given, the ones to change how they are currently or how they should be?
 
 
     /**
@@ -731,11 +808,11 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @param logEntries  list of all relevant LogEntries
      * @return truePreconditions
      */
-    public Boolean hasTruePreconditions(Rule r, LogEntry explanandum, ArrayList<LogEntry> currentState, ArrayList<LogEntry> logEntries) {
+    public boolean hasTruePreconditions(Rule r, LogEntry explanandum, ArrayList<LogEntry> currentState, ArrayList<LogEntry> logEntries) {
         boolean truePreconditions = findCauseSer.preconditionsApply(explanandum, r, logEntries);
         ArrayList<LogEntry> conditions = r.getConditions();
         for (LogEntry condition : conditions) {
-            if (condition.getEntityId() != null && !currentState.contains(condition)) { //condition does not have the same state and entityid as one of the elements in currentstate, i.e. the state is different and does not have entityId null which makes it an invalid condition
+            if (condition != null && condition.getEntityId() != null && !currentState.contains(condition)) { //condition does not have the same state and entityid as one of the elements in currentstate, i.e. the state is different and does not have entityId null which makes it an invalid condition
                 truePreconditions = false;
                 break;
             }
@@ -750,13 +827,8 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @param logEntries  All considered logEntries
      */
     public void TruePreconditions(ArrayList<Rule> rules, LogEntry explanandum, ArrayList<LogEntry> currentState, ArrayList<LogEntry> logEntries) {
-        if (rules != null) {
-            for (int i = 0; i < rules.size(); i++) {
-                Rule rule = rules.get(i);
-                if (!hasTruePreconditions(rule, explanandum, currentState, logEntries)) {
-                    rules.remove(rule);
-                }
-            }
+        if (rules != null && !rules.isEmpty()) {
+            rules.removeIf(rule -> !hasTruePreconditions(rule, explanandum, currentState, logEntries));
         }
     }
 
@@ -801,6 +873,35 @@ public class CounterfactualExplanationService extends ExplanationService {
         Set<T> set = new LinkedHashSet<>(list);
         list.clear();
         list.addAll(set);
+    }
+
+    public ArrayList<Rule> removeOverridden(ArrayList<Rule> rules, ArrayList<LogEntry> logEntries) {
+        ArrayList<Rule> modifiedRules = new ArrayList<>(rules);
+        for (LogEntry logEntry : logEntries) {
+            String entityIdEntry = logEntry.getEntityId();
+            ArrayList<Rule> sameAction = new ArrayList<>(); //action has the same entityId
+            for (Rule r : rules) {
+                ArrayList<LogEntry> actions = r.getActions();
+                for (LogEntry action : actions) {
+                    if (action.getEntityId().equals(entityIdEntry)) {
+                        sameAction.add(r);
+                    }
+                }
+            }
+            if (!sameAction.isEmpty()) {
+                Rule maxPrioRule = Collections.max(sameAction, Comparator.comparingInt(Rule::getPriority));
+                sameAction.remove(maxPrioRule);
+                for (Rule r : modifiedRules) {
+                    if (sameAction.contains(r)) {
+                        ArrayList<LogEntry> actions = r.getActions();
+                        actions.remove(logEntry);
+                        r.setActions(actions);
+                    }
+                }
+            }
+        }
+        return modifiedRules;
+
     }
 
 
