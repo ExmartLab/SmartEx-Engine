@@ -147,8 +147,7 @@ public class LogEntry implements Comparable<LogEntry> {
 	 */
 	public LocalDateTime getLocalDateTime() {
 		DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-		OffsetDateTime offsetDate = OffsetDateTime.parse(this.time, formatter);
-
+		OffsetDateTime offsetDate = OffsetDateTime.parse(this.getTime(), formatter);
 		return offsetDate.toLocalDateTime();
 	}
 

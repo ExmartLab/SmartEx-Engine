@@ -16,7 +16,6 @@ class JsonHandlerTest {
 
 	@DisplayName("Test Loading LogEntry Objects From Json File")
 	@Test
-	@Disabled
 	void testLoadLogFile() throws IOException, URISyntaxException {
 		// Given
 		String fileName = "testingData/" + ExplainableEngineApplication.FILE_NAME_DEMO_LOGS;
@@ -122,36 +121,114 @@ class JsonHandlerTest {
 				        "name": "tv_bright (constructed)",
 				        "entity_id": "scene.tv_brightness"
 				    },
-								         {
-								             "when": "2022-10-01T09:07:30.920189+00:00",
-								             "name": "Lamp Office turning off",
-								             "state": "off",
-								             "entity_id": "binary_sensor.lamp"
-								         },
-								         {
-								             "when": "2022-10-01T09:07:31.920189+00:00",
-								             "name": "Lamp Office turning off",
-								             "state": "null",
-								             "entity_id": "color.lamp"
-								         },
-								         {
-								             "when": "2022-10-01T09:07:32.920189+00:00",
-								             "name": "Lamp Office turning on",
-								             "state": "on",
-								             "entity_id": "binary_sensor.lamp"
-								         },
-								         {
-								             "when": "2022-10-01T09:07:34.920189+00:00",
-								             "name": "Lamp Office turning yellow",
-								             "state": "yellow",
-								             "entity_id": "color.lamp"
-								         },
-								         {
-								             "when": "2022-10-01T09:07:36.920189+00:00",
-								             "name": "Lamp Office turning blue",
-								             "state": "blue",
-								             "entity_id": "color.lamp"
-								         }
+				    {
+				        "when": "2022-08-02T09:07:26.933444+00:00",
+				        "name": "Turn Meeting Room Status Light orange",
+				        "state": "orange",
+				        "entity_id": "light.meeting_room_status_light"
+				    },
+				    {
+				        "when": "2022-08-03T09:07:26.920189+00:00",
+				        "name": "Contact Sensor Meeting Room Opening",
+				        "state": "off",
+				        "entity_id": "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:30.920189+00:00",
+				        "name": "Lamp Office turning off",
+				        "state": "off",
+				        "entity_id": "status.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:31.920189+00:00",
+				        "name": "Lamp Office color is null",
+				        "state": "null",
+				        "entity_id": "color.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:32.920189+00:00",
+				        "name": "Air Conditioning turning off",
+				        "state": "off",
+				        "entity_id": "setting.aircon"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:34.920189+00:00",
+				        "name": "Lamp Office turning on",
+				        "state": "on",
+				        "entity_id": "status.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:36.920189+00:00",
+				        "name": "Lamp Office turning yellow",
+				        "state": "yellow",
+				        "entity_id": "color.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:38.920189+00:00",
+				        "name": "Fan turning on",
+				        "state": "on",
+				        "entity_id": "status.fan"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:40.920189+00:00",
+				        "name": "Window closed",
+				        "state": "closed",
+				        "entity_id": "status.window"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:45.920189+00:00",
+				        "name": "Lamp turning blue",
+				        "state": "blue",
+				        "entity_id": "color.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:48.920189+00:00",
+				        "name": "Air Conditioning turning on low",
+				        "state": "low",
+				        "entity_id": "setting.aircon"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:52.920189+00:00",
+				        "name": "Window closed",
+				        "state": "closed",
+				        "entity_id": "status.window"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:55.920189+00:00",
+				        "name": "Window open",
+				        "state": "open",
+				        "entity_id": "status.window"
+				    },
+				    {
+				        "when": "2022-10-01T09:07:58.920189+00:00",
+				        "name": "Lamp turning red",
+				        "state": "red",
+				        "entity_id": "color.lamp"
+				    },
+				    {
+				        "when": "2022-10-01T09:08:02.920189+00:00",
+				        "name": "Fan turning off",
+				        "state": "off",
+				        "entity_id": "status.fan"
+				    },
+				    {
+				        "when": "2022-10-01T09:08:05.920189+00:00",
+				        "name": "Warm temperature",
+				        "state": "warm",
+				        "entity_id": "status.temperature"
+				    },
+				    {
+				        "when": "2022-10-01T09:08:08.920189+00:00",
+				        "name": "Air Conditioning turning on high",
+				        "state": "high",
+				        "entity_id": "setting.aircon"
+				    },
+				    {
+				        "when": "2022-10-01T09:08:10.920189+00:00",
+				        "name": "Cold temperature",
+				        "state": "cold",
+				        "entity_id": "status.temperature"
+				    }
 				]
 								""";
 		Assertions.assertEquals(expectedJson.replaceAll("\\s+",""), json.replaceAll("\\s+",""));

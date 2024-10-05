@@ -44,7 +44,6 @@ class DatabaseServiceTest {
 	
 	@DisplayName("Test Getting All Actions Combining Rule And Error Actions")
 	@Test
-	@Disabled
 	void testGetAllActions() {
 		
 		// When
@@ -54,11 +53,11 @@ class DatabaseServiceTest {
 		ArrayList<LogEntry> allActions = underTest.getAllActions();
 		
 		// Then
-		Assertions.assertEquals(10, allActions.size());
+		Assertions.assertEquals(9, allActions.size());
 		Assertions.assertEquals("Smart Plug Social Room Coffee", allActions.get(0).getName());
 		Assertions.assertEquals("tv_mute", allActions.get(1).getName());
 		Assertions.assertEquals("Never used strobo light", allActions.get(2).getName());
-		Assertions.assertEquals("Deebot last error", allActions.get(3).getName());
+		Assertions.assertEquals("Lamp Office turning on", allActions.get(3).getName());
 	}
 
 
