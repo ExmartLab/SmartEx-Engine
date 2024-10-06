@@ -1,0 +1,2 @@
+userid, device, expected_explanation
+1; coffee_machine; Error, there is no explanation need. Fact and Foil are the same.
