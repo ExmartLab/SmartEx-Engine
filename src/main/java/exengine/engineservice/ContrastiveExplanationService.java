@@ -579,7 +579,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			if (happenedEvent instanceof Rule) { // CC1
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
-				System.out.println("findEntityByEntityId worked. ENtity found: " + deviceName);
+				System.out.println("findEntityByEntityId worked. Entity found: " + deviceName);
 				LogEntry happenedAction = getDeviceAction((Rule) happenedEvent, entityId);
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 				ArrayList<String> preconditions = new ArrayList<String>();
