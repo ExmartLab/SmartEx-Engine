@@ -1,2 +1,4 @@
 userid, device, expected_explanation
-1; coffee_machine; Error, there is no explanation need. Fact and Foil are the same.
+2; coffee_machine; Error, there is no explanation need. Fact and Foil are the same.
+2; tv; Error, there is no explanation need. Fact and Foil are the same.
+2; status_light; Error, there is no explanation need. Fact and Foil are the same.

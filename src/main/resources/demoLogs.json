@@ -20,8 +20,9 @@
     },
     {
         "when": "2022-06-23T09:50:50.014573+00:00",
-        "name": "state change",
-        "entity_id": "scene.state_change"
+        "name": "state",
+        "entity_id": "scene.state_change",
+        "state": "changed"
     },
     {
         "when": "2022-06-23T09:50:50.229746+00:00",
@@ -78,7 +79,8 @@
     },
     {
         "when": "2022-06-23T11:19:31.037231+00:00",
-        "name": "tv_mute",
+        "name": "tv",
+        "state" : "mute",
         "entity_id": "scene.tv_playing",
         "icon": "mdi:television",
         "context_event_type": "automation_triggered",

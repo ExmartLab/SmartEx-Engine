@@ -1,8 +1,8 @@
 userid, device, expected_explanation
 10; coffee_machine; unvalid userId: this user does not exist
-1; coffee_machine; Hi Alice, Smart Plug Social Room Coffee is off because you have set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state change has happened, so the rule has been fired.
-2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because Alice has set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state change has happened, so the rule has been fired.
-2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because currently daily energy consumption is higher than the threshold and state change has happened.
+1; coffee_machine; Hi Alice, Smart Plug Social Room Coffee is off because you have set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state is changed, so the rule has been fired.
+2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because Alice has set up a rule: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached" and currently daily energy consumption is higher than the threshold and state is changed, so the rule has been fired.
+2; coffee_machine; Hi Bob, Smart Plug Social Room Coffee is off because currently daily energy consumption is higher than the threshold and state is changed.
 2; tv; Hi Bob, you have set up a rule and at this moment the rule has been fired.
 1; tv; Hi Alice, the rule: "Rule_2: mutes the TV if TV is playing while a meeting is going on"has been fired.
 1; tv; Hi Alice, Bob has set up a rule and at this moment the rule has been fired.

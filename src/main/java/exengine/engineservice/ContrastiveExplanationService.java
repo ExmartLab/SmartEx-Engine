@@ -602,7 +602,7 @@ public class ContrastiveExplanationService extends ExplanationService {
 			} else if (happenedEvent instanceof Error) { // CC2
 
 				String deviceName = dataSer.findEntityByEntityID(entityId).getDeviceName();
-				System.out.println("findEntityByEntityId worked. ENtity found: " + deviceName);
+				System.out.println("findEntityByEntityId worked. Entity found: " + deviceName);
 				LogEntry expectedAction = getDeviceAction(expectedRule, entityId);
 
 				pattern = String.format(

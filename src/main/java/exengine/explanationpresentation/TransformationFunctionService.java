@@ -25,7 +25,7 @@ public class TransformationFunctionService {
 	 * explanation.
 	 * 
 	 * @param view         appropriate View for the explanation presentation
-	 * @param generalCause the found causal path
+	 * @param cause the found causal path
 	 * @param context      the collected contextual information
 	 * @return A natural language explanation
 	 * 
@@ -82,14 +82,14 @@ public class TransformationFunctionService {
 	 * Builds a part of a natural language sentence that concatenates the conditions
 	 * of a rule by "and".
 	 * 
-	 * @param cause
+	 * @param rule
 	 * @return A natural language sentence part
 	 */
 	public String getConditionsString(Rule rule) {
 		//TODO how to handle new way of storing conditions here?s
-		String conditionsString = rule.getConditions().get(0).getName();
+		String conditionsString = rule.getConditions().get(0).getName() + " is " + rule.getConditions().get(0).getState();
 		for (int i = 1; i < rule.getConditions().size(); i++) {
-			conditionsString = String.format("%s and %s", conditionsString, rule.getConditions().get(i));
+			conditionsString = String.format("%s and %s is %s", conditionsString, rule.getConditions().get(i).getName(),rule.getConditions().get(i).getState() );
 		}
 		return conditionsString;
 	}
@@ -98,7 +98,7 @@ public class TransformationFunctionService {
 	 * Builds a part of a natural language sentence that concatenates the name and
 	 * state of actions of a cause (i.e., name1 is state1 and name2 is state2).
 	 * 
-	 * @param cause
+	 * @param rule
 	 * @return A natural language sentence part
 	 */
 	public String getActionsString(Rule rule) {
@@ -134,7 +134,7 @@ public class TransformationFunctionService {
 	 * Provides sentence part depending on whether there is additional information
 	 * on the trigger or not.
 	 * 
-	 * @param cause
+	 * @param rule
 	 * @return A natural language sentence part
 	 */
 	public String getTriggerString(Rule rule) {

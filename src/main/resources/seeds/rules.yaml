@@ -9,9 +9,9 @@
     entity_id: "scene.state_change"
     state: "null"
   conditions:
-  - name: "daily energy consumption is higher than the threshold"
+  - name: "daily energy consumption"
     entity_id: "smartplug coffee machine"
-    state: "null"
+    state: "higher than the threshold"
   actions:
   - name: "Smart Plug Social Room Coffee"
     entity_id: "switch.smart_plug_social_room_coffee"

@@ -1,2 +1,4 @@
 userid, device, expected_explanation
-2; status_light; The [device] is off and negate([AER]) because not all [PER]. [device] = status_light [AER] = green [PER] = , No Motion in meeting room is clear, Contact Sensor Meeting Room Opening is on
+2; coffee_machine; The [device] is [AHR] and negate([AER]) because [PHR]. [device] = coffee_machine [AHR] = off [AER] = on [PHR] = , daily energy consumption is higher than the threshold, state is changed
+2; tv; The [device] is [AHR] and negate([AER]) because [PHR]. [device] = tv [AHR] = mute [AER] = loud [PHR] = , a meeting in room 1 is happening, Lab TV is playing
+2; status_light; The [device] is off and negate([AER]) because not all [PER]. [device] = status_light [AER] = green [PER] = , meeting room is empty, Contact Sensor Meeting Room Opening is activated

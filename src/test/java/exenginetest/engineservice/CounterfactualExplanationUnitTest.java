@@ -6,7 +6,6 @@ import exengine.datamodel.*;
 import exengine.engineservice.ContrastiveExplanationService;
 import exengine.engineservice.CounterfactualExplanationService;
 import exenginetest.algorithmicexplanationgenerator.TestingObjects;
-import org.apache.juli.logging.Log;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ public class CounterfactualExplanationUnitTest {
     private FindCauseService findCauseSer;
 
     @Mock
-    private ContrastiveExplanationService constrastiveSer;
+    private ContrastiveExplanationService contrastiveSer;
 
     @Mock
     private DatabaseService dataSer;
@@ -714,7 +713,6 @@ public class CounterfactualExplanationUnitTest {
 
     @Test
     void testGenerateCFE() {
-        //Todo: Improve generateCFE
 
         // Given
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
@@ -731,7 +729,7 @@ public class CounterfactualExplanationUnitTest {
         // Mocks
         Mockito.when(dataSer.findEntityByEntityID(any())).thenAnswer(invocation -> {
             String entityId = invocation.getArgument(0);
-            String split[] = entityId.split("\\.", 2);
+            String[] split = entityId.split("\\.", 2);
             return new Entity("dummyId", split[1], "actionable");
             });
 
@@ -739,7 +737,7 @@ public class CounterfactualExplanationUnitTest {
         String explanation = underTest.generateCFE(minPreconditions, logEntries.get(18), logEntries.get(25), "fan");
 
         // Then
-        Assertions.assertEquals("The fan would be off instead of on if in the past the lamp was on, the lamp was yellow, and the window was closed and the temperature was not cold. ", explanation);
+        Assertions.assertEquals("The fan would be off instead of on if in the past the lamp was on, the lamp was yellow, and the window was closed and the temperature was not cold.", explanation);
 
     }
 
@@ -757,7 +755,7 @@ public class CounterfactualExplanationUnitTest {
         // Mocks
         Mockito.when(dataSer.findEntityByEntityID(any())).thenAnswer(invocation -> {
             String entityId = invocation.getArgument(0);
-            String split[] = entityId.split("\\.", 2);
+            String[] split = entityId.split("\\.", 2);
             return new Entity(entityId, split[1], "actionable");
         });
         Mockito.when(dataSer.findAllRules()).thenReturn(consideredRules);
@@ -828,8 +826,8 @@ public class CounterfactualExplanationUnitTest {
         String explanation_3 = underTest.getExplanation(30, "2", "temperature" );
 
         // Then
-        Assertions.assertEquals("The lamp would be blue instead of red if in the past the aircon was not high. ", explanation_1);
-        Assertions.assertEquals("The fan would be on instead of off if in the past the aircon was not high. ", explanation_2);
+        Assertions.assertEquals("The lamp would be blue instead of red if in the past the aircon was not high.", explanation_1);
+        Assertions.assertEquals("The fan would be on instead of off if in the past the aircon was not high.", explanation_2);
        Assertions.assertEquals("No explanandum found. Could not proceed.", explanation_3);
     }
 

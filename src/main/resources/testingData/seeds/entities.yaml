@@ -26,6 +26,10 @@
   deviceName: "robo_cleaner"
   controllability: "actionable"
 
+- entityId: "light.meeting_room_status_light"
+  deviceName: "status_light"
+  controllability: "actionable"
+
 - entityId: "status.lamp"
   deviceName: "lamp"
   controllability: "actionable"
