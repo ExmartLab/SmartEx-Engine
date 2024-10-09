@@ -42,7 +42,7 @@ class CreateExServiceTest {
 		ArrayList<LogEntry> logEntries = underTest.loadDemoEntries(fileName);
 
 		// Then
-		Assertions.assertEquals(29, logEntries.size());
+		Assertions.assertEquals(30, logEntries.size());
 		for (LogEntry logEntry : logEntries) {
 			Assertions.assertNotNull(logEntry);
 		}

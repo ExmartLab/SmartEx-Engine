@@ -88,8 +88,14 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         // rules with actions leading to current state
         ArrayList<Rule> rulesCurrent = findCauseSer.findCandidateRules(explanandum, dbRules);
+        for (Rule rule : rulesCurrent) {
+            System.out.println("rule in rulescurrent (not necessarily active): " + rule.getRuleName());
+        }
         TruePreconditions(rulesCurrent, explanandum, currentState, logEntries);    //checks if the conditions currently are true and a trigger has been activated before the explanandum
         LOGGER.info("The rules with true preconditions leading to the current state are " + rulesCurrent);
+        for (Rule rule : rulesCurrent) {
+            System.out.println("rule in rulescurrent: " + rule.getRuleName());
+        }
 
         // rules with actions leading to expected state
         ArrayList<Rule> rulesExpected = findCauseSer.findCandidateRules(expected, dbRules);
@@ -117,15 +123,18 @@ public class CounterfactualExplanationService extends ExplanationService {
             }
             rulesCurrent.addAll(rulesPrevious);
             noDuplicates(rulesCurrent);
+            System.out.println("in case rulesCurrent are not empty. Firing necessary: " + firingNecessary);
             minPreconditions.addAll(overrideOrRemove(rulesCurrent, explanandum, expected, firingNecessary, logEntries));
         } else {
             if (rulesExpected.isEmpty()) {
                 Rule dummy = new Rule("dummy", null, null, null, null, null, null, 0);
-                minPreconditions.add(minAdd(dummy, expected, explanandum, logEntries));
+                minPreconditions.add(minAdd(dummy, explanandum, expected, logEntries));
             } else {
                 return "Error, there is no explanation need.";
             }
         }
+
+        System.out.println("minPreconditions: " + minPreconditions);
 
         LOGGER.info("Minimal change determined.");
         return generateCFE(minPreconditions, explanandum, expected, device);
@@ -172,10 +181,6 @@ public class CounterfactualExplanationService extends ExplanationService {
                 case "status.temperature" -> logEntries.get(2);
                 case "setting.aircon" -> logEntries.get(13);
                 case "status.window" -> logEntries.get(6);
-                // needed for integration tests:
-                case "scene.tv_playing" -> new LogEntry(null, "Tv on", "on", "scene.tv_playing", new ArrayList<>());
-                case "switch.smart_plug_social_room_coffee" ->
-                        new LogEntry(null, "Coffee machine on", "on", "switch.smart_plug_social_room_coffee", new ArrayList<>());
                 default -> explanandum;
             };
 
@@ -196,54 +201,73 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         String explanation = "The " + device + " would be " + expected.getState() + " instead of " + explanandum.getState() + " if in the past ";
 
-        //Todo: Rework
 
         // add additive preconditions to explanation
         ArrayList<LogEntry> addPreconditions = minPreconditions.get(0);
         for (int i = 0; i < addPreconditions.size() - 1; i++) {
+
             Entity entityAdd = dataSer.findEntityByEntityID(addPreconditions.get(i).getEntityId());
             String deviceAdd = addPreconditions.get(i).getName();
+
             if (entityAdd != null) {    // we can get the correct device
                 deviceAdd = entityAdd.getDeviceName();
             }
+
             explanation = explanation.concat("the " + deviceAdd + " was " + addPreconditions.get(i).getState() + ", ");
         }
+
         if (addPreconditions.size() > 0) {
+
             if (addPreconditions.size() >= 2) {
                 explanation = explanation.concat("and ");
             }
+
             Entity entityAdd = dataSer.findEntityByEntityID(addPreconditions.get(addPreconditions.size() - 1).getEntityId());
             String deviceAdd = addPreconditions.get(addPreconditions.size() - 1).getName();
+
             if (entityAdd != null) {    //we can get the correct device
                 deviceAdd = entityAdd.getDeviceName();
             }
-            explanation = explanation.concat("the " + deviceAdd + " was " + addPreconditions.get(addPreconditions.size() - 1).getState() + " and ");
+
+            explanation = explanation.concat("the " + deviceAdd + " was " + addPreconditions.get(addPreconditions.size() - 1).getState());
         }
 
         // add subtractive preconditions to explanation
-        if (minPreconditions.size() > 1) {
+        if (minPreconditions.size() > 1 && minPreconditions.get(1).size() > 0) {
             ArrayList<LogEntry> subPreconditions = minPreconditions.get(1);
+            if (addPreconditions.size() > 0) {
+                explanation = explanation.concat(" and ");
+            }
             for (int i = 0; i < subPreconditions.size() - 1; i++) {
+
                 Entity entitySub = dataSer.findEntityByEntityID(subPreconditions.get(i).getEntityId());
                 String deviceSub = subPreconditions.get(i).getName();
-                if (entitySub != null) {    //we can get the correct device
+
+                if (entitySub != null) {
                     deviceSub = entitySub.getDeviceName();
                 }
+
                 explanation = explanation.concat("the " + deviceSub + " was not " + subPreconditions.get(i).getState() + ", ");
 
             }
+
             if (subPreconditions.size() > 0) {
+
                 if (subPreconditions.size() >= 2) {
                     explanation = explanation.concat("and ");
                 }
+
                 Entity entitySub = dataSer.findEntityByEntityID(subPreconditions.get(subPreconditions.size() - 1).getEntityId());
                 String deviceSub = subPreconditions.get(subPreconditions.size() - 1).getName();
-                if (entitySub != null) {    //we can get the correct device
+
+                if (entitySub != null) {
                     deviceSub = entitySub.getDeviceName();
                 }
-                explanation = explanation.concat("the " + deviceSub + " was not " + subPreconditions.get(subPreconditions.size() - 1).getState() + ". ");
+
+                explanation = explanation.concat("the " + deviceSub + " was not " + subPreconditions.get(subPreconditions.size() - 1).getState());
             }
         }
+        explanation = explanation.concat(".");
 
         // Capitalize only the first letter
         explanation = explanation.toLowerCase();
@@ -266,16 +290,15 @@ public class CounterfactualExplanationService extends ExplanationService {
      */
     public ArrayList<LogEntry> minSub(Rule ruleToReverse, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
 
-        ArrayList<ArrayList<LogEntry>> reversableCandidates = new ArrayList<>();
+        ArrayList<ArrayList<LogEntry>> reversibleCandidates = new ArrayList<>();
         ArrayList<LogEntry> conditions = new ArrayList<>(ruleToReverse.getConditions());
         ArrayList<LogEntry> actionableConditions = new ArrayList<>();
         ArrayList<LogEntry> mutableConditions = new ArrayList<>();
         ArrayList<LogEntry> nonMutableConditions = new ArrayList<>();
 
         // Sort by controllability
-        Iterator<LogEntry> i = conditions.iterator();
-        while (i.hasNext()) {
-            LogEntry condition = i.next();
+        for (LogEntry condition : conditions) {
+            System.out.println(" rule " + ruleToReverse.getRuleName() + "has condition" + condition);
             String controllability = getControllabilityByEntityId(condition.getEntityId());
             switch (controllability) {
                 case "actionable" -> actionableConditions.add(condition);
@@ -283,64 +306,63 @@ public class CounterfactualExplanationService extends ExplanationService {
                 case "non-mutable" -> nonMutableConditions.add(condition);
                 default -> {
                     LOGGER.info("An entity has invalid controllability. It is removed from the set of options to reverse.");
-                    i.remove();     //Todo:is this even necessary. we do not use conditons later anymore
                 }
             }// Todo: find roots returns empty array if c is already false
         }
 
         // actionable preconditions
-        for (LogEntry precondition : actionableConditions) {
-            reversableCandidates.addAll(new ArrayList<>(findRoots(precondition, explanandum, logEntries)));
+        for (LogEntry condition : actionableConditions) {
+            reversibleCandidates.addAll(new ArrayList<>(findRoots(condition, explanandum, logEntries)));
         }
 
         // mutable but non-actionable preconditions
-        for (LogEntry precondition : mutableConditions) {
-            reversableCandidates.addAll(new ArrayList<>(findRoots(precondition, explanandum, logEntries)));
-            reversableCandidates.remove(precondition); // precondition cannot be directly manipulated  //Todo: fix! precondition as array ( this is how it is added in findroots)
+        for (LogEntry condition : mutableConditions) {
+            reversibleCandidates.addAll(new ArrayList<>(findRoots(condition, explanandum, logEntries)));
+            ArrayList<LogEntry> conditionAsArray = new ArrayList<>();
+            conditionAsArray.add(condition);
+            reversibleCandidates.remove(conditionAsArray); // precondition cannot be directly manipulated
         }
 
         // consider non-mutable preconditions if there are no other ones
-        if (reversableCandidates.isEmpty()) {
+        if (reversibleCandidates.isEmpty()) {
             for (LogEntry condition : nonMutableConditions) {
                 ArrayList<LogEntry> conditionAsArray = new ArrayList<>();
                 conditionAsArray.add(condition);
-                reversableCandidates.add(conditionAsArray);
+                reversibleCandidates.add(conditionAsArray);
             }
-            LOGGER.info("There are no mutable preconditions. Proceed with non-mutable ones");
         }
 
-        noDuplicates(reversableCandidates);
+        noDuplicates(reversibleCandidates);
 
         // findRoots considers rules with true preconditions
         // but the manipulation can use a rule that that does not have true preconditions
-        ArrayList<ArrayList<LogEntry>> minCandidates = new ArrayList<>();
-        for (ArrayList<LogEntry> candidate : reversableCandidates) {
+        ArrayList<ArrayList<LogEntry>> modifiedCandidates = new ArrayList<>();
+        for (ArrayList<LogEntry> candidate : reversibleCandidates) {
             ArrayList<LogEntry> modified = new ArrayList<>();
             for (LogEntry c : candidate) {
                 modified.addAll(modify(c, explanandum, logEntries));
             }
-            minCandidates.add(modified);
+            modifiedCandidates.add(modified);
         }
-
 
         // reverse triggers
         ArrayList<LogEntry> currentState = new ArrayList<>(getCurrentState(logEntries));
         ArrayList<LogEntry> triggers = new ArrayList<>(ruleToReverse.getTrigger());
+
         // only consider true triggers
         triggers.removeIf(trigger -> !currentState.contains(trigger));
+
         //add all options to remove all triggers
         ArrayList<ArrayList<LogEntry>> allRoots = new ArrayList<>();
         for (LogEntry trigger : triggers) {
-            allRoots.addAll(findRoots(trigger, explanandum, logEntries)); //correct?
+            allRoots.addAll(new ArrayList<>(findRoots(trigger, explanandum, logEntries)));
         }
+
         // find combinations s.t. for each trigger one root is chosen
         generatePermutations(allRoots, new ArrayList<>(), 0, new ArrayList<>());
-        minCandidates.addAll(allRoots);
+        modifiedCandidates.addAll(allRoots);
 
-        //Todo: either remove one condition or all trigger
-        //Todo: check trigger for all methods
-
-        return minComputation(minCandidates, explanandum, logEntries);
+        return minComputation(modifiedCandidates, explanandum, logEntries);
     }
 
     /**
@@ -360,7 +382,7 @@ public class CounterfactualExplanationService extends ExplanationService {
             if (sub == null) {   // there is an invalid entry
                 return null;
             }
-            conditions.addAll(sub); //Todo: correct???
+            conditions.addAll(sub);
         }
         noDuplicates(conditions);
         return conditions;
@@ -381,7 +403,12 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         // Find rules that lead to the desired state
         List<Rule> dbRules = new ArrayList<>(dataSer.findAllRules());
+        //System.out.println("the state to achieve is " + toAchieve.getState());
         ArrayList<Rule> candidateRules = findCauseSer.findCandidateRules(toAchieve, dbRules);
+        //System.out.println("candidate rules: " + candidateRules);
+        for (Rule candidate : candidateRules) {
+            //System.out.println("Rule name of candidateRule:  " + candidate.getRuleName());
+        }
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
 
         if (candidateRules != null && !candidateRules.isEmpty()) {
@@ -393,6 +420,7 @@ public class CounterfactualExplanationService extends ExplanationService {
 
                 // only consider rules that override ruleToOverride and don't need too many changes
                 if (r.getPriority() > ruleToOverride.getPriority() && candidate.size() <= 3) {
+                    //System.out.println("candidate added for rule " + r.getRuleName() + ". the candidate is " + candidate);
                     candidates.add(candidate);
                 }
             }
@@ -438,12 +466,18 @@ public class CounterfactualExplanationService extends ExplanationService {
 
             //additive part:
             ArrayList<LogEntry> overriding = minAdd(r, explanandum, expected, logEntries);
+            System.out.println("overriding in overrideOrRemove: " + overriding);
+            for (LogEntry entry : overriding) {
+                System.out.println("overriding entry  in overrideOrRemove: " + entry.getName());
+            }
 
             //subtractive part:
             ArrayList<LogEntry> subtracting = new ArrayList<>();
             if (i != 0) {    //r has not the highest priority, i.e. there is a subtractive part
                 ArrayList<Rule> rulesHigherPriority = new ArrayList<>(rulesSorted.subList(0, i - 1));
                 subtracting = minSubAll(rulesHigherPriority, explanandum, logEntries);
+                System.out.println("subtracting in overrideOrRemove: " + subtracting);
+
             }
 
             // add to candidate
@@ -456,7 +490,10 @@ public class CounterfactualExplanationService extends ExplanationService {
                     candidate.addAll(subtracting);
                     subCandidates.addAll(candidate);
                 }
-                candidates.add(candidate);
+                if (!candidate.isEmpty()) {
+                    candidates.add(candidate);
+                }
+
             }
         }
 
@@ -468,22 +505,36 @@ public class CounterfactualExplanationService extends ExplanationService {
             ArrayList<LogEntry> additivePart = minAdd(dummy, explanandum, expected, logEntries);
             addCandidates.addAll(additivePart);
             subtractingAll.addAll(additivePart);
+            System.out.println("additive part added in subtractingAll");
+        }
+        System.out.println("subtractingAll in overrideOrRemove: " + subtractingAll);
+        for (LogEntry entry : subtractingAll) {
+            System.out.println("subtractingAll entry  in overrideOrRemove: " + entry.getName());
         }
         candidates.add(subtractingAll);
 
+        System.out.println("candidates entering mincomputation are" + candidates);
+
 
         // minimal computation
-        ArrayList<LogEntry> mixedMin = minComputation(candidates, explanandum, logEntries);
+        ArrayList<LogEntry> mixedMin = new ArrayList<>(minComputation(candidates, explanandum, logEntries));
+        System.out.println("mixedMin in overrideOrRemove: " + mixedMin);
+        for (LogEntry entry : mixedMin) {
+            System.out.println("mixedMin entry  in overrideOrRemove: " + entry.getName());
+        }
+
 
         // determine which were additive or subtractive:
         ArrayList<LogEntry> addMin = new ArrayList<>();
         ArrayList<LogEntry> subMin = new ArrayList<>();
         for (LogEntry entry : mixedMin) {
             if (addCandidates.contains(entry)) {
+                System.out.println("entry is additive detected");
                 addMin.add(entry);
             }
             if (subCandidates.contains(entry)) {
                 subMin.add(entry);
+                System.out.println("entry is subtractive detected");
             }
         }
         ArrayList<ArrayList<LogEntry>> sortedMin = new ArrayList<>();
@@ -843,9 +894,9 @@ public class CounterfactualExplanationService extends ExplanationService {
      * determines the proximity of the candidates, i.e. the amount of changes to the system if
      * a candidate was manipulated to be true. This takes into consideration which rules would fire when the changes are done
      *
-     * @param candidates    the set the proximity is to be determined for
-     * @param explanandum   the situation to be explained
-     * @param logEntries    the list of Home Assistant logs
+     * @param candidates  the set the proximity is to be determined for
+     * @param explanandum the situation to be explained
+     * @param logEntries  the list of Home Assistant logs
      * @return how many changes there would be in the system if all entries in a candidate are included
      * in the current state
      */
@@ -1010,7 +1061,7 @@ public class CounterfactualExplanationService extends ExplanationService {
      * Returns the controllability of the entityId.
      * If the entityId does not have a corresponding entity, "actionable" is returned.
      *
-     * @param entityId  entityId of a LogEntry
+     * @param entityId entityId of a LogEntry
      * @return controllability of the entity associated to the entityId
      */
     public String getControllabilityByEntityId(String entityId) {
@@ -1026,8 +1077,8 @@ public class CounterfactualExplanationService extends ExplanationService {
     /**
      * removes the duplicates from the list
      *
-     * @param list  the list the duplicates are to be removed from
-     * @param <T>   any
+     * @param list the list the duplicates are to be removed from
+     * @param <T>  any
      */
     public <T> void noDuplicates(ArrayList<T> list) {
         Set<T> set = new LinkedHashSet<>(list);
@@ -1038,8 +1089,8 @@ public class CounterfactualExplanationService extends ExplanationService {
     /**
      * removes all rules from the input that are overridden
      *
-     * @param rules         the rules with true preconditions
-     * @param logEntries    the list of Home Assistant logs
+     * @param rules      the rules with true preconditions
+     * @param logEntries the list of Home Assistant logs
      * @return the subset of rules that are not being overridden by other rules in rules
      */
     public ArrayList<Rule> removeOverridden(ArrayList<Rule> rules, ArrayList<LogEntry> logEntries) {
@@ -1075,10 +1126,10 @@ public class CounterfactualExplanationService extends ExplanationService {
     /**
      * determines all permutations of lists
      *
-     * @param lists     the list to be permuted
-     * @param result    the result
-     * @param depth     the depth of the permutation
-     * @param current   the current result
+     * @param lists   the list to be permuted
+     * @param result  the result
+     * @param depth   the depth of the permutation
+     * @param current the current result
      */
     void generatePermutations(ArrayList<ArrayList<LogEntry>> lists, ArrayList<ArrayList<LogEntry>> result,
                               int depth, ArrayList<LogEntry> current) {

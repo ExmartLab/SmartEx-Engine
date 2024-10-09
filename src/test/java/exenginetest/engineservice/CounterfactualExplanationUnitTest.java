@@ -49,8 +49,8 @@ public class CounterfactualExplanationUnitTest {
 
         //Given
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
-        LogEntry explanandum = logEntries.get(24);
-        LogEntry expectedLogEntry = logEntries.get(20);
+        LogEntry explanandum = logEntries.get(25);
+        LogEntry expectedLogEntry = logEntries.get(21);
 
         //When
         LogEntry previous = underTest.getPreviousLogEntry(explanandum, logEntries);
@@ -66,7 +66,7 @@ public class CounterfactualExplanationUnitTest {
         // Given
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
         ArrayList<LogEntry> expectedStates = new ArrayList<>();
-        int[] indices = {28, 27, 25, 24, 23, 16, 12, 11, 10, 9, 8, 7, 5, 4, 3, 2, 1};    //LogEntries that are currently true
+        int[] indices = {29, 28, 26, 25, 24, 17, 13, 12, 11, 10,9, 8,7, 5, 4, 3, 2, 1};    //LogEntries that are currently true
         for (int i : indices) {
             expectedStates.add(logEntries.get(i));
         }
@@ -85,8 +85,8 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
         ArrayList<Rule> dbRules = testingObjects.getDBRules();
         ArrayList<LogEntry> currentState = underTest.getCurrentState(logEntries);
-        LogEntry falseExplanandum = logEntries.get(17);
-        LogEntry trueExplanandum = logEntries.get(25);
+        LogEntry falseExplanandum = logEntries.get(18);
+        LogEntry trueExplanandum = logEntries.get(26);
 
         // Mocks
         Mockito.when(findCauseSer.preconditionsApply(falseExplanandum, dbRules.get(5), logEntries))
@@ -115,7 +115,7 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<LogEntry> currentState = underTest.getCurrentState(logEntries);
         rulesToTest.add(dbRules.get(5));
         rulesToTest.add(dbRules.get(6));
-        LogEntry explanandum = logEntries.get(25);
+        LogEntry explanandum = logEntries.get(26);
 
         // Expected
         ArrayList<Rule> trueRules = new ArrayList<>();
@@ -162,12 +162,12 @@ public class CounterfactualExplanationUnitTest {
 
         // Expected
         ArrayList<LogEntry> expectedCandidates = new ArrayList<>();
-        expectedCandidates.add(logEntries.get(18));
-        expectedCandidates.add(logEntries.get(20));
-        expectedCandidates.add(logEntries.get(26));
+        expectedCandidates.add(logEntries.get(19));
+        expectedCandidates.add(logEntries.get(21));
+        expectedCandidates.add(logEntries.get(27));
 
         // When
-        ArrayList<LogEntry> minPreconditions = underTest.modify(logEntries.get(18), logEntries.get(22), logEntries);
+        ArrayList<LogEntry> minPreconditions = underTest.modify(logEntries.get(19), logEntries.get(23), logEntries);
 
         // Then
         Assertions.assertEquals(expectedCandidates, minPreconditions);
@@ -183,7 +183,7 @@ public class CounterfactualExplanationUnitTest {
         for (int i = 5; i < dbRules.size(); i++) {
             consideredRules.add(dbRules.get(i));
         }
-        LogEntry explanandum = logEntries.get(17);
+        LogEntry explanandum = logEntries.get(18);
 
         // Mocks
         Mockito.when(dataSer.findAllRules()).thenReturn(consideredRules);
@@ -203,9 +203,9 @@ public class CounterfactualExplanationUnitTest {
         // Expected
         ArrayList<LogEntry> simpleExpected = new ArrayList<>();    // simple case without any other rules
         ArrayList<LogEntry> falseComplicatedExpected = new ArrayList<>();
-        simpleExpected.add(logEntries.get(26));
-        falseComplicatedExpected.add(logEntries.get(20));
+        simpleExpected.add(logEntries.get(27));
         falseComplicatedExpected.add(logEntries.get(21));
+        falseComplicatedExpected.add(logEntries.get(22));
 
 
         // When
@@ -216,7 +216,7 @@ public class CounterfactualExplanationUnitTest {
 
 
         // Then
-        Assertions.assertEquals(simpleExpected, minPreconditions_simple, "Should be equal because rule" + dbRules.get(8).getRuleName() + " has precondition " + logEntries.get(26).getName() + "and cannot be fired another way.");
+        Assertions.assertEquals(simpleExpected, minPreconditions_simple, "Should be equal because rule" + dbRules.get(8).getRuleName() + " has precondition " + logEntries.get(27).getName() + "and cannot be fired another way.");
         Assertions.assertEquals(new ArrayList<>(), minPreconditions_true, "Should be equal because rule" + dbRules.get(5).getRuleName() + "already has true preconditions.");
         Assertions.assertEquals(new ArrayList<>(), minPreconditions_true_complicated, "Should be equal because rule" + dbRules.get(7).getRuleName() + "already has true preconditions.");
         Assertions.assertEquals(falseComplicatedExpected, minPreconditions_false_complicated, "Should be equal because rule" + dbRules.get(6).getRuleName() + "can be fired by firing directly or by firing rule " + dbRules.get(9));
@@ -228,8 +228,8 @@ public class CounterfactualExplanationUnitTest {
         // Given
         ArrayList<LogEntry> logEntries = testingObjects.getDemoEntries();
         ArrayList<Rule> dbRules = testingObjects.getDBRules();
-        LogEntry explanandum = logEntries.get(15);
-        LogEntry expected = logEntries.get(18);
+        LogEntry explanandum = logEntries.get(16);
+        LogEntry expected = logEntries.get(19);
 
         // Mocks
         Mockito.when(dataSer.findAllRules()).thenReturn(dbRules);
@@ -252,11 +252,11 @@ public class CounterfactualExplanationUnitTest {
         // Expected
         // no rule to override:
         ArrayList<LogEntry> minAddExpected_1 = new ArrayList<>();
-        minAddExpected_1.add(logEntries.get(20));
-        minAddExpected_1.add(logEntries.get(26));
+        minAddExpected_1.add(logEntries.get(21));
+        minAddExpected_1.add(logEntries.get(27));
         //rule to override:
         ArrayList<LogEntry> minAddExpected_2 = new ArrayList<>();
-        minAddExpected_2.add(logEntries.get(20));       //dbRules.get(6) has lower priority, so it is not an option anymore
+        minAddExpected_2.add(logEntries.get(21));       //dbRules.get(6) has lower priority, so it is not an option anymore
 
         // When
         ArrayList<LogEntry> minPreconditions_1 = underTest.minAdd(new Rule("dummy", null, null, null, null, null, null, 0), explanandum, expected, logEntries);
@@ -279,11 +279,11 @@ public class CounterfactualExplanationUnitTest {
         // Mocks
         Mockito.when(dataSer.findAllRules()).thenReturn(dbRules);
         Mockito.when(findCauseSer.preconditionsApply(any(), any(), any())).thenReturn(true);
-        LogEntry lampOn = logEntries.get(16);
-        LogEntry fanOn = logEntries.get(18);
-        LogEntry lampBlue = logEntries.get(20);
-        LogEntry lampRed = logEntries.get(24);
-        LogEntry fanOff = logEntries.get(25);
+        LogEntry lampOn = logEntries.get(17);
+        LogEntry fanOn = logEntries.get(19);
+        LogEntry lampBlue = logEntries.get(21);
+        LogEntry lampRed = logEntries.get(25);
+        LogEntry fanOff = logEntries.get(26);
         Mockito.when(findCauseSer.findCandidateRules(any(), any()))
                 .thenAnswer(invocation -> {
                     LogEntry input = invocation.getArgument(0);
@@ -319,8 +319,8 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> expectedRoots = new ArrayList<>();
         ArrayList<LogEntry> expectedEntry_1 = new ArrayList<>();
         ArrayList<LogEntry> expectedEntry_2 = new ArrayList<>();
-        expectedEntry_1.add(logEntries.get(27));
-        expectedEntry_2.add(logEntries.get(23));
+        expectedEntry_1.add(logEntries.get(28));
+        expectedEntry_2.add(logEntries.get(24));
         expectedRoots.add(expectedEntry_1);
         expectedRoots.add(expectedEntry_2);
 
@@ -355,11 +355,11 @@ public class CounterfactualExplanationUnitTest {
                     }
                     return dummy; // return the first element of the input list
                 });
-        LogEntry lampOn = logEntries.get(16);
-        LogEntry fanOn = logEntries.get(18);
-        LogEntry lampBlue = logEntries.get(20);
-        LogEntry lampRed = logEntries.get(24);
-        LogEntry fanOff = logEntries.get(25);
+        LogEntry lampOn = logEntries.get(17);
+        LogEntry fanOn = logEntries.get(19);
+        LogEntry lampBlue = logEntries.get(21);
+        LogEntry lampRed = logEntries.get(25);
+        LogEntry fanOff = logEntries.get(26);
         Mockito.when(findCauseSer.findCandidateRules(any(), any()))
                 .thenAnswer(invocation -> {
                     LogEntry input = invocation.getArgument(0);
@@ -393,11 +393,11 @@ public class CounterfactualExplanationUnitTest {
 
         // Expected
         ArrayList<LogEntry> minExpected = new ArrayList<>();
-        minExpected.add(logEntries.get(27));
-        minExpected.add(logEntries.get(23));
+        minExpected.add(logEntries.get(28));
+        minExpected.add(logEntries.get(24));
 
         // When
-        ArrayList<LogEntry> minSub = underTest.minSub(dbRules.get(7), logEntries.get(25), logEntries);
+        ArrayList<LogEntry> minSub = underTest.minSub(dbRules.get(7), logEntries.get(26), logEntries);
 
         // Then
         Assertions.assertEquals(minExpected, minSub, "Should be equal because " + dbRules.get(7).getRuleName() + " can only be removed by removing " + dbRules.get(5).getRuleName());
@@ -431,11 +431,11 @@ public class CounterfactualExplanationUnitTest {
                     return dummy; // return the first element of the input list
                 });
 
-        LogEntry lampOn = logEntries.get(16);
-        LogEntry fanOn = logEntries.get(18);
-        LogEntry lampBlue = logEntries.get(20);
-        LogEntry lampRed = logEntries.get(24);
-        LogEntry fanOff = logEntries.get(25);
+        LogEntry lampOn = logEntries.get(17);
+        LogEntry fanOn = logEntries.get(19);
+        LogEntry lampBlue = logEntries.get(21);
+        LogEntry lampRed = logEntries.get(25);
+        LogEntry fanOff = logEntries.get(26);
         Mockito.when(findCauseSer.findCandidateRules(any(), any()))
                 .thenAnswer(invocation -> {
                     LogEntry input = invocation.getArgument(0);
@@ -469,11 +469,11 @@ public class CounterfactualExplanationUnitTest {
 
         // Expected
         ArrayList<LogEntry> minExpected = new ArrayList<>();
-        minExpected.add(logEntries.get(27));
-        minExpected.add(logEntries.get(23));
+        minExpected.add(logEntries.get(28));
+        minExpected.add(logEntries.get(24));
 
         // When
-        ArrayList<LogEntry> minSub = underTest.minSubAll(rulesToReverse, logEntries.get(25), logEntries);
+        ArrayList<LogEntry> minSub = underTest.minSubAll(rulesToReverse, logEntries.get(26), logEntries);
 
         // Then
         Assertions.assertEquals(minExpected, minSub, "Should be equal because rule " + dbRules.get(6).getRuleName() + " is already false and rule" + dbRules.get(7).getRuleName() + " only be removed by removing " + dbRules.get(5).getRuleName());
@@ -501,11 +501,11 @@ public class CounterfactualExplanationUnitTest {
                     }
                     return dummy; // Return the first element of the input list
                 });
-        LogEntry lampOn = logEntries.get(16);
-        LogEntry fanOn = logEntries.get(18);
-        LogEntry lampBlue = logEntries.get(20);
-        LogEntry lampRed = logEntries.get(24);
-        LogEntry fanOff = logEntries.get(25);
+        LogEntry lampOn = logEntries.get(17);
+        LogEntry fanOn = logEntries.get(19);
+        LogEntry lampBlue = logEntries.get(21);
+        LogEntry lampRed = logEntries.get(25);
+        LogEntry fanOff = logEntries.get(26);
         Mockito.when(findCauseSer.findCandidateRules(any(), any()))
                 .thenAnswer(invocation -> {
                     LogEntry input = invocation.getArgument(0);
@@ -543,9 +543,9 @@ public class CounterfactualExplanationUnitTest {
         rules.add(dbRules.get(7));
         ArrayList<ArrayList<LogEntry>> expectedMin = new ArrayList<>();
         ArrayList<LogEntry> additiveMin = new ArrayList<>();
-        additiveMin.add(logEntries.get(20));
+        additiveMin.add(logEntries.get(21));
         ArrayList<LogEntry> subtractiveMin = new ArrayList<>();
-        subtractiveMin.add(logEntries.get(27));
+        subtractiveMin.add(logEntries.get(28));
         expectedMin.add(additiveMin);
         expectedMin.add(subtractiveMin);
         //only subtractive part
@@ -553,13 +553,13 @@ public class CounterfactualExplanationUnitTest {
         rulesSub.add(dbRules.get(5));
         ArrayList<ArrayList<LogEntry>> expectedMinSub = new ArrayList<>();
         ArrayList<LogEntry> subtractiveMinSub = new ArrayList<>();
-        subtractiveMinSub.add(logEntries.get(27));
+        subtractiveMinSub.add(logEntries.get(28));
         expectedMinSub.add(new ArrayList<>());
         expectedMinSub.add(subtractiveMinSub);
 
         // When
-        ArrayList<ArrayList<LogEntry>> minSub = underTest.overrideOrRemove(rulesSub, logEntries.get(18), logEntries.get(25), false, logEntries);
-        ArrayList<ArrayList<LogEntry>> min = underTest.overrideOrRemove(rules, logEntries.get(25), logEntries.get(18), false, logEntries);
+        ArrayList<ArrayList<LogEntry>> minSub = underTest.overrideOrRemove(rulesSub, logEntries.get(19), logEntries.get(26), false, logEntries);
+        ArrayList<ArrayList<LogEntry>> min = underTest.overrideOrRemove(rules, logEntries.get(26), logEntries.get(19), false, logEntries);
 
         // Then
         Assertions.assertEquals(expectedMinSub, minSub, "Should be equal because " + dbRules.get(5).getRuleName() + " cannot be overridden and only directly reversed.");
@@ -576,11 +576,11 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
         ArrayList<LogEntry> candidate_2 = new ArrayList<>();
-        candidate_1.add(logEntries.get(12));
-        candidate_1.add(logEntries.get(14));
-        candidate_1.add(logEntries.get(18));
-        candidate_2.add(logEntries.get(15));
-        candidate_2.add(logEntries.get(20));
+        candidate_1.add(logEntries.get(13));
+        candidate_1.add(logEntries.get(15));
+        candidate_1.add(logEntries.get(19));
+        candidate_2.add(logEntries.get(16));
+        candidate_2.add(logEntries.get(21));
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
@@ -604,11 +604,11 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
         ArrayList<LogEntry> candidate_2 = new ArrayList<>();
-        candidate_1.add(logEntries.get(13));
         candidate_1.add(logEntries.get(14));
-        candidate_1.add(logEntries.get(18));
-        candidate_2.add(logEntries.get(15));
-        candidate_2.add(logEntries.get(20));
+        candidate_1.add(logEntries.get(15));
+        candidate_1.add(logEntries.get(19));
+        candidate_2.add(logEntries.get(16));
+        candidate_2.add(logEntries.get(21));
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
@@ -632,11 +632,11 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> firstCandidate = new ArrayList<>();
         ArrayList<LogEntry> secondCandidate = new ArrayList<>();
-        firstCandidate.add(logEntries.get(13));
         firstCandidate.add(logEntries.get(14));
-        firstCandidate.add(logEntries.get(19));
-        secondCandidate.add(logEntries.get(15));
-        secondCandidate.add(logEntries.get(24));
+        firstCandidate.add(logEntries.get(15));
+        firstCandidate.add(logEntries.get(20));
+        secondCandidate.add(logEntries.get(16));
+        secondCandidate.add(logEntries.get(25));
         candidates.add(firstCandidate);
         candidates.add(secondCandidate);
 
@@ -645,10 +645,10 @@ public class CounterfactualExplanationUnitTest {
         expected.add((double) Integer.MAX_VALUE / 2);
 
         // When
-        ArrayList<Double> abnormality = underTest.calculateTemporality(candidates, logEntries.get(23), logEntries);
+        ArrayList<Double> abnormality = underTest.calculateTemporality(candidates, logEntries.get(24), logEntries);
 
         // Then
-        Assertions.assertEquals(expected, abnormality, "Should be equal because " + logEntries.get(19) + " has an identical logEntry later and " + logEntries.get(24) + " is after the explanandum.");
+        Assertions.assertEquals(expected, abnormality, "Should be equal because " + logEntries.get(20) + " has an identical logEntry later and " + logEntries.get(25) + " is after the explanandum.");
     }
 
     @Test
@@ -664,8 +664,8 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> firstCandidate = new ArrayList<>();
         ArrayList<LogEntry> secondCandidate = new ArrayList<>();
-        firstCandidate.add(logEntries.get(26));
-        secondCandidate.add(logEntries.get(21));
+        firstCandidate.add(logEntries.get(27));
+        secondCandidate.add(logEntries.get(22));
         candidates.add(firstCandidate);
         candidates.add(secondCandidate);
 
@@ -679,10 +679,10 @@ public class CounterfactualExplanationUnitTest {
         expected.add(3.0);
 
         // When
-        ArrayList<Double> proximity = underTest.calculateProximity(candidates, logEntries.get(28), logEntries);
+        ArrayList<Double> proximity = underTest.calculateProximity(candidates, logEntries.get(29), logEntries);
 
         // Then
-        Assertions.assertEquals(expected, proximity, "Should be equal because changing " + logEntries.get(26) + " changes nothing and changing " + logEntries.get(21) + " makes " + dbRules.get(9) + " have true preconditions.");
+        Assertions.assertEquals(expected, proximity, "Should be equal because changing " + logEntries.get(27) + " changes nothing and changing " + logEntries.get(22) + " makes " + dbRules.get(9) + " have true preconditions.");
     }
 
     @Test
@@ -692,11 +692,11 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> firstCandidate = new ArrayList<>();
         ArrayList<LogEntry> secondCandidate = new ArrayList<>();
-        firstCandidate.add(logEntries.get(15));
         firstCandidate.add(logEntries.get(16));
         firstCandidate.add(logEntries.get(17));
-        secondCandidate.add(logEntries.get(19));
+        firstCandidate.add(logEntries.get(18));
         secondCandidate.add(logEntries.get(20));
+        secondCandidate.add(logEntries.get(21));
         candidates.add(firstCandidate);
         candidates.add(secondCandidate);
 
@@ -704,7 +704,7 @@ public class CounterfactualExplanationUnitTest {
         Mockito.when(dataSer.findEntityByEntityID(any())).thenReturn(new Entity("dummyId", "dummyDevice", "actionable"));
 
         // When
-        ArrayList<LogEntry> minimum = underTest.minComputation(candidates,  logEntries.get(25),  logEntries);
+        ArrayList<LogEntry> minimum = underTest.minComputation(candidates,  logEntries.get(26),  logEntries);
 
         // Then
         Assertions.assertEquals(secondCandidate, minimum, "Should be equal because the second candidate is more minimal than the first.");
@@ -719,10 +719,10 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> minPreconditions = new ArrayList<>();
         ArrayList<LogEntry> add = new ArrayList<>();
         ArrayList<LogEntry> sub = new ArrayList<>();
-        add.add(logEntries.get(16));
         add.add(logEntries.get(17));
-        add.add(logEntries.get(19));
-        sub.add(logEntries.get(28));
+        add.add(logEntries.get(18));
+        add.add(logEntries.get(20));
+        sub.add(logEntries.get(29));
         minPreconditions.add(add);
         minPreconditions.add(sub);
 
@@ -734,7 +734,7 @@ public class CounterfactualExplanationUnitTest {
             });
 
         // When
-        String explanation = underTest.generateCFE(minPreconditions, logEntries.get(18), logEntries.get(25), "fan");
+        String explanation = underTest.generateCFE(minPreconditions, logEntries.get(19), logEntries.get(26), "fan");
 
         // Then
         Assertions.assertEquals("The fan would be off instead of on if in the past the lamp was on, the lamp was yellow, and the window was closed and the temperature was not cold.", explanation);
@@ -760,11 +760,11 @@ public class CounterfactualExplanationUnitTest {
         });
         Mockito.when(dataSer.findAllRules()).thenReturn(consideredRules);
         Mockito.when(findCauseSer.preconditionsApply(any(), any(), any())).thenReturn(true);
-        LogEntry lampOn = logEntries.get(16);
-        LogEntry fanOn = logEntries.get(18);
-        LogEntry lampBlue = logEntries.get(20);
-        LogEntry lampRed = logEntries.get(24);
-        LogEntry fanOff = logEntries.get(25);
+        LogEntry lampOn = logEntries.get(17);
+        LogEntry fanOn = logEntries.get(19);
+        LogEntry lampBlue = logEntries.get(21);
+        LogEntry lampRed = logEntries.get(25);
+        LogEntry fanOff = logEntries.get(26);
         Mockito.when(findCauseSer.findCandidateRules(any(), any()))
                 .thenAnswer(invocation -> {
                     LogEntry input = invocation.getArgument(0);
@@ -796,11 +796,11 @@ public class CounterfactualExplanationUnitTest {
                     }
                 });
         ArrayList<LogEntry> actions = new ArrayList<>();
-        actions.add(logEntries.get(16));
-        actions.add(logEntries.get(24));
-        actions.add(logEntries.get(18));
+        actions.add(logEntries.get(17));
         actions.add(logEntries.get(25));
-        actions.add(logEntries.get(20));
+        actions.add(logEntries.get(19));
+        actions.add(logEntries.get(26));
+        actions.add(logEntries.get(21));
         Mockito.when(dataSer.getAllActions()).thenReturn(actions);
         Mockito.when(dataSer.findEntityIdsByDeviceName(any())).thenAnswer(invocation -> {
             String device = invocation.getArgument(0);

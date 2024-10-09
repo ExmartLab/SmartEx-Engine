@@ -25,6 +25,12 @@
         "state": "changed"
     },
     {
+        "when": "2022-06-23T09:50:50.084573+00:00",
+        "name": "daily energy consumption",
+        "entity_id": "smartplug coffee machine",
+        "state": "higher than the threshold"
+    },
+    {
         "when": "2022-06-23T09:50:50.229746+00:00",
         "name": "Rule: Block High Coffee Consumption (sc1)",
         "entity_id": "automation.test_scenario_watching_tv_light_off",
@@ -64,6 +70,12 @@
         "name": "Lab TV",
         "state": "playing",
         "entity_id": "media_player.lab_tv"
+    },
+    {
+        "when": "2022-06-23T11:19:31.025189+00:00",
+        "name": "a meeting in room 1",
+        "state": "happening",
+        "entity_id": "calendar"
     },
     {
         "when": "2022-06-23T11:19:31.028089+00:00",

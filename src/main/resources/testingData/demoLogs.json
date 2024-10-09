@@ -65,6 +65,12 @@
         "entity_id": "media_player.lab_tv"
     },
     {
+        "when": "2022-06-23T11:19:31.025189+00:00",
+        "name": "a meeting in room 1",
+        "state": "happening",
+        "entity_id": "calendar"
+    },
+    {
         "when": "2022-06-23T11:19:31.028089+00:00",
         "name": "Rule: Block TV Audio During Meeting (sc2)",
         "entity_id": "automation.sc2_multi_user_conflict",
