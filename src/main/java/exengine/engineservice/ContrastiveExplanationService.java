@@ -159,9 +159,6 @@ public class ContrastiveExplanationService extends ExplanationService {
 							reducedCandidates.add(rule);
 						}
 					}
-					/*for (Rule rule : reducedCandidates) {
-						System.out.println(rule.getRuleName());
-					}*/
 
 					/*
 					 * as of now, candidateRules contains all rules, that use the entityId

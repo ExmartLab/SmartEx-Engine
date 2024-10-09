@@ -604,24 +604,24 @@ public class CounterfactualExplanationUnitTest {
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> candidate_1 = new ArrayList<>();
         ArrayList<LogEntry> candidate_2 = new ArrayList<>();
-        candidate_1.add(logEntries.get(14));
-        candidate_1.add(logEntries.get(15));
-        candidate_1.add(logEntries.get(19));
-        candidate_2.add(logEntries.get(16));
-        candidate_2.add(logEntries.get(21));
+        candidate_1.add(logEntries.get(14));    // add
+        candidate_1.add(logEntries.get(15));    // add
+        candidate_1.add(logEntries.get(19));    // add
+        candidate_2.add(logEntries.get(28));    // sub
+        candidate_2.add(logEntries.get(21));    // add
         candidates.add(candidate_1);
         candidates.add(candidate_2);
 
         // Expected
         ArrayList<Double> expected = new ArrayList<>();
-        expected.add(41.666666666666664);
-        expected.add(29.166666666666664);
+        expected.add(0.5833333333333334);
+        expected.add(0.5416666666666666);
 
         // When
         ArrayList<Double> abnormality = underTest.calculateAbnormality(candidates, logEntries);
 
         // Then
-        Assertions.assertEquals(expected, abnormality, "Should be equal because for the first entry status.lamp has 2 states, color.lamp has 3 states and status.fan has 2 states. For the second entry setting. Air conditioner has 3 states and color.lamp has 4 states.");
+        Assertions.assertEquals(expected, abnormality, "Should be equal because for the first entry status.lamp has 2 states, color.lamp has 4 states and status.fan has 2 states. For the second entry setting. Lamp status has 2 states and color.lamp has 4 states.");
     }
 
     @Test
@@ -826,8 +826,8 @@ public class CounterfactualExplanationUnitTest {
         String explanation_3 = underTest.getExplanation(30, "2", "temperature" );
 
         // Then
-        Assertions.assertEquals("The lamp would be blue instead of red if in the past the aircon was not high.", explanation_1);
-        Assertions.assertEquals("The fan would be on instead of off if in the past the aircon was not high.", explanation_2);
+        Assertions.assertEquals("The lamp would be blue instead of red if in the past the window was not open.", explanation_1);
+        Assertions.assertEquals("The fan would be on instead of off if in the past the window was not open.", explanation_2);
        Assertions.assertEquals("No explanandum found. Could not proceed.", explanation_3);
     }
 

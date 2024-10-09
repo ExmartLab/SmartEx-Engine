@@ -1,7 +1,7 @@
 userid, device, expected_explanation
 2; coffee_machine; The coffee_machine would be on instead of off if in the past the daily energy consumption was not higher than the threshold.
-2; tv; The tv would be loud instead of mute if in the past the lab tv was not playing.
+2; tv; The tv would be loud instead of mute if in the past the a meeting in room 1 was not happening.
 2; status_light; The status_light would be green instead of orange if in the past the meeting room was empty, and the contact sensor meeting room opening was activated.
-2; lamp; The lamp would be blue instead of red if in the past the air conditioning was not high.
-2; fan; The fan would be on instead of off if in the past the air conditioning was not high.
+2; lamp; The lamp would be blue instead of red if in the past the window was not open.
+2; fan; The fan would be on instead of off if in the past the window was not open.
 2; temperature; No explanandum found. Could not proceed.
