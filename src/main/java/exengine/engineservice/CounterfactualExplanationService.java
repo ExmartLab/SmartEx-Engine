@@ -83,29 +83,28 @@ public class CounterfactualExplanationService extends ExplanationService {
             return "Error, there is no explanation need. Fact and Foil are the same.";
         }
 
-
         // Determine rules with currently true preconditions
         ArrayList<LogEntry> currentState = getCurrentState(logEntries);
 
         // rules with actions leading to current state
         ArrayList<Rule> rulesCurrent = findCauseSer.findCandidateRules(explanandum, dbRules);
         TruePreconditions(rulesCurrent, explanandum, currentState, logEntries);    //checks if the conditions currently are true and a trigger has been activated before the explanandum
-        LOGGER.info("The rules with true preconditions leading to the current state are " + rulesCurrent);
+        LOGGER.info("Rules with true preconditions leading to the current state are " + rulesCurrent);
 
         // rules with actions leading to expected state
         ArrayList<Rule> rulesExpected = findCauseSer.findCandidateRules(expected, dbRules);
         TruePreconditions(rulesExpected, explanandum, currentState, logEntries);
-        LOGGER.info("The rules with true preconditions leading to the expected state are " + rulesExpected);
+        LOGGER.info("Rules with true preconditions leading to the expected state are " + rulesExpected);
 
         // rules with actions leading to previous state
         ArrayList<Rule> rulesPrevious = findCauseSer.findCandidateRules(previous, dbRules);
         TruePreconditions(rulesPrevious, explanandum, currentState, logEntries);
-        LOGGER.info("The rules with true preconditions leading to the previous state are " + rulesPrevious);
         if (!rulesExpected.isEmpty()) {         // Only consider rules with higher priority than rules in rulesExpected
             Rule maxPriorityRule = Collections.max(rulesExpected, Comparator.comparingInt(Rule::getPriority));
             int maxPriority = maxPriorityRule.getPriority();
             rulesPrevious.removeIf(r -> r.getPriority() <= maxPriority);
         }
+        LOGGER.info("Rules with true preconditions leading to the previous state are " + rulesPrevious);
 
 
         // Case Distinction
@@ -122,6 +121,7 @@ public class CounterfactualExplanationService extends ExplanationService {
         } else {
             if (rulesExpected.isEmpty()) {
                 Rule dummy = new Rule("dummy", null, null, null, null, null, null, 0);
+                LOGGER.info("There are no rules with true preconditions. A rule to fire is determined.");
                 minPreconditions.add(minAdd(dummy, explanandum, expected, logEntries));
             } else {
                 return "Error, there is no explanation need.";
@@ -152,33 +152,24 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         // determine foil using the ContrastiveExplanationService
         Object happenedEvent = findCauseSer.findCause(explanandum, logEntries, dbRules, dbErrors);
-        ArrayList<Rule> candidateRules = contrastiveSer.getCandidateRules(entityId);
-        Rule expectedRule = contrastiveSer.getExpectedRule(explanandum, logEntries, candidateRules, happenedEvent, device, entityId, userId);
-        if (expectedRule != null) {
+        ArrayList<Rule> candidateRules = new ArrayList<>(contrastiveSer.getCandidateRules(entityId));
+
+        while (expected.equals(explanandum)){       //exclude determined expectedRule until we reach foil that is not the explanandum
+            Rule expectedRule = contrastiveSer.getExpectedRule(explanandum, logEntries, candidateRules, happenedEvent, device, entityId, userId);
+            if (expectedRule == null) {
+                return explanandum;
+            }
             ArrayList<LogEntry> expectedCandidates = expectedRule.getActions();
             for (LogEntry logEntry : expectedCandidates) {
                 if (logEntry.getEntityId().equals(entityId)) {
                     expected = logEntry;
                 }
             }
+            candidateRules.remove(expectedRule);
         }
-        if (!expected.equals(explanandum)) {     // using the ContrastiveExplanationService worked
-            return expected;
-        } else {                                // foil determination did not work, add cases manually
 
-            return switch (explanandum.getEntityId()) {
-                // needed for unit tests:
-                case "status.fan" -> logEntries.get(10);
-                case "color.lamp" -> logEntries.get(8);
-                case "status.lamp" -> logEntries.get(15);
-                case "status.temperature" -> logEntries.get(2);
-                case "setting.aircon" -> logEntries.get(13);
-                case "status.window" -> logEntries.get(6);
-                default -> explanandum;
-            };
-
-        }
-    }
+        return expected;
+}
 
 
     /**
@@ -194,34 +185,18 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         String explanation = "The " + device + " would be " + expected.getState() + " instead of " + explanandum.getState() + " if in the past ";
 
-
         // add additive preconditions to explanation
         ArrayList<LogEntry> addPreconditions = minPreconditions.get(0);
         for (int i = 0; i < addPreconditions.size() - 1; i++) {
-
-            Entity entityAdd = dataSer.findEntityByEntityID(addPreconditions.get(i).getEntityId());
-            String deviceAdd = addPreconditions.get(i).getName();
-
-            if (entityAdd != null) {    // we can get the correct device
-                deviceAdd = entityAdd.getDeviceName();
-            }
-
+            String deviceAdd = dataSer.findEntityByEntityID(addPreconditions.get(i).getEntityId()).getDeviceName();
             explanation = explanation.concat("the " + deviceAdd + " was " + addPreconditions.get(i).getState() + ", ");
         }
 
         if (addPreconditions.size() > 0) {
-
             if (addPreconditions.size() >= 2) {
                 explanation = explanation.concat("and ");
             }
-
-            Entity entityAdd = dataSer.findEntityByEntityID(addPreconditions.get(addPreconditions.size() - 1).getEntityId());
-            String deviceAdd = addPreconditions.get(addPreconditions.size() - 1).getName();
-
-            if (entityAdd != null) {    //we can get the correct device
-                deviceAdd = entityAdd.getDeviceName();
-            }
-
+            String deviceAdd = dataSer.findEntityByEntityID(addPreconditions.get(addPreconditions.size() - 1).getEntityId()).getDeviceName();
             explanation = explanation.concat("the " + deviceAdd + " was " + addPreconditions.get(addPreconditions.size() - 1).getState());
         }
 
@@ -232,31 +207,15 @@ public class CounterfactualExplanationService extends ExplanationService {
                 explanation = explanation.concat(" and ");
             }
             for (int i = 0; i < subPreconditions.size() - 1; i++) {
-
-                Entity entitySub = dataSer.findEntityByEntityID(subPreconditions.get(i).getEntityId());
-                String deviceSub = subPreconditions.get(i).getName();
-
-                if (entitySub != null) {
-                    deviceSub = entitySub.getDeviceName();
-                }
-
+                String deviceSub = dataSer.findEntityByEntityID(subPreconditions.get(i).getEntityId()).getDeviceName();
                 explanation = explanation.concat("the " + deviceSub + " was not " + subPreconditions.get(i).getState() + ", ");
-
             }
 
             if (subPreconditions.size() > 0) {
-
                 if (subPreconditions.size() >= 2) {
                     explanation = explanation.concat("and ");
                 }
-
-                Entity entitySub = dataSer.findEntityByEntityID(subPreconditions.get(subPreconditions.size() - 1).getEntityId());
-                String deviceSub = subPreconditions.get(subPreconditions.size() - 1).getName();
-
-                if (entitySub != null) {
-                    deviceSub = entitySub.getDeviceName();
-                }
-
+                String deviceSub = dataSer.findEntityByEntityID(subPreconditions.get(subPreconditions.size() - 1).getEntityId()).getDeviceName();
                 explanation = explanation.concat("the " + deviceSub + " was not " + subPreconditions.get(subPreconditions.size() - 1).getState());
             }
         }
@@ -282,6 +241,7 @@ public class CounterfactualExplanationService extends ExplanationService {
      * or null if there is no such set
      */
     public ArrayList<LogEntry> minSub(Rule ruleToReverse, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
+
 
         ArrayList<ArrayList<LogEntry>> reversibleCandidates = new ArrayList<>();
         ArrayList<LogEntry> conditions = ruleToReverse.getConditions();
@@ -468,6 +428,7 @@ public class CounterfactualExplanationService extends ExplanationService {
                 }
                 if (!candidate.isEmpty()) {
                     candidates.add(candidate);
+                    LOGGER.info("Candidate for minimum added:" + candidate);
                 }
 
             }
@@ -482,6 +443,7 @@ public class CounterfactualExplanationService extends ExplanationService {
             addCandidates.addAll(additivePart);
             subtractingAll.addAll(additivePart);
         }
+        LOGGER.info("Candidate for minimum added:" + subtractingAll);
         candidates.add(subtractingAll);
 
         // minimal computation
@@ -864,8 +826,6 @@ public class CounterfactualExplanationService extends ExplanationService {
      */
     public ArrayList<Double> calculateProximity(ArrayList<ArrayList<LogEntry>> candidates, LogEntry
             explanandum, ArrayList<LogEntry> logEntries) {
-
-        System.out.println("calculate proximity entered with candidates" + candidates);
 
         ArrayList<Double> proximity = new ArrayList<>();
 

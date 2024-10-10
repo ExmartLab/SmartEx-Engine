@@ -5,42 +5,92 @@
     entity_id: "automation.test_scenario_watching_tv_light_off"
     state: "null"
   triggers:
-  - name: "state change"
-    entity_id: "scene.state_change"
-    state: "null"
+    - name: "state"
+      entity_id: "scene.state_change"
+      state: "changed"
   conditions:
-  - name: "daily energy consumption"
-    entity_id: "smartplug coffee machine"
-    state: "higher than the threshold"
+    - name: "daily energy consumption"
+      entity_id: "smartplug coffee machine"
+      state: "higher than the threshold"
   actions:
-  - name: "Smart Plug Social Room Coffee"
-    entity_id: "switch.smart_plug_social_room_coffee"
-    state: "off"
+    - name: "Smart Plug Social Room Coffee"
+      entity_id: "switch.smart_plug_social_room_coffee"
+      state: "off"
   ownerId: "1"
   ruleDescription: "Rule_1: allows coffee to be made only until the daily energy consumption threshold is reached"
+  priority: 2
+
+- name: "rule 1.5 (coffee)"
+  ruleId: "1.5"
+  ruleEntry:
+    name: "Rule: Turn on Coffee machine"
+    entity_id: "artificially_added"
+    state: "null"
+  triggers:
+    - name: "state"
+      entity_id: "scene.state_change"
+      state: "changed"
+  conditions:
+    - name: "temperature"
+      entity_id: "state.temperature"
+      state: "warm"
+    - name: "a meeting in room 1"
+      entity_id: "calendar"
+      state: "not happening"
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "08:00"
+    - name: "Lamp turned off"
+      entity_id: "status.lamp"
+      state: "off"
+  actions:
+    - name: "Smart Plug Social Room Coffee"
+      entity_id: "switch.smart_plug_social_room_coffee"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "Rule_1: an artifical rule to create the foil. Turns on the coffee machine if the Lab TV is in idle"
   priority: 1
 
 - name: "rule 2 (tv mute)"
   ruleId: "2"
   ruleEntry:
-    name: "Rule: Block TV Audio During Meeting (sc2)"
+    name: "Rule: Block TV Audio During Meeting (sc2) happened"
     entity_id: "automation.sc2_multi_user_conflict"
     state: "null"
   triggers:
-  - name: "Lab TV"
-    entity_id: "media_player.lab_tv"
-    state: "playing"
+    - name: "Lab TV"
+      entity_id: "media_player.lab_tv"
+      state: "playing"
   conditions:
-  - name: "a meeting in room 1 is going on"
-    entity_id: "calendar?"
-    state: "???"
+    - name: "a meeting in room 1"
+      entity_id: "calendar"
+      state: "happening"
   actions:
-  - name: "tv_mute"
-    entity_id: "scene.tv_playing"
-    state: "null"
+    - name: "tv"
+      entity_id: "scene.tv_playing"
+      state: "mute"
   ownerId: "2"
   ruleDescription: "Rule_2: mutes the TV if TV is playing while a meeting is going on"
   priority: 2
+
+- name: "rule 2.5 (tv loud)"
+  ruleId: "2.5"
+  ruleEntry:
+    name: "Rule: Turn tv loud at 8am (artificial)"
+    entity_id: "automation.sc2_multi_user_conflict"
+    state: "null"
+  triggers:
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "08:00"
+  actions:
+    - name: "tv"
+      entity_id: "scene.tv_playing"
+      state: "loud"
+  ownerId: "2"
+  ruleDescription: "Rule_2: an artificial rule to create the foil. turns the tv loud at 8am"
+  priority: 1
+
 
 - name: "Meeting room not occupied"
   ruleId: "3"
@@ -49,18 +99,18 @@
     entity_id: "automation.rule_meeting_room_not_occupied"
     state: "null"
   triggers:
-  - name: "Contact Sensor Meeting Room Opening"
-    entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
-    state: "on"
+    - name: "Contact Sensor Meeting Room Opening"
+      entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+      state: "activated"
   conditions:
-  - name: "No Motion in meeting room"
-    entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
-    state: "clear"
+    - name: "meeting room"
+      entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
+      state: "empty"
   actions:
-  - name: "Turn Meeting Room Status Light green"
-    entity_id: "light.meeting_room_status_light"
-    state: "green"
-  ownerId: "1"
+    - name: "Meeting Room Status Light"
+      entity_id: "light.meeting_room_status_light"
+      state: "green"
+  ownerId: "2"
   ruleDescription: "Rule_3: turns the meeting room status light green if the room is not occupied"
   priority: 3
 
@@ -71,18 +121,18 @@
     entity_id: "automation.rule_meeting_room_occupied"
     state: "null"
   triggers:
-  - name: "Contact Sensor Meeting Room Opening"
-    entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
-    state: "off"
+    - name: "Meeting Room Door"
+      entity_id: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+      state: "opening"
   conditions:
-  - name: "Occupancy of meeting room"
-    entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
-    state: "not empty"
+    - name: "Occupancy of the meeting room"
+      entity_id: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
+      state: "Detected"
   actions:
-  - name: "Turn Meeting Room Status Light orange"
-    entity_id: "light.meeting_room_status_light"
-    state: "orange"
-  ownerId: "1"
+    - name: "Meeting Room Status Light"
+      entity_id: "light.meeting_room_status_light"
+      state: "orange"
+  ownerId: "2"
   ruleDescription: "Rule_4: turns the meeting room status light orange if the room is occupied"
   priority: 4
 
@@ -93,17 +143,17 @@
     entity_id: "automation.rule_rain_at_lunch_warning"
     state: "null"
   triggers:
-  - name: "Forecast Xmart-Lab"
-    entity_id: "weather.xmart_lab"
-    state: "rainy"
+    - name: "Forecast Xmart-Lab"
+      entity_id: "weather.xmart_lab"
+      state: "rainy"
   conditions:
-  - name: "Time between 11 am and 1 pm"
-    entity_id: "sensor.worldclock_sensor"
-    state: "11:00-13:00"
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "11:00-13:00"
   actions:
-  - name: "Turn Meeting Room Status Light blue"
-    entity_id: "light.meeting_room_status_light"
-    state: "blue"
+    - name: "Meeting Room Status Light"
+      entity_id: "light.meeting_room_status_light"
+      state: "blue"
   ownerId: "2"
   ruleDescription: "Rule_5: turns all lights blue if rain at lunch is expected"
   priority: 5
@@ -115,19 +165,19 @@
     entity_id: "automation.rule_rain_at_lunch_warning"
     state: "null"
   triggers:
-  - name: "Forecast Xmart-Lab"
-    entity_id: "weather.xmart_lab"
-    state: "sunny"
+    - name: "Forecast Xmart-Lab"
+      entity_id: "weather.xmart_lab"
+      state: "sunny"
   conditions:
-  - name: "Time between 11 am and 1 pm"
-    entity_id: "sensor.worldclock_sensor"
-    state: "11:00-13:00"
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "11:00-13:00"
   actions:
-  - name: "Turn Meeting Room Status Light orange"
-    entity_id: "light.meeting_room_status_light"
-    state: "orange"
+    - name: "Meeting Room Status Light"
+      entity_id: "light.meeting_room_status_light"
+      state: "orange"
   ownerId: "2"
-  ruleDescription: "Rule_5: turns all lights orange if rain at lunch is expected"
+  ruleDescription: "Rule_6: turns all lights orange if rain at lunch is expected"
   priority: 6
 
 - name: "Danger"
@@ -137,24 +187,149 @@
     entity_id: "automation.danger"
     state: "null"
   triggers:
-  - name: "Smoke detected"
-    entity_id: "binary_sensor.smoke_detector"
-    state: "on"
-  - name: "CO2 detected"
-    entity_id: "binary_sensor.co2_detector"
-    state: "on"
-  - name: "Fire alarm"
-    entity_id: "binary_sensor.fire_alarm"
-    state: "on"
+    - name: "Smoke"
+      entity_id: "binary_sensor.smoke_detector"
+      state: "detected"
+    - name: "CO2"
+      entity_id: "binary_sensor.co2_detector"
+      state: "detected"
+    - name: "Fire alarm"
+      entity_id: "binary_sensor.fire_alarm"
+      state: "on"
   conditions:
-  - name: "Time between 8 am and 6 pm"
-    entity_id: "sensor.worldclock_sensor"
-    state: "08:00-18:00"
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "08:00-18:00"
   actions:
-  - name: "Turn Meeting Room Status Light orange"
-    entity_id: "light.meeting_room_status_light"
-    state: "orange"
-  ownerId: "1"
+    - name: "Meeting Room Status Light"
+      entity_id: "light.meeting_room_status_light"
+      state: "orange"
+  ownerId: "2"
   ruleDescription: "Rule_7: turns the meeting room status light orange if danger occurs"
   priority: 7
+
+- name: "Turn the lamp red if it is very warm"
+  ruleId: "8"
+  ruleEntry:
+    name: "Rule: Very hot"
+    entity_id: "automation.hot"
+    state: "null"
+  triggers:
+    - name: "Window open"
+      entity_id: "status.window"
+      state: "open"
+  conditions:
+    - name: "Air Conditioning turning on high"
+      entity_id: "setting.aircon"
+      state: "high"
+  actions:
+    - name: "Lamp Office turning on"
+      entity_id: "status.lamp"
+      state: "on"
+    - name: "Lamp turning red"
+      entity_id: "color.lamp"
+      state: "red"
+  ownerId: "1"
+  ruleDescription: "Rule_8: turns the meeting room light red if it is very warm."
+  priority: 10
+
+- name: "Turn on the fan if nothing else to cool is on."
+  ruleId: "9"
+  ruleEntry:
+    name: "Rule: Turn fan on"
+    entity_id: "automation.fan"
+    state: "null"
+  triggers:
+    - name: "Air Conditioning turning off"
+      entity_id: "status.aircon"
+      state: "off"
+    - name: "Window closed"
+      entity_id: "status.window"
+      state: "closed"
+  conditions:
+    - name: "Lamp Office turning on"
+      entity_id: "status.lamp"
+      state: "on"
+    - name: "Lamp turning blue"
+      entity_id: "color.lamp"
+      state: "blue"
+  actions:
+    - name: "Fan turning on"
+      entity_id: "status.fan"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "Rule_9: turns on the fan if the lamp is blue and nothing else to cool is on."
+  priority: 9
+
+- name: "Turn off the fan if the lamp is red."
+  ruleId: "10"
+  ruleEntry:
+    name: "Rule: Turn fan off"
+    entity_id: "automation.fan"
+    state: "null"
+  triggers:
+    - name: "state"
+      entity_id: "scene.state_change"
+      state: "changed"
+  conditions:
+    - name: "Lamp Office turning on"
+      entity_id: "status.lamp"
+      state: "on"
+    - name: "Lamp turning red"
+      entity_id: "color.lamp"
+      state: "red"
+  actions:
+    - name: "Fan turning off"
+      entity_id: "status.fan"
+      state: "off"
+  ownerId: "1"
+  ruleDescription: "Rule_10: turns off the fan if the lamp is red."
+  priority: 8
+
+- name: "Turn on the fan if the lamp is yellow."
+  ruleId: "11"
+  ruleEntry:
+    name: "Rule: Turn fan on"
+    entity_id: "automation.fan"
+    state: "null"
+  triggers:
+    - name: "state"
+      entity_id: "scene.state_change"
+      state: "changed"
+  conditions:
+    - name: "temperature"
+      entity_id: "state.temperature"
+      state: "warm"
+  actions:
+    - name: "Fan turning on"
+      entity_id: "status.fan"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "Rule_11: turns on the fan if it is warm."
+  priority: 7
+
+- name: "Turn the lamp blue if the air conditioning is on low."
+  ruleId: "12"
+  ruleEntry:
+    name: "Rule: Turn lamp blue"
+    entity_id: "automation.lamp"
+    state: "null"
+  triggers:
+    - name: "state"
+      entity_id: "scene.state_change"
+      state: "changed"
+  conditions:
+    - name: "Air conditioning turning on low"
+      entity_id: "setting.aircon"
+      state: "low"
+  actions:
+    - name: "Lamp Office turning on"
+      entity_id: "status.lamp"
+      state: "on"
+    - name: "Lamp turning blue"
+      entity_id: "color.lamp"
+      state: "blue"
+  ownerId: "2"
+  ruleDescription: "Rule_12: turns the lamp blue if the air conditioning is on low."
+  priority: 11
 

@@ -32,7 +32,7 @@
       state: "changed"
   conditions:
     - name: "temperature"
-      entity_id: "status.temperature"
+      entity_id: "state.temperature"
       state: "warm"
     - name: "a meeting in room 1"
       entity_id: "calendar"
@@ -177,7 +177,7 @@
     entity_id: "light.meeting_room_status_light"
     state: "orange"
   ownerId: "2"
-  ruleDescription: "Rule_5: turns all lights orange if rain at lunch is expected"
+  ruleDescription: "Rule_6: turns all lights orange if rain at lunch is expected"
   priority: 6
 
 - name: "Danger"
@@ -298,7 +298,7 @@
       state: "changed"
   conditions:
     - name: "temperature"
-      entity_id: "status.temperature"
+      entity_id: "state.temperature"
       state: "warm"
   actions:
     - name: "Fan turning on"
@@ -329,7 +329,7 @@
     - name: "Lamp turning blue"
       entity_id: "color.lamp"
       state: "blue"
-  ownerId: "1"
+  ownerId: "2"
   ruleDescription: "Rule_12: turns the lamp blue if the air conditioning is on low."
   priority: 11
 

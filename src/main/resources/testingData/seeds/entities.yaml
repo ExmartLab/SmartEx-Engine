@@ -53,3 +53,35 @@
 - entityId: "state.temperature"
   deviceName: "temperature"
   controllability: "non-mutable"
+
+- entityId: "media_player.lab_tv"
+  deviceName: "Lab TV"
+  controllability: "actionable"
+
+- entityId: "calendar"
+  deviceName: "a meeting in room 1"
+  controllability: "non-mutable"
+
+- entityId: "smartplug coffee machine"
+  deviceName: "the daily energy consumption of the coffee machine"
+  controllability: "actionable"
+
+- entityId: "scene.state_change"
+  deviceName: "state"
+  controllability: "non-mutable"
+
+- entityId: "sensor.worldclock_sensor"
+  deviceName: "time"
+  controllability: "non-mutable"
+
+- entityId: "binary_sensor.lumi_lumi_sensor_motion_aq2_motion_2"
+  deviceName: "meeting room"
+  controllability: "actionable"
+
+- entityId: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
+  deviceName: "Contact Sensor if the Meeting Room is Opening"
+  controllability: "actionable"
+
+
+
+

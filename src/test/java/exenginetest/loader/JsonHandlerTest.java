@@ -221,7 +221,7 @@ class JsonHandlerTest {
 				        "when": "2022-10-01T09:08:05.920189+00:00",
 				        "name": "Warm temperature",
 				        "state": "warm",
-				        "entity_id": "status.temperature"
+				        "entity_id": "state.temperature"
 				    },
 				    {
 				        "when": "2022-10-01T09:08:08.920189+00:00",
@@ -233,7 +233,7 @@ class JsonHandlerTest {
 				        "when": "2022-10-01T09:08:10.920189+00:00",
 				        "name": "Cold temperature",
 				        "state": "cold",
-				        "entity_id": "status.temperature"
+				        "entity_id": "state.temperature"
 				    }
 				]
 								""";
