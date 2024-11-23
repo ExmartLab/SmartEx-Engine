@@ -35,7 +35,7 @@ public class CounterfactualExplanationService extends ExplanationService {
     final Double PROXIMITY_WEIGHT = 1.0;
     final Double SPARSITY_WEIGHT = 1.0;
 
-    final Boolean ABNORMALITY_BENEFICIAL = false;
+    final Boolean ABNORMALITY_BENEFICIAL = true;
     final Boolean TEMPORALITY_BENEFICIAL = false;
     final Boolean PROXIMITY_BENEFICIAL = false;
     final Boolean SPARSITY_BENEFICIAL = false;
@@ -256,9 +256,7 @@ public class CounterfactualExplanationService extends ExplanationService {
                 case "actionable" -> actionableConditions.add(condition);
                 case "mutable" -> mutableConditions.add(condition); // mutable but non-actionable
                 case "non-mutable" -> nonMutableConditions.add(condition);
-                default -> {
-                    LOGGER.info("An entity has invalid controllability. It is removed from the set of options to reverse.");
-                }
+                default -> LOGGER.info("An entity has invalid controllability. It is removed from the set of options to reverse.");
             }
         }
 
