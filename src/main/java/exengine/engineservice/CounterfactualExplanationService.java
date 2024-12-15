@@ -3,7 +3,6 @@ package exengine.engineservice;
 import java.util.*;
 import java.time.LocalDateTime;
 
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,11 +98,6 @@ public class CounterfactualExplanationService extends ExplanationService {
         // rules with actions leading to previous state
         ArrayList<Rule> rulesPrevious = findCauseSer.findCandidateRules(previous, dbRules);
         TruePreconditions(rulesPrevious, explanandum, currentState, logEntries);
-        if (!rulesExpected.isEmpty()) {         // Only consider rules with higher priority than rules in rulesExpected
-            Rule maxPriorityRule = Collections.max(rulesExpected, Comparator.comparingInt(Rule::getPriority));
-            int maxPriority = maxPriorityRule.getPriority();
-            rulesPrevious.removeIf(r -> r.getPriority() <= maxPriority);
-        }
         LOGGER.info("Rules with true preconditions leading to the previous state are " + rulesPrevious);
 
 
@@ -307,7 +301,6 @@ public class CounterfactualExplanationService extends ExplanationService {
         // find combinations s.t. for each trigger one root is chosen
         generatePermutations(allRoots, new ArrayList<>(), 0, new ArrayList<>());
         modifiedCandidates.addAll(allRoots);
-
         return minComputation(modifiedCandidates, explanandum, logEntries);
     }
 
@@ -346,7 +339,6 @@ public class CounterfactualExplanationService extends ExplanationService {
      * overridden by another rule or null if there is no such set.
      */
     public ArrayList<LogEntry> minAdd(Rule ruleToOverride, LogEntry explanandum, LogEntry toAchieve, ArrayList<LogEntry> logEntries) {
-
         List<Rule> dbRules = dataSer.findAllRules();
         ArrayList<Rule> candidateRules = findCauseSer.findCandidateRules(toAchieve, dbRules);
 
@@ -369,7 +361,6 @@ public class CounterfactualExplanationService extends ExplanationService {
             LOGGER.info("No additive explanation available. No rule that could fire found.");
             return null;
         }
-
         return minComputation(candidates, explanandum, logEntries);
     }
 
@@ -385,7 +376,6 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @return the minimal change to the system s.t. the rules are not in effect anymore.
      */
     public ArrayList<ArrayList<LogEntry>> overrideOrRemove(ArrayList<Rule> rules, LogEntry explanandum, LogEntry expected, Boolean firingNecessary, ArrayList<LogEntry> logEntries) {
-
         ArrayList<ArrayList<LogEntry>> candidates = new ArrayList<>();
         ArrayList<LogEntry> addCandidates = new ArrayList<>();  // collect additive candidates
         ArrayList<LogEntry> subCandidates = new ArrayList<>();  // collect subtractive candidates
@@ -546,7 +536,6 @@ public class CounterfactualExplanationService extends ExplanationService {
                 minCandidates.add(makeFire(r, explanandum, logEntries));    //minimal changes to make r fire
             }
         }
-
         return minComputation(minCandidates, explanandum, logEntries);
     }
 
@@ -560,7 +549,6 @@ public class CounterfactualExplanationService extends ExplanationService {
      * @return the list of LogEntries which contain the states the system has to have to make r have true preconditions
      */
     public ArrayList<LogEntry> makeFire(Rule r, LogEntry explanandum, ArrayList<LogEntry> logEntries) {
-
         ArrayList<LogEntry> currentState = getCurrentState(logEntries);
         ArrayList<LogEntry> conditions = new ArrayList<>(r.getConditions());
         ArrayList<LogEntry> triggers = new ArrayList<>(r.getTrigger());
@@ -663,9 +651,9 @@ public class CounterfactualExplanationService extends ExplanationService {
 
         // calculate properties
         ArrayList<Double> abnormality = calculateAbnormality(candidates, logEntries);
-        ArrayList<Double> temporality = calculateAbnormality(candidates, logEntries);
         ArrayList<Double> proximity = calculateProximity(candidates, explanandum, logEntries);
         ArrayList<Double> sparsity = calculateSparsity(candidates);
+        ArrayList<Double> temporality = calculateTemporality(candidates, explanandum, logEntries);
 
         // define weights
         ArrayList<Double> weights = new ArrayList<>();
@@ -771,12 +759,29 @@ public class CounterfactualExplanationService extends ExplanationService {
     public ArrayList<Double> calculateTemporality(ArrayList<ArrayList<LogEntry>> candidates, LogEntry
             explanandum, ArrayList<LogEntry> logEntries) {
 
+        ArrayList<LogEntry> logEntriesSorted = new ArrayList<>(logEntries);
+        logEntriesSorted.sort(Collections.reverseOrder());
+
         ArrayList<Double> temporality = new ArrayList<>();
 
         for (ArrayList<LogEntry> candidate : candidates) {
             double sum = 0.0;
 
             for (LogEntry c : candidate) {
+                if (c.getTime() == null) {  // determine time of newest logEntry with equal entityId and state
+                    for (LogEntry sortedLogEntry : logEntriesSorted) {
+                        if (c.equals(sortedLogEntry)){
+                            c.setTime(sortedLogEntry.getTime());
+                            break;
+                        }
+                    }
+                }
+
+                if (c.getTime() == null){   // Change has never happened before, i.e. there is no logEntry
+                    LOGGER.info("No time could be determined for change " + c.getName() + ". The temporality has been set to max.");
+                    sum = Integer.MAX_VALUE;
+                    break;
+                }
 
                 LogEntry newest = c;
                 for (LogEntry logEntry : logEntries) {
@@ -796,7 +801,7 @@ public class CounterfactualExplanationService extends ExplanationService {
                 }
 
                 if (newest.compareTo(explanandum) > 0) {  //no identical logEntry before explanandum found
-                    LOGGER.info("For LogEntry " + newest.getEntityId() + " with state " + newest.getState() + " no entry before the explanandum could be found. The temporality has been set to max.");
+                    LOGGER.info("For LogEntry " + newest.getName() + " no entry before the explanandum could be found. The temporality has been set to max.");
                     sum = Integer.MAX_VALUE;
                     break;
                 }
