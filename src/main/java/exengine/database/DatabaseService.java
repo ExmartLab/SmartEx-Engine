@@ -2,20 +2,16 @@ package exengine.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import exengine.datamodel.*;
+import exengine.datamodel.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import exengine.ExplainableEngineApplication;
-import exengine.datamodel.Entity;
-import exengine.datamodel.Error;
-import exengine.datamodel.FrequencyEntry;
-import exengine.datamodel.LogEntry;
-import exengine.datamodel.OccurrenceEntry;
-import exengine.datamodel.Rule;
-import exengine.datamodel.User;
 
 /**
  * The DatabaseService class provides methods for interacting with the database
@@ -44,6 +40,8 @@ public class DatabaseService {
 
 	@Autowired
 	FrequencyRepository frequencyRepo;
+    @Autowired
+    private ScenarioRepository scenarioRepository;
 
 	/**
 	 * Resets the database by deleting all rules, errors, users, and entities. If
@@ -309,6 +307,39 @@ public class DatabaseService {
 	 */
 	public List<FrequencyEntry> findAllFrequencyEntriesByRuleId(String ruleId) {
 		return frequencyRepo.findFrequencyEntriesById(ruleId);
+	}
+
+	/**
+	 * Retrieves all scenarios from the database.
+	 * @return a List of all Scenarios found
+	 */
+	public List<Scenario> findAllScenarios() {
+		return scenarioRepository.findAll();
+	}
+
+	/**
+	 * Finds a scenario by it's id
+	 * @param id the id of the scenario to find
+	 * @return an Optional of Scenario which includes a scenario if one exists with that id
+	 */
+	public Optional<Scenario> findScenarioById(int id) {
+		return scenarioRepository.findById(id);
+	}
+
+	/**
+	 * Saves a scenario in the database
+	 * @param scenario the Scenario to save
+	 */
+	public void saveScenario(Scenario scenario) {
+		scenarioRepository.save(scenario);
+	}
+
+	/**
+	 * Deletes the specified Scenario from the database
+	 * @param scenario the scenario to delete
+	 */
+	public void deleteScenario(Scenario scenario) {
+		scenarioRepository.delete(scenario);
 	}
 
 

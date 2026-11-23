@@ -1,16 +1,20 @@
 package exengine.rest;
 
+import exengine.scenarios.dto.ScenarioCreationData;
+import exengine.scenarios.ScenarioService;
+import exengine.scenarios.dto.ScenarioMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ch.qos.logback.classic.Level;
 import exengine.ExplainableEngineApplication;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * REST controller for all live (runtime) configurations made to the
@@ -20,6 +24,8 @@ import exengine.ExplainableEngineApplication;
 public class ConfigurationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
+	@Autowired
+	private ScenarioService scenarioService;
 
 	/**
 	 * Retrieves the status of the Explainable Engine.
@@ -54,6 +60,40 @@ public class ConfigurationController {
 		ExplainableEngineApplication.setDemo(true);
 		LOGGER.info("HTTP POST: Testing turned on");
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
+	}
+
+	@PostMapping("/demo/scenario")
+	public ResponseEntity<String> addScenario(@RequestParam("file") MultipartFile file,
+											  @RequestBody ScenarioCreationData meta) {
+		if (meta.getDescription()==null || meta.getTitle()==null || meta.getTitle().isBlank() || meta.getDescription().isBlank())
+			return new ResponseEntity<>("Title and Description may not be blank!", HttpStatus.BAD_REQUEST);
+		if (scenarioService.addScenario(file, meta))
+			return new ResponseEntity<>("Successfully added scenario " + meta.getTitle(), HttpStatus.CREATED);
+		else return new ResponseEntity<>("Failed to add scenario! Try again!", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@PostMapping("/demo/scenario/update/{id}")
+	public ResponseEntity<String> updateScenario(@RequestParam("file") MultipartFile file,
+											  @PathVariable("id") int id) {
+		if (scenarioService.updateScenario(file, id))
+			return new ResponseEntity<>("Successfully updated logs of scenario " + id, HttpStatus.CREATED);
+		else return new ResponseEntity<>("Failed to update scenario! Try again!", HttpStatus.BAD_REQUEST);
+	}
+
+	@GetMapping("/demo/scenario/all")
+	public ResponseEntity<List<ScenarioMetaData>> getAllScenarios() {
+		List<ScenarioMetaData> allScenarios = scenarioService.getAllScenarios();
+		if (allScenarios==null || allScenarios.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		else return new ResponseEntity<>(allScenarios, HttpStatus.OK);
+	}
+
+	@PostMapping("/demo/select/{id}")
+	public ResponseEntity<String> setScenario(@PathVariable("id") int scenarioId) {
+		if (scenarioService.selectScenario(scenarioId)) {
+			return new ResponseEntity<>("Successfully set scenario to " + scenarioId, HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>("Scenario " + scenarioId + " not found!", HttpStatus.NOT_FOUND);
+		}
 	}
 
 	/**
