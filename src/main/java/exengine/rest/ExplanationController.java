@@ -36,10 +36,11 @@ public class ExplanationController {
 	 * @param min               number of minutes in history to take into account
 	 * @param userId            the user identifier of the explainee
 	 * @param device            the device which exhibited the explanandum
-	 * @param expgentype 		indicating type of explanation: If true, this
+	 * @param expgentype 		indicating type of explanation: If contrastive, this
 	 *                          function will return a contrastive explanation, if
-	 *                          false, this function will reside to the default
-	 *                          causal explanations.
+	 *                          causal, this function will reside to the default
+	 *                          causal explanations. If anything else, a counterfactual
+	 *                          explanation will be given
 	 * @return A ResponseEntity containing a String message containing the
 	 *         explanation and HttpStatus.OK.
 	 */
