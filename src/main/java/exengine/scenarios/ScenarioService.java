@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class ScenarioService {
         if (metaData.getDescription()==null || metaData.getDescription().isBlank() || metaData.getTitle()==null || metaData.getTitle().isBlank()) return false;
         String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         if (!"json".equals(suffix)) return false;
-        Scenario scenario = new Scenario(metaData.getTitle(), metaData.getDescription(), file.getOriginalFilename(), metaData.getExplanationType());
+        Scenario scenario = new Scenario(getNextFreeScenarioId(), metaData.getTitle(), metaData.getDescription(), file.getOriginalFilename(), metaData.getExplanationType());
         databaseService.saveScenario(scenario);
         if (storageService.store(file, scenario.getStoredFileName())) {
             return true;
@@ -43,6 +44,18 @@ public class ScenarioService {
             databaseService.deleteScenario(scenario);
             return false;
         }
+    }
+
+    /**
+     * Computes the next free scenarioId based on the highest ID currently stored in the database
+     *
+     * @return the currently highest scenarioId +1
+     */
+    private int getNextFreeScenarioId() {
+        List<Scenario> scenarios = databaseService.findAllScenarios();
+        scenarios.sort(Comparator.comparing(Scenario::getScenarioId));
+        int lastId = scenarios.getLast().getScenarioId();
+        return lastId++;
     }
 
     /**

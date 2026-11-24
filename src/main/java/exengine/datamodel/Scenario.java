@@ -7,7 +7,8 @@ public class Scenario {
     private int scenarioId;
     private String title, description, fileName, explanationType;
 
-    public Scenario(String title, String description, String fileName, String explanationType) {
+    public Scenario(int scenarioId, String title, String description, String fileName, String explanationType) {
+        this.scenarioId=scenarioId;
         this.title = title;
         this.description = description;
         this.fileName = fileName;
