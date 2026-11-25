@@ -81,3 +81,89 @@
 - entityId: "binary_sensor.lumi_lumi_sensor_magnet_aq2_opening_2"
   deviceName: "Contact Sensor if the Meeting Room is Opening"
   controllability: "actionable"
+- entityId: "light.socialroom_bloomlamp"
+  deviceName: "bloomlamp"
+  controllability: "actionable"
+
+
+
+
+
+
+- entityId: "sensor.temperature_lab"
+  deviceName: "lab_temperature"
+  controllability: "non-mutable"
+
+- entityId: "binary_sensor.xlab_motion_sensor_occupancy"
+  deviceName: "lab_occupancy"
+  controllability: "non-mutable"
+
+
+
+
+
+- entityId: "binary_sensor.socialroom_motion_sensor_motion"
+  deviceName: "socialroom_motion_sensor"
+  controllability: "non-mutable"
+
+- entityId: "sensor.socialroom_motion_sensor_device_temperature"
+  deviceName: "socialroom_temperature"
+  controllability: "non-mutable"
+
+
+
+
+
+- entityId: "light.xlab_stand_light_level_light_color_on_off"
+  deviceName: "floor_lamp"
+  controllability: "actionable"
+
+- entityId: "sensor.smart_plug_social_room_coffee_current_consumption"
+  deviceName: "coffee_machine"
+  controllability: "non-mutable"
+
+- entityId: "sensor.xlab_motion_sensor_illuminance"
+  deviceName: "lab_illuminance"
+  controllability: "non-mutable"
+
+
+
+
+
+- entityId: "light.meeting_room_status_light"
+  deviceName: "status_light"
+  controllability: "actionable"
+
+- entityId: "binary_sensor.meetingroom_door_contact_opening"
+  deviceName: "meetingroom_door_contact"
+  controllability: "non-mutable"
+
+- entityId: "binary_sensor.meetingroom_motion_motion"
+  deviceName: "meetingroom_motion"
+  controllability: "actionable"
+
+- entityId: "binary_sensor.meetingroom_motion_occupancy"
+  deviceName: "meetingroom_occupancy"
+  controllability: "non-mutable"
+
+- entityId: "weather.xmart_lab"
+  deviceName: "xmart_lab_weather"
+  controllability: "non-mutable"
+
+
+
+
+
+
+
+- entityId: "cover.xlab_curtain_shutter_cover"
+  deviceName: "curtain_shutter"
+  controllability: "actionable"
+
+- entityId: "binary_sensor.xlab_motion_sensor_motion"
+  deviceName: "lab_motion"
+  controllability: "non-mutable"
+
+- entityId: "scene.movie"
+  deviceName: "movie_scene"
+  controllability: "actionable"

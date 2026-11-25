@@ -333,3 +333,455 @@
   ruleDescription: "Rule_12: turns the lamp blue if the air conditioning is on low."
   priority: 11
 
+
+
+
+
+
+- name: "Ventilator an bei Hitze, Belegung, Wochentag und Tageszeit"
+  ruleId: "30"
+  ruleEntry:
+    name: "Rule: Lab fan on when hot and occupied on weekday daytime"
+    entity_id: "automation.lab_fan_on_heat_occupancy"
+    state: "null"
+  triggers:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "26"
+    - name: "LabOccupancy"
+      entity_id: "binary_sensor.xlab_motion_sensor_occupancy"
+      state: "on"
+  conditions:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "26"
+    - name: "LabOccupancy"
+      entity_id: "binary_sensor.xlab_motion_sensor_occupancy"
+      state: "on"
+    - name: "DayOfWeek"
+      entity_id: "sensor.day_of_week"
+      state: "wednesday"
+    - name: "TimeWindow"
+      entity_id: "sensor.time_of_day"
+      state: "09:00-19:00"
+  actions:
+    - name: "LabFan"
+      entity_id: "switch.lab_fan"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "The fan turns on when the temperature is above 25 degrees (for 3 min), the room is occupied for 15 min, it is a weekday, and the time is between 9:00 and 19:00."
+  priority: 10
+
+- name: "Ventilator aus wenn Temperatur niedrig und Raum frei"
+  ruleId: "31"
+  ruleEntry:
+    name: "Rule: Lab fan off when cool and unoccupied"
+    entity_id: "automation.lab_fan_off_cool"
+    state: "null"
+  triggers:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "21"
+  conditions:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "21"
+    - name: "LabOccupancy"
+      entity_id: "binary_sensor.xlab_motion_sensor_occupancy"
+      state: "off"
+  actions:
+    - name: "LabFan"
+      entity_id: "switch.lab_fan"
+      state: "off"
+  ownerId: "1"
+  ruleDescription: "Der Ventilator bleibt aus, wenn es kuehl ist und niemand im Raum ist."
+  priority: 11
+
+
+
+
+
+
+
+
+- name: "Deebot 16:00"
+  ruleId: "13"
+  ruleEntry:
+    name: "Rule: Deebot 16:00"
+    entity_id: "automation.deebot_1600"
+    state: "null"
+  triggers:
+    - name: "Time"
+      entity_id: "sensor.worldclock_sensor"
+      state: "16:00"
+  conditions: []
+  actions:
+    - name: "Deebot"
+      entity_id: "vacuum.deebot_3"
+      state: "cleaning"
+  ownerId: "1"
+  ruleDescription: "Deebot startet um 16:00."
+  priority: 12
+
+
+
+
+
+- name: "Bloomlampe gruen bei 19-23 Grad und Bewegung"
+  ruleId: "15"
+  ruleEntry:
+    name: "Rule: Bloomlamp green 19-23 motion"
+    entity_id: "automation.bloomlamp_green"
+    state: "null"
+  triggers:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "21"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  conditions:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "21"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  actions:
+    - name: "Bloomlamp"
+      entity_id: "light.socialroom_bloomlamp"
+      state: "green"
+  ownerId: "1"
+  ruleDescription: "Die Bloomlampe wird gruen, wenn die Temperatur zwischen 19 und 23 Grad liegt und Bewegung erkannt wird."
+  priority: 14
+
+- name: "Bloomlampe blau unter 15 Grad und Bewegung"
+  ruleId: "16"
+  ruleEntry:
+    name: "Rule: Bloomlamp blue under 15 motion"
+    entity_id: "automation.bloomlamp_blue"
+    state: "null"
+  triggers:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "12"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  conditions:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "12"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  actions:
+    - name: "Bloomlamp"
+      entity_id: "light.socialroom_bloomlamp"
+      state: "blue"
+  ownerId: "1"
+  ruleDescription: "Die Bloomlampe wird blau, wenn die Temperatur unter 15 Grad liegt und Bewegung erkannt wird."
+  priority: 15
+
+- name: "Bloomlampe rot ueber 28 Grad und Bewegung"
+  ruleId: "17"
+  ruleEntry:
+    name: "Rule: Bloomlamp red over 28 motion"
+    entity_id: "automation.bloomlamp_red"
+    state: "null"
+  triggers:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "30"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  conditions:
+    - name: "SocialRoomTemperature"
+      entity_id: "sensor.socialroom_motion_sensor_device_temperature"
+      state: "30"
+    - name: "SocialRoomMotion"
+      entity_id: "binary_sensor.socialroom_motion_sensor_motion"
+      state: "on"
+  actions:
+    - name: "Bloomlamp"
+      entity_id: "light.socialroom_bloomlamp"
+      state: "red"
+  ownerId: "1"
+  ruleDescription: "Die Bloomlampe wird rot, wenn die Temperatur ueber 28 Grad liegt und Bewegung erkannt wird."
+  priority: 16
+
+
+
+
+- name: "Standlampe an wenn Kaffee fertig ist"
+  ruleId: "20"
+  ruleEntry:
+    name: "Rule: Floor lamp on when coffee finished"
+    entity_id: "automation.floor_lamp_coffee_finished"
+    state: "null"
+  triggers:
+    - name: "CoffeeConsumption"
+      entity_id: "sensor.smart_plug_social_room_coffee_current_consumption"
+      state: "0"
+  conditions:
+    - name: "CoffeeConsumption"
+      entity_id: "sensor.smart_plug_social_room_coffee_current_consumption"
+      state: "0"
+  actions:
+    - name: "FloorLamp"
+      entity_id: "light.xlab_stand_light_level_light_color_on_off"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "Die Standlampe geht an, wenn der Kaffee fertig ist (Stromverbrauch bei 0)."
+  priority: 10
+
+- name: "Standlampe an wenn es im Raum dunkel ist"
+  ruleId: "21"
+  ruleEntry:
+    name: "Rule: Floor lamp on when dark"
+    entity_id: "automation.floor_lamp_dark"
+    state: "null"
+  triggers:
+    - name: "LabIlluminance"
+      entity_id: "sensor.xlab_motion_sensor_illuminance"
+      state: "65"
+  conditions:
+    - name: "LabIlluminance"
+      entity_id: "sensor.xlab_motion_sensor_illuminance"
+      state: "65"
+  actions:
+    - name: "FloorLamp"
+      entity_id: "light.xlab_stand_light_level_light_color_on_off"
+      state: "on"
+  ownerId: "1"
+  ruleDescription: "Die Standlampe geht an, wenn die Beleuchtungsstaerke unter 100 liegt."
+  priority: 11
+
+- name: "Standlampe aus wenn es hell ist"
+  ruleId: "22"
+  ruleEntry:
+    name: "Rule: Floor lamp off when bright"
+    entity_id: "automation.floor_lamp_off_bright"
+    state: "null"
+  triggers:
+    - name: "LabIlluminance"
+      entity_id: "sensor.xlab_motion_sensor_illuminance"
+      state: "300"
+  conditions:
+    - name: "LabIlluminance"
+      entity_id: "sensor.xlab_motion_sensor_illuminance"
+      state: "300"
+  actions:
+    - name: "FloorLamp"
+      entity_id: "light.xlab_stand_light_level_light_color_on_off"
+      state: "off"
+  ownerId: "1"
+  ruleDescription: "Die Standlampe bleibt aus, wenn es hell ist."
+  priority: 12
+
+
+
+
+
+- name: "Meeting room door opens -> Lawn green and motion Clear"
+  ruleId: "40"
+  ruleEntry:
+    name: "Rule: Door opens sets status light Lawn green and motion Clear"
+    entity_id: "automation.meeting_room_door_open"
+    state: "null"
+  triggers:
+    - name: "DoorContact"
+      entity_id: "binary_sensor.meetingroom_door_contact_opening"
+      state: "Open"
+  conditions:
+    - name: "DoorContact"
+      entity_id: "binary_sensor.meetingroom_door_contact_opening"
+      state: "Open"
+  actions:
+    - name: "StatusLight"
+      entity_id: "light.meeting_room_status_light"
+      state: "Lawn green"
+    - name: "MotionSensor"
+      entity_id: "binary_sensor.meetingroom_motion_motion"
+      state: "Clear"
+  ownerId: "1"
+  ruleDescription: "When the meeting room door changes from Closed to Open, the status light turns Lawn green and the motion sensor switches to Clear."
+  priority: 10
+
+- name: "Meeting room door closes and occupancy Detected -> Orange"
+  ruleId: "41"
+  ruleEntry:
+    name: "Rule: Door closed and occupancy Detected sets status light Orange"
+    entity_id: "automation.meeting_room_occupied"
+    state: "null"
+  triggers:
+    - name: "DoorContact"
+      entity_id: "binary_sensor.meetingroom_door_contact_opening"
+      state: "Closed"
+    - name: "Occupancy"
+      entity_id: "binary_sensor.meetingroom_motion_occupancy"
+      state: "Detected"
+  conditions:
+    - name: "DoorContact"
+      entity_id: "binary_sensor.meetingroom_door_contact_opening"
+      state: "Closed"
+    - name: "Occupancy"
+      entity_id: "binary_sensor.meetingroom_motion_occupancy"
+      state: "Detected"
+  actions:
+    - name: "StatusLight"
+      entity_id: "light.meeting_room_status_light"
+      state: "Orange"
+  ownerId: "1"
+  ruleDescription: "When the meeting room door changes from Open to Closed and occupancy is Detected, the status light turns Orange."
+  priority: 11
+
+- name: "Rain at lunch (11:00-13:00) -> Blue"
+  ruleId: "42"
+  ruleEntry:
+    name: "Rule: Rainy weather between 11am and 1pm sets status light Blue"
+    entity_id: "automation.meeting_room_rain_lunch"
+    state: "null"
+  triggers:
+    - name: "Weather"
+      entity_id: "weather.xmart_lab"
+      state: "Rainy"
+  conditions:
+    - name: "Weather"
+      entity_id: "weather.xmart_lab"
+      state: "Rainy"
+    - name: "LunchWindow"
+      entity_id: "sensor.time_of_day"
+      state: "11:00-13:00"
+  actions:
+    - name: "StatusLight"
+      entity_id: "light.meeting_room_status_light"
+      state: "Blue"
+  ownerId: "1"
+  ruleDescription: "When weather changes to Rainy between 11am and 1pm, the status light turns Blue."
+  priority: 12
+
+- name: "Sunny at lunch (11:00-13:00) -> Orange"
+  ruleId: "43"
+  ruleEntry:
+    name: "Rule: Sunny weather between 11am and 1pm sets status light Orange"
+    entity_id: "automation.meeting_room_sunny_lunch"
+    state: "null"
+  triggers:
+    - name: "Weather"
+      entity_id: "weather.xmart_lab"
+      state: "Sunny"
+  conditions:
+    - name: "Weather"
+      entity_id: "weather.xmart_lab"
+      state: "Sunny"
+    - name: "LunchWindow"
+      entity_id: "sensor.time_of_day"
+      state: "11:00-13:00"
+  actions:
+    - name: "StatusLight"
+      entity_id: "light.meeting_room_status_light"
+      state: "Orange"
+  ownerId: "1"
+  ruleDescription: "When weather changes to Sunny between 11am and 1pm, the status light turns Orange."
+  priority: 13
+
+
+
+
+
+
+- name: "Curtain shutter closes when sunny and hot (>28C)"
+  ruleId: "50"
+  ruleEntry:
+    name: "Rule: Curtain shutter closed when sunny and hot"
+    entity_id: "automation.curtain_shutter_sunny_hot"
+    state: "null"
+  triggers:
+    - name: "LabWeather"
+      entity_id: "weather.xmart_lab"
+      state: "sunny"
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "30"
+  conditions:
+    - name: "LabWeather"
+      entity_id: "weather.xmart_lab"
+      state: "sunny"
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "30"
+  actions:
+    - name: "CurtainShutter"
+      entity_id: "cover.xlab_curtain_shutter_cover"
+      state: "closed"
+  ownerId: "1"
+  ruleDescription: "The curtain shutter closes when it is sunny and the temperature is above 28 degrees."
+  priority: 10
+
+- name: "Curtain shutter closes during movie scene"
+  ruleId: "51"
+  ruleEntry:
+    name: "Rule: Curtain shutter closed when movie scene is active"
+    entity_id: "automation.curtain_shutter_movie"
+    state: "null"
+  triggers:
+    - name: "MovieScene"
+      entity_id: "scene.movie"
+      state: "on"
+  conditions:
+    - name: "MovieScene"
+      entity_id: "scene.movie"
+      state: "on"
+  actions:
+    - name: "CurtainShutter"
+      entity_id: "cover.xlab_curtain_shutter_cover"
+      state: "closed"
+  ownerId: "1"
+  ruleDescription: "The curtain shutter closes when the movie scene is active."
+  priority: 11
+
+- name: "Curtain shutter opens when temperature below 25C"
+  ruleId: "55"
+  ruleEntry:
+    name: "Rule: Curtain shutter open when cool (<25C)"
+    entity_id: "automation.curtain_shutter_open_below_25"
+    state: "null"
+  triggers:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "20"
+  conditions:
+    - name: "LabTemperature"
+      entity_id: "sensor.temperature_lab"
+      state: "20"
+  actions:
+    - name: "CurtainShutter"
+      entity_id: "cover.xlab_curtain_shutter_cover"
+      state: "open"
+  ownerId: "1"
+  ruleDescription: "The curtain shutter opens when the temperature is below 25 degrees."
+  priority: 14
+
+- name: "Curtain shutter opens when movie scene ends"
+  ruleId: "54"
+  ruleEntry:
+    name: "Rule: Curtain shutter opens when movie scene ends"
+    entity_id: "automation.curtain_shutter_open_movie_ended"
+    state: "null"
+  triggers:
+    - name: "MovieScene"
+      entity_id: "scene.movie"
+      state: "off"
+  conditions:
+    - name: "MovieScene"
+      entity_id: "scene.movie"
+      state: "off"
+  actions:
+    - name: "CurtainShutter"
+      entity_id: "cover.xlab_curtain_shutter_cover"
+      state: "open"
+  ownerId: "1"
+  ruleDescription: "The curtain shutter opens when the movie scene ends."
+  priority: 15
