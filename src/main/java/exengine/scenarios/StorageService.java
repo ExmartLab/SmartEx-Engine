@@ -1,14 +1,12 @@
 package exengine.scenarios;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 
 @Service
 public class StorageService {
-    private final String rootLocation= "resources";
+    private static final String rootLocation= "scenario_logs";
     private boolean initialized=false;
 
     /**
@@ -41,25 +39,16 @@ public class StorageService {
     }
 
     /**
-     * Loads the file as a resource. Returns null if the file was not found.
+     * Loads the filepath as a String
      * @param filename the name of the file
-     * @return the resource (file) if found, null if not found or error occurs
+     * @return the filepath to the uploaded file
      * @author aabert
      */
-    public Resource loadFile(String filename) {
-        if (!initialized) this.init();
+    public static String getFilePath(String filename) {
         if (filename==null) return null;
         Path folderPath = Paths.get(rootLocation);
         Path file = folderPath.resolve(filename);
-        try{
-            Resource resource = new UrlResource(file.toUri());
-            if(resource.exists() && resource.isReadable()) {
-                return resource;
-            }
-        } catch (MalformedURLException e) {
-            return null;
-        }
-        return null;
+        return file.toAbsolutePath().toString();
     }
 
     /**

@@ -35,7 +35,7 @@ public class ScenarioService {
     public boolean addScenario(MultipartFile file, ScenarioCreationData metaData) {
         if (metaData.getDescription()==null || metaData.getDescription().isBlank() || metaData.getTitle()==null || metaData.getTitle().isBlank()) return false;
         String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        if (!"json".equals(suffix)) return false;
+        if (!".json".equals(suffix)) return false;
         Scenario scenario = new Scenario(getNextFreeScenarioId(), metaData.getTitle(), metaData.getDescription(), file.getOriginalFilename(), metaData.getExplanationType());
         databaseService.saveScenario(scenario);
         if (storageService.store(file, scenario.getStoredFileName())) {
@@ -56,7 +56,7 @@ public class ScenarioService {
         if(scenarios.isEmpty()) return 0;
         scenarios.sort(Comparator.comparing(Scenario::getScenarioId));
         int lastId = scenarios.get(scenarios.size()-1).getScenarioId();
-        return lastId++;
+        return (lastId+1);
     }
 
     /**

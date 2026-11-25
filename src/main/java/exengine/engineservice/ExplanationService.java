@@ -144,7 +144,7 @@ public abstract class ExplanationService {
 	 */
 	public ArrayList<LogEntry> loadDemoEntries(String fileName) throws IOException, URISyntaxException {
 		ArrayList<LogEntry> demoEntries;
-		String logJSON = JsonHandler.loadFile(fileName);
+		String logJSON = (fileName.equals("demoLogs.json")) ? JsonHandler.loadFile(fileName) : JsonHandler.loadScenarioFile(fileName);
 		demoEntries = JsonHandler.loadLogEntriesFromJson(logJSON);
 
 		LOGGER.info("demoEntries have been loaded from {}", fileName);

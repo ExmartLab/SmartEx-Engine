@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import exengine.scenarios.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,20 @@ public class JsonHandler {
 		Path resourcePath = Paths.get(resourceUrl.toURI());
 		String filePath = resourcePath.toAbsolutePath().toString();
 		LOGGER.debug("File loaded");
+		return Files.readString(Path.of(filePath));
+	}
+
+	/**
+	 * Loads the content of a demo logs file that was injected at runtime as a string.
+	 *
+	 * @param fileName the name of the file to load
+	 * @return the content of the file as a string
+	 * @throws IOException        if an I/O error occurs while reading the file
+	 * @throws URISyntaxException if the file URL has an invalid syntax
+	 */
+	public static String loadScenarioFile(String fileName) throws IOException, URISyntaxException {
+		String filePath = StorageService.getFilePath(fileName);
+		LOGGER.debug("Scenario File loaded");
 		return Files.readString(Path.of(filePath));
 	}
 
