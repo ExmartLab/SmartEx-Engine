@@ -53,8 +53,9 @@ public class ScenarioService {
      */
     private int getNextFreeScenarioId() {
         List<Scenario> scenarios = databaseService.findAllScenarios();
+        if(scenarios.isEmpty()) return 0;
         scenarios.sort(Comparator.comparing(Scenario::getScenarioId));
-        int lastId = scenarios.getLast().getScenarioId();
+        int lastId = scenarios.get(scenarios.size()-1).getScenarioId();
         return lastId++;
     }
 
