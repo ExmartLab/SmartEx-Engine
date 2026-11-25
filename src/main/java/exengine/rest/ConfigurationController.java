@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,9 +63,9 @@ public class ConfigurationController {
 		return new ResponseEntity<>("Testing turned on", HttpStatus.CREATED);
 	}
 
-	@PostMapping("/demo/scenario")
+	@PostMapping(value = "/demo/scenario", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<String> addScenario(@RequestParam("file") MultipartFile file,
-											  @RequestBody ScenarioCreationData meta) {
+											  @RequestPart("meta") ScenarioCreationData meta) {
 		if (meta.getDescription()==null || meta.getTitle()==null || meta.getTitle().isBlank() || meta.getDescription().isBlank())
 			return new ResponseEntity<>("Title and Description may not be blank!", HttpStatus.BAD_REQUEST);
 		if (scenarioService.addScenario(file, meta))
